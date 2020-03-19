@@ -1,0 +1,234 @@
+{
+    "created_at": "Thu Mar 19 15:39:16 +0000 2020",
+    "id": 1240664141163044900,
+    "id_str": "1240664141163044864",
+    "full_text": "#MarchemosEnInternet por Memoria, Verdad y Justicia, y acompañemos a @abuelasdifusion subiendo fotos de marchas previas y liberándolas en @WikiCommons. Entre todos/as, #ConstruimosMemoria.\n\n#MesDeLaMemoria #24MWikipedia #WikiDDHH\n\nAutor/a: TitiNicola - Licencia: CC BY-SA 4.0 https://t.co/OZl9i3w3HU",
+    "truncated": false,
+    "display_text_range": [
+        0,
+        275
+    ],
+    "entities": {
+        "hashtags": [
+            {
+                "text": "MarchemosEnInternet",
+                "indices": [
+                    0,
+                    20
+                ]
+            },
+            {
+                "text": "ConstruimosMemoria",
+                "indices": [
+                    168,
+                    187
+                ]
+            },
+            {
+                "text": "MesDeLaMemoria",
+                "indices": [
+                    190,
+                    205
+                ]
+            },
+            {
+                "text": "24MWikipedia",
+                "indices": [
+                    206,
+                    219
+                ]
+            },
+            {
+                "text": "WikiDDHH",
+                "indices": [
+                    220,
+                    229
+                ]
+            }
+        ],
+        "symbols": [],
+        "user_mentions": [
+            {
+                "screen_name": "abuelasdifusion",
+                "name": "Abuelas Plaza Mayo",
+                "id": 182644738,
+                "id_str": "182644738",
+                "indices": [
+                    69,
+                    85
+                ]
+            },
+            {
+                "screen_name": "WikiCommons",
+                "name": "Wikimedia Commons",
+                "id": 285907780,
+                "id_str": "285907780",
+                "indices": [
+                    138,
+                    150
+                ]
+            }
+        ],
+        "urls": [],
+        "media": [
+            {
+                "id": 1240662926148731000,
+                "id_str": "1240662926148730881",
+                "indices": [
+                    276,
+                    299
+                ],
+                "media_url": "http://pbs.twimg.com/media/ETe4W6cXgAEeHEg.jpg",
+                "media_url_https": "https://pbs.twimg.com/media/ETe4W6cXgAEeHEg.jpg",
+                "url": "https://t.co/OZl9i3w3HU",
+                "display_url": "pic.twitter.com/OZl9i3w3HU",
+                "expanded_url": "https://twitter.com/wikimedia_ar/status/1240664141163044864/photo/1",
+                "type": "photo",
+                "sizes": {
+                    "thumb": {
+                        "w": 150,
+                        "h": 150,
+                        "resize": "crop"
+                    },
+                    "medium": {
+                        "w": 1200,
+                        "h": 800,
+                        "resize": "fit"
+                    },
+                    "large": {
+                        "w": 1200,
+                        "h": 800,
+                        "resize": "fit"
+                    },
+                    "small": {
+                        "w": 680,
+                        "h": 453,
+                        "resize": "fit"
+                    }
+                }
+            }
+        ]
+    },
+    "extended_entities": {
+        "media": [
+            {
+                "id": 1240662926148731000,
+                "id_str": "1240662926148730881",
+                "indices": [
+                    276,
+                    299
+                ],
+                "media_url": "http://pbs.twimg.com/media/ETe4W6cXgAEeHEg.jpg",
+                "media_url_https": "https://pbs.twimg.com/media/ETe4W6cXgAEeHEg.jpg",
+                "url": "https://t.co/OZl9i3w3HU",
+                "display_url": "pic.twitter.com/OZl9i3w3HU",
+                "expanded_url": "https://twitter.com/wikimedia_ar/status/1240664141163044864/photo/1",
+                "type": "photo",
+                "sizes": {
+                    "thumb": {
+                        "w": 150,
+                        "h": 150,
+                        "resize": "crop"
+                    },
+                    "medium": {
+                        "w": 1200,
+                        "h": 800,
+                        "resize": "fit"
+                    },
+                    "large": {
+                        "w": 1200,
+                        "h": 800,
+                        "resize": "fit"
+                    },
+                    "small": {
+                        "w": 680,
+                        "h": 453,
+                        "resize": "fit"
+                    }
+                }
+            }
+        ]
+    },
+    "metadata": {
+        "iso_language_code": "es",
+        "result_type": "recent"
+    },
+    "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+        "id": 70695732,
+        "id_str": "70695732",
+        "name": "Wikimedia Argentina",
+        "screen_name": "wikimedia_ar",
+        "location": "Argentina",
+        "description": "Capítulo local de la Fundación Wikimedia en Argentina | #SoyWikipedista.",
+        "url": "https://t.co/QXNMQNtJuk",
+        "entities": {
+            "url": {
+                "urls": [
+                    {
+                        "url": "https://t.co/QXNMQNtJuk",
+                        "expanded_url": "http://www.wikimedia.org.ar/",
+                        "display_url": "wikimedia.org.ar",
+                        "indices": [
+                            0,
+                            23
+                        ]
+                    }
+                ]
+            },
+            "description": {
+                "urls": []
+            }
+        },
+        "protected": false,
+        "followers_count": 7396,
+        "friends_count": 527,
+        "listed_count": 175,
+        "created_at": "Tue Sep 01 14:44:29 +0000 2009",
+        "favourites_count": 5129,
+        "utc_offset": null,
+        "time_zone": null,
+        "geo_enabled": true,
+        "verified": true,
+        "statuses_count": 12132,
+        "lang": null,
+        "contributors_enabled": false,
+        "is_translator": false,
+        "is_translation_enabled": false,
+        "profile_background_color": "FFFFFF",
+        "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+        "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+        "profile_background_tile": true,
+        "profile_image_url": "http://pbs.twimg.com/profile_images/878249940002189312/atKBnAes_normal.jpg",
+        "profile_image_url_https": "https://pbs.twimg.com/profile_images/878249940002189312/atKBnAes_normal.jpg",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/70695732/1535120483",
+        "profile_link_color": "006699",
+        "profile_sidebar_border_color": "006699",
+        "profile_sidebar_fill_color": "FFFFFF",
+        "profile_text_color": "484848",
+        "profile_use_background_image": false,
+        "has_extended_profile": false,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": false,
+        "follow_request_sent": false,
+        "notifications": false,
+        "translator_type": "none"
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "is_quote_status": false,
+    "retweet_count": 10,
+    "favorite_count": 14,
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "es"
+}
