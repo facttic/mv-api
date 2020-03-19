@@ -35,5 +35,8 @@
     "socket.io": "^2.3.0",
     "twit": "^2.2.11",
     "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
