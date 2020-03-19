@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  api:
+    build: ./
+    ports:
+     - "${API_PORT}:${DOCKER_API_PORT}"
+    links:
+      - mongo
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+
+  #·······················································#
+  #·BBDD MONGO············································#
+  #·······················································#
+  mongo:
+    image: mongo
+    ports:
+     - "${MONGODB_PORT}:${DOCKER_MONGODB_PORT}"
+    volumes:
+      - mongo-data:/data/db
+    command: "--smallfiles --logpath=/dev/null --setParameter failIndexKeyTooLong=false"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+
+volumes:
+  mongo-data:
