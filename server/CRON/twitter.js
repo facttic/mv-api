@@ -1,4 +1,4 @@
-const Twitter = require("twit");
+const Twitter = require("twitter");
 const Big = require("big-js");
 
 const maxTweets = 200;
@@ -48,13 +48,14 @@ const getTweets = (maxId) => {
           tweet.entities.media.length > 0
         ) {
           tweet.entities.media.forEach(function(m) {
-            // console.log(m.media_url);
+            
           });
           tweetCount++;
         }
       });
-      console.log(statuses[statuses.length - 1].id);
-      getTweets(statuses[statuses.length - 1].id);
+      // console.log(statuses[statuses.length - 1].id);
+      // getTweets(statuses[statuses.length - 1].id);
+      console.log(`Oh haven't I processed my tweeeEets. Totals ${tweetCount}.`);
     }
   );
 }
