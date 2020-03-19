@@ -17,16 +17,16 @@
   - DOCKER_MONGODB_PORT=puerto de la bbdd para el contenedor. Opcional. Para usar con Docker.
   - DOCKER_API_PORT=puerto de la api para el contenedor. Opcional. Para usar con Docker.
   - FB_TOKEN=token de fb. En desuso.
-  - TWITTER_CONSUMER_KEY=accesos a tweeter API.
-  - TWITTER_CONSUMER_SECRET=accesos a tweeter API.
-  - TWITTER_ACCESS_TOKEN_KEY=accesos a tweeter API.
-  - TWITTER_ACCESS_TOKEN_SECRET=accesos a tweeter API.
+  - TWITTER_CONSUMER_KEY=accesos a Twitter API.
+  - TWITTER_CONSUMER_SECRET=accesos a Twitter API.
+  - TWITTER_ACCESS_TOKEN_KEY=accesos a Twitter API.
+  - TWITTER_ACCESS_TOKEN_SECRET=accesos a Twitter API.
 
 ## Ejecutar
 
 - `npm i`. Instalar dependencias.
 - `npm start`. Correr con nodemon (hotreload).
 
-## Acceso a API de tweeter
+## Acceso a API de Twitter
 
-[Acá](https://elfsight.com/blog/2020/03/how-to-get-twitter-api-key/) encontré un tutorial para obtener keys y acceder a la API de Tweeter. Yo tenía keys que había pedido hace un tiempo. Está la posibilidad de que ahora el proceso sea más complejo. Puedo compartir mis keys, pero tenemos que ser cuidadosxs de no saturar la cuota.
+[Acá](https://elfsight.com/blog/2020/03/how-to-get-twitter-api-key/) encontré un tutorial para obtener keys y acceder a la API de Twitter. Yo tenía keys que había pedido hace un tiempo. Está la posibilidad de que ahora el proceso sea más complejo. Puedo compartir mis keys, pero tenemos que ser cuidadosxs de no saturar la cuota.
