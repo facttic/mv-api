@@ -62,4 +62,8 @@ const getTweets = (maxId) => {
   );
 }
 
-getTweets(null);
+if (process.env.CRON_ACTIVE && process.env.CRON_ACTIVE === "true") {
+  getTweets(null);
+} else {
+  console.log(".env CRON_ACTIVE not set to 'false' or undefined. CRON to fetch Tweets will not run.")
+}

@@ -7,6 +7,7 @@
 
 - Usamos `dotenv` para levantar la configuración de un archivo `.env`.
 - Se puede tomar el archivo `.env-example` de base.
+  - CRON_ACTIVE=indicar `true` para configurar si esta instancia va a levantar tweets. Opcional. Default=false.
   - API_PORT=puerto donde va a escuchar express. Opcional. Default: `3333`.
   - API_HOST=host para express. Opcional. Default: `localhost`.
   - MONGODB_URI=conexión a bbdd con formato URI. Mandatorio. E.g.: `mongodb://localhost:27017/24m`
