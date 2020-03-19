@@ -10,8 +10,8 @@ const TweetSchema = mongoose.Schema({
   },
   media: {
     type: [{
-      media_url: { type: String, trim: true }
-      media_url_https: { type: String, trim: true }
+      media_url: { type: String, trim: true },
+      media_url_https: { type: String, trim: true },
     }],
     required: true,
   },

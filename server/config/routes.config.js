@@ -7,7 +7,7 @@ const cors = require('cors');
 
 const MAX_CONTENT_LENGTH_ACCEPTED = 9999;
 
-const { Routes } = require('../api/tweet/routes');
+const { TweetRoutes } = require('../api/tweet/routes');
 
 class RoutesConfig {
   static init(app, router) {
@@ -21,7 +21,7 @@ class RoutesConfig {
     app.use(bodyParser.json());
     app.use(helmet());
 
-    // Routes.init(router);
+    TweetRoutes.init(router);
 
     app.use('/api', router);
   }

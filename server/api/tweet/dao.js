@@ -1,31 +1,39 @@
-/* eslint-disable no-param-reassign */
-const mongoose = require('mongoose');
+/* eslint-disable no-use-before-define */
+const mongoose = require("mongoose");
+const mongooseDelete = require("mongoose-delete");
+const moment = require("moment");
 
-const TweetSchema = mongoose.Schema({
-  id_str: {
-    type: String,
-    trim: true,
-    required: true,
-    index: true,
-  },
-  full_text: {
-    type: String,
-    trim: true,
-    required: true,
-  },
-  hastags: [{
-    type: String,
-    trim: true,
-    required: true,
-  }]
-  // name: {
-  //   type: String,
-  //   trim: true,
-  //   required: true,
-  //   index: true,
-  // }
-}, { collection: 'tweet' });
+const { TweetSchema } = require("./model");
 
-module.exports = {
-  TweetSchema,
+TweetSchema.statics.createNew = async function createNew(tweet) {
+  const _tweet = new TweetDAO(tweet);
+  const newTweet = await _tweet.save();
+  return newTweet;
+}
+
+// Must probably have:
+// {
+//   skip,
+//   limit,
+//   select,
+//   sort,
+//   query
+// }
+TweetSchema.statics.getAll = async function getAll() {
+  const tweetsCount = await this.model("Tweet").countDocuments({ deleted: false });
+  const tweets = await this.model("Tweet").find({}); // query
+    // .skip(skip)
+    // .limit(limit)
+    // .select(select)
+    // .sort(sort);
+  return {
+    count: tweetsCount,
+    list: tweets
+  };
 };
+
+TweetSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: true, indexFields: ["deleted"] });
+
+const TweetDAO = mongoose.model("Tweet", TweetSchema);
+
+module.exports = { TweetDAO };
