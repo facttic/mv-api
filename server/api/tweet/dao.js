@@ -19,21 +19,21 @@ TweetSchema.statics.insertMany = async function insertMany(tweets) {
   return newTweets;
 }
 
-// Must probably have:
-// {
-//   skip,
-//   limit,
-//   select,
-//   sort,
-//   query
-// }
-TweetSchema.statics.getAll = async function getAll() {
-  const tweetsCount = await this.model("Tweet").countDocuments({ deleted: false });
-  const tweets = await this.model("Tweet").find({}); // query
-    // .skip(skip)
-    // .limit(limit)
-    // .select(select)
-    // .sort(sort);
+TweetSchema.statics.getAll = async function getAll({
+  skip,
+  limit,
+  sort,
+  query
+}) {
+  const tweetsCount = await this.model("Tweet").countDocuments({ ...query })
+    .skip(skip)
+    .limit(limit)
+    .sort(sort);
+
+  const tweets = await this.model("Tweet").find({ ...query })
+    .skip(skip)
+    .limit(limit)
+    .sort(sort);
   return {
     count: tweetsCount,
     list: tweets

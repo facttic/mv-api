@@ -21,7 +21,9 @@ class TweetController {
 
   async getAll(req, res, next) {
     try {
-      const tweets = await TweetDAO.getAll();
+      const { shapedQuery } = req;
+
+      const tweets = await TweetDAO.getAll(shapedQuery);
       res.status(200).json(tweets);
     } catch (error) {
       console.error(error);
