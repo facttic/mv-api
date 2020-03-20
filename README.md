@@ -14,7 +14,7 @@ Devuelve la lista de tweets, según los siguientes parámetros (`query params`):
 
 - `page`. Página actual. Opcional. Int positivo. Default: 1.
 - `perPage`. Cantidad de entradas por página. Opcional. Int positivo. Default: 5.
-- `sort`. Ordenar los resultados por este campo. Opcional. String. Default: _id.
+- `sortBy`. Ordenar los resultados por este campo. Opcional. String. Default: _id.
 - `query`. Permite filtrar usando el valor asignado de alguno de los campos. Opcional. Default: null.
 
 ## .env
