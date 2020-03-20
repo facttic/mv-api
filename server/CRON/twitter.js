@@ -34,7 +34,7 @@ const getTweets = async (sinceId, maxId) => {
     const [start, end] = splitString(maxId, maxIdLength - 4);
     const endInt = parseInt(end) - 1;
     options.max_id = `${start}${endInt}`;
-    console.log(`Fetching from max ${options.max_id}`);
+    console.log(`Fetching from max ${maxId}`);
   }
 
   client.get("search/tweets", options, function(error, tweets, response) {
