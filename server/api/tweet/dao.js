@@ -11,6 +11,14 @@ TweetSchema.statics.createNew = async function createNew(tweet) {
   return newTweet;
 }
 
+TweetSchema.statics.insertMany = async function insertMany(tweets) {
+  const options = {
+    ordered: false
+  }
+  const newTweets = await this.model("Tweet").collection.insertMany(tweets, options);
+  return newTweets;
+}
+
 // Must probably have:
 // {
 //   skip,
