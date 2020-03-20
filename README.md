@@ -6,7 +6,7 @@
 ## Restore de BBDD
 
 - Para utilizar una BBDD modelo (tiene tweets de ejemplo y la iremos actualizando), se puede usar el backup que está en la carpeta `/dbdump`.
-  - Ir a la carpeta y ejecutar el comando mongorestore con las opciones que correspondan: `mongorestore --port [mongo_PORT] [--authenticationDatabase auth_db_name_if_needed --username my_user_if_needed --password "my_password_if_needed"] --archive=24m.2020-03-20.gz --gzip`
+  - Ir a la carpeta y ejecutar el comando mongorestore con las opciones que correspondan, [sin corchetes]: `mongorestore --db [db_name] --port [mongo_PORT] [--authenticationDatabase auth_db_name_if_needed --username my_user_if_needed --password "my_password_if_needed"] --archive=24m.2020-03-20.gz --gzip`
 
 ## .env
 
