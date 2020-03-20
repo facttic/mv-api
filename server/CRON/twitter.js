@@ -1,8 +1,9 @@
 const Twitter = require("twitter");
 const { TweetDAO } = require("../api/tweet/dao");
+const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
 
-const maxTweets = 2000;
-const tweetsPerQuery = 100;
+const maxTweets = 10;
+const tweetsPerQuery = 5;
 
 const splitString = (value, index) => {
   return [value.substring(0, index), value.substring(index)];
@@ -24,13 +25,16 @@ const options = {
   include_entities: true
 };
 
-const getTweets = maxId => {
-  if (maxId) {
+const getTweets = async (sinceId, maxId) => {
+  if (sinceId) {
+    options.since_id = sinceId;
+    console.log(`Fetching from since ${sinceId}`);
+  } else if (maxId) {
     const maxIdLength = maxId.length;
     const [start, end] = splitString(maxId, maxIdLength - 4);
     const endInt = parseInt(end) - 1;
     options.max_id = `${start}${endInt}`;
-    console.log(`Fetching from ${options.max_id}`);
+    console.log(`Fetching from max ${options.max_id}`);
   }
 
   client.get("search/tweets", options, function(error, tweets, response) {
@@ -98,9 +102,13 @@ const getTweets = maxId => {
     });
 
     TweetDAO.insertMany(myArrayOfTweets)
-      .then(tweetResults => {
+      .then(async tweetResults => {
         console.log(`Success! Inserted ${tweetResults.insertedCount}`);
-        getTweets(statuses[statuses.length - 1].id_str);
+        const { id_str, created_at } = statuses[statuses.length - 1];
+        const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str, tweet_created_at: created_at });
+        if (!sinceId) {
+          getTweets(sinceId, id_str);
+        }
       })
       .catch(err => {
         console.log("Something failed at saving many");
