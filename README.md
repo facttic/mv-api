@@ -8,6 +8,15 @@
 - Para utilizar una BBDD modelo (tiene tweets de ejemplo y la iremos actualizando), se puede usar el backup que está en la carpeta `/dbdump`.
   - Ir a la carpeta y ejecutar el comando mongorestore con las opciones que correspondan, [sin corchetes]: `mongorestore --db [db_name] --port [mongo_PORT] [--authenticationDatabase auth_db_name_if_needed --username my_user_if_needed --password "my_password_if_needed"] --archive=24m.2020-03-20.gz --gzip`
 
+## GET /api/tweets endpoint
+
+Devuelve la lista de tweets, según los siguientes parámetros (`query params`):
+
+- `page`. Página actual. Opcional. Int positivo. Default: 1.
+- `perPage`. Cantidad de entradas por página. Opcional. Int positivo. Default: 5.
+- `sort`. Ordenar los resultados por este campo. Opcional. String. Default: _id.
+- `query`. Permite filtrar usando el valor asignado de alguno de los campos. Opcional. Default: null.
+
 ## .env
 
 - Usamos `dotenv` para levantar la configuración de un archivo `.env`.
