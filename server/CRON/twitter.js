@@ -27,6 +27,7 @@ const options = {
 const getTweets = async (sinceId, maxId, hashtags) => {
   if (sinceId) {
     options.since_id = sinceId;
+    delete options.max_id;
     console.log(`Fetching from since ${sinceId}`);
   } else if (maxId) {
     const maxIdLength = maxId.length;
@@ -36,7 +37,9 @@ const getTweets = async (sinceId, maxId, hashtags) => {
     console.log(`Fetching from max ${maxId}`);
   }
 
-  options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`,
+  options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`;
+
+  console.log(`With the following options: ${JSON.stringify(options)}`);
 
   client.get("search/tweets", options, function(error, tweets, response) {
     if (error) {
