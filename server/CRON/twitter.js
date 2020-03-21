@@ -109,7 +109,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       .then(async tweetResults => {
         console.log(`Success! Inserted ${tweetResults.insertedCount}`);
         const { id_str, created_at } = statuses[statuses.length - 1];
-        const { id_str_start } = statuses[0];
+        const { id_str: id_str_start } = statuses[0];
         console.log("este otro", id_str_start);
         console.log("o este", id_str);
         
