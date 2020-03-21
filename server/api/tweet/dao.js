@@ -25,6 +25,8 @@ TweetSchema.statics.getAll = async function getAll({
   sort,
   query
 }) {
+  const tweetsTotal = await this.model("Tweet").countDocuments({})
+
   const tweetsCount = await this.model("Tweet").countDocuments({ ...query })
     .skip(skip)
     .limit(limit)
@@ -36,7 +38,8 @@ TweetSchema.statics.getAll = async function getAll({
     .sort(sort);
   return {
     count: tweetsCount,
-    list: tweets
+    list: tweets,
+    total: tweetsTotal
   };
 };
 
