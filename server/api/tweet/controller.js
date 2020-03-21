@@ -37,7 +37,7 @@ class TweetController {
         console.log("Serving from cache");
         return res.status(200).json(value);
       }
-      
+
       console.log("Fetching from DB");
 
       const tweets = await TweetDAO.getAll(shapedQuery);
