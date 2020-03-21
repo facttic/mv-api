@@ -9,7 +9,7 @@ class TweetRoutes {
 
     router
       .route('/tweets')
-      .get(auth, [shapeQuery(TweetSchema), tweetController.getAll]);
+      .get([shapeQuery(TweetSchema), tweetController.getAll]);
   }
 }
 

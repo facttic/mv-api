@@ -6,7 +6,7 @@ const auth = require('../middleware/auth')
 class UserRoutes {
   static init(router) {
 
-    router.post('/users', async (req, res) => {
+    /*router.post('/users', async (req, res) => {
         // Create a new user
         try {
             const user = new User(req.body)
@@ -16,7 +16,7 @@ class UserRoutes {
         } catch (error) {
             res.status(400).send(error)
         }
-    })
+    })*/
 
     router.post('/users/login', async(req, res) => {
         //Login a registered user
