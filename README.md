@@ -35,6 +35,7 @@ Devuelve la lista de tweets, según los siguientes parámetros (`query params`):
   - TWITTER_CONSUMER_SECRET=accesos a Twitter API.
   - TWITTER_ACCESS_TOKEN_KEY=accesos a Twitter API.
   - TWITTER_ACCESS_TOKEN_SECRET=accesos a Twitter API.
+  - JWT_KEY=key para generar tokens
 
 ## Ejecutar
 
