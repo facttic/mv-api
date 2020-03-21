@@ -8,11 +8,11 @@ class HashtagRoutes {
 
     router
       .route('/hashtags')
-      .get(auth, hashtagController.getAll);
+      .get(hashtagController.getAll);
 
     router
       .route('/hashtags/:hashtagId')
-      .get(auth, hashtagController.getOne);
+      .get(hashtagController.getOne);
 
     router
       .route('/hashtags')
