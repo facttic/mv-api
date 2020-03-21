@@ -2,8 +2,8 @@ const Twitter = require("twitter");
 const { TweetDAO } = require("../api/tweet/dao");
 const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
 
-const maxTweets = process.env.CRAWLER_MAX_TWEETS || 10;
-const tweetsPerQuery = process.env.CRAWLER_MAX_TWEETS_PER_QUERY || 5;
+const maxTweets = process.env.CRAWLER_MAX_TWEETS || 1400;
+const tweetsPerQuery = process.env.CRAWLER_MAX_TWEETS_PER_QUERY || 100;
 
 const splitString = (value, index) => {
   return [value.substring(0, index), value.substring(index)];
