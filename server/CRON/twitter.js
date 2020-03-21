@@ -19,14 +19,12 @@ const client = new Twitter({
 let tweetCount = 0;
 
 const options = {
-  // q: "#MesDeLamemoria OR #24DeMarzo OR #ConstruimosMemoria OR #PañuelosConMemoria -filter:retweets -filter:replies filter:images",
-  q: "#PañuelosConMemoria -filter:retweets -filter:replies filter:images",
   tweet_mode: "extended",
   count: tweetsPerQuery,
   include_entities: true
 };
 
-const getTweets = async (sinceId, maxId) => {
+const getTweets = async (sinceId, maxId, hashtags) => {
   if (sinceId) {
     options.since_id = sinceId;
     console.log(`Fetching from since ${sinceId}`);
@@ -37,6 +35,8 @@ const getTweets = async (sinceId, maxId) => {
     options.max_id = `${start}${endInt}`;
     console.log(`Fetching from max ${maxId}`);
   }
+
+  options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`,
 
   client.get("search/tweets", options, function(error, tweets, response) {
     if (error) {
@@ -109,7 +109,7 @@ const getTweets = async (sinceId, maxId) => {
         const { id_str, created_at } = statuses[statuses.length - 1];
         const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str, tweet_created_at: created_at });
         if (!sinceId) {
-          getTweets(sinceId, id_str);
+          getTweets(sinceId, id_str, hashtags);
         }
       })
       .catch(err => {
