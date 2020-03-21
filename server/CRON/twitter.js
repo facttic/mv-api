@@ -40,7 +40,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
   client.get("search/tweets", options, function(error, tweets, response) {
     if (error) {
-      console.log(`Processed ${tweetCount}. And got the error below.`);
+      console.log(`Processed ${tweetCount}. And got the error below. With the following options: ${JSON.stringify(options)}`);
       console.error(error);
       return;
     }
