@@ -1,6 +1,5 @@
 /* eslint-disable no-use-before-define */
 const mongoose = require("mongoose");
-const mongooseDelete = require("mongoose-delete");
 
 const { HashtagSchema } = require("./model");
 
@@ -19,8 +18,6 @@ HashtagSchema.statics.getAll = async function getAll() {
     list: hashtags
   };
 };
-
-HashtagSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: true, indexFields: ["deleted"] });
 
 const HashtagDAO = mongoose.model("Hashtag", HashtagSchema);
 
