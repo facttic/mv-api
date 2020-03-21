@@ -22,6 +22,9 @@ Devuelve la lista de tweets, según los siguientes parámetros (`query params`):
 - Usamos `dotenv` para levantar la configuración de un archivo `.env`.
 - Se puede tomar el archivo `.env-example` de base.
   - CRON_ACTIVE=indicar `true` para configurar si esta instancia va a levantar tweets. Opcional. Default=false.
+  - CRAWLER_MAX_TWEETS=cantidad de tweets total a obtener al llenar BBDD la 1era vez. Opcional. Default: 1400.
+  - CRAWLER_MAX_TWEETS_PER_QUERY=Cantidad de tweets a obtener en cada llamada a la API de twitter. Opcional. Default: 100.
+  - CRON_TIMELAPSE=tiempo en minutos entre llamads a la API de twitter. Opcional. Default: 5 (minutos).
   - API_PORT=puerto donde va a escuchar express. Opcional. Default: `3333`.
   - API_HOST=host para express. Opcional. Default: `localhost`.
   - MONGODB_URI=conexión a bbdd con formato URI. Mandatorio. E.g.: `mongodb://localhost:27017/24m`
