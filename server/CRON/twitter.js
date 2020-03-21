@@ -109,6 +109,12 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       .then(async tweetResults => {
         console.log(`Success! Inserted ${tweetResults.insertedCount}`);
         const { id_str, created_at } = statuses[statuses.length - 1];
+        const { id_str_start } = statuses[0];
+        console.log("este otro", id_str_start);
+        console.log("o este", id_str);
+        
+        console.log(id_str_start > id_str);
+
         const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str, tweet_created_at: created_at });
         if (!sinceId) {
           getTweets(sinceId, id_str, hashtags);
