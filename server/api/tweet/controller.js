@@ -34,6 +34,7 @@ class TweetController {
       
       // check if there are cached tweets
       if (value) {
+        console.log("Serving from cache");
         return res.status(200).json(value);
       }
 
