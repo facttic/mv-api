@@ -38,6 +38,8 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`,
 
+  console.log(`Fetching with the following options: ${JSON.stringify(options)}`);
+
   client.get("search/tweets", options, function(error, tweets, response) {
     if (error) {
       console.log(`Processed ${tweetCount}. And got the error below. With the following options: ${JSON.stringify(options)}`);
