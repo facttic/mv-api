@@ -1,6 +1,7 @@
 const { TweetSchema } = require('./model');
 const { TweetController } = require('./controller');
 const { shapeQuery } = require("../../middleware/shape-query");
+const auth = require('../middleware/auth')
 
 class TweetRoutes {
   static init(router) {
@@ -8,7 +9,7 @@ class TweetRoutes {
 
     router
       .route('/tweets')
-      .get([shapeQuery(TweetSchema), tweetController.getAll]);
+      .get(auth, [shapeQuery(TweetSchema), tweetController.getAll]);
   }
 }
 
