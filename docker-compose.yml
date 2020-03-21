@@ -22,7 +22,6 @@ services:
      - "${MONGODB_PORT}:${DOCKER_MONGODB_PORT}"
     volumes:
       - mongo-data:/data/db
-    command: "--smallfiles --logpath=/dev/null --setParameter failIndexKeyTooLong=false"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USERNAME
       - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD

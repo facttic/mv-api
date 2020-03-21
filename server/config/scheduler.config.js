@@ -5,7 +5,7 @@ const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
 class SchedulerConfig {
   static init() {
     if (process.env.CRON_ACTIVE && process.env.CRON_ACTIVE === "true") {
-      return schedule.scheduleJob("*/1 * * * *", async () => {
+      return schedule.scheduleJob("*/15 * * * *", async () => {
         const lastTweetCrawlStatus = await TweetCrawlStatusDAO.getLast();
         let since_id = null;
         if (lastTweetCrawlStatus) {

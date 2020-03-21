@@ -19,7 +19,8 @@ const client = new Twitter({
 let tweetCount = 0;
 
 const options = {
-  q: "#MesDeLamemoria OR #24DeMarzo OR #ConstruimosMemoria OR #PañuelosConMemoria -filter:retweets -filter:replies filter:images",
+  // q: "#MesDeLamemoria OR #24DeMarzo OR #ConstruimosMemoria OR #PañuelosConMemoria -filter:retweets -filter:replies filter:images",
+  q: "#PañuelosConMemoria -filter:retweets -filter:replies filter:images",
   tweet_mode: "extended",
   count: tweetsPerQuery,
   include_entities: true
