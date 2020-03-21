@@ -38,8 +38,6 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`,
 
-  console.log(`Fetching with the following options: ${JSON.stringify(options)}`);
-
   client.get("search/tweets", options, function(error, tweets, response) {
     if (error) {
       console.log(`Processed ${tweetCount}. And got the error below. With the following options: ${JSON.stringify(options)}`);
@@ -108,16 +106,12 @@ const getTweets = async (sinceId, maxId, hashtags) => {
     TweetDAO.insertMany(myArrayOfTweets)
       .then(async tweetResults => {
         console.log(`Success! Inserted ${tweetResults.insertedCount}`);
-        const { id_str, created_at } = statuses[statuses.length - 1];
-        const { id_str: id_str_start } = statuses[0];
-        console.log("este otro", id_str_start);
-        console.log("o este", id_str);
-        
-        console.log(id_str_start > id_str);
+        const { id_str: id_str_bottom, created_at: created_at_bottom } = statuses[statuses.length - 1];
+        const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
 
-        const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str, tweet_created_at: created_at });
+        const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str_top, tweet_created_at: created_at_top });
         if (!sinceId) {
-          getTweets(sinceId, id_str, hashtags);
+          getTweets(sinceId, id_str_bottom, hashtags);
         }
       })
       .catch(err => {
