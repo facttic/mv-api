@@ -39,6 +39,8 @@ Devuelve la lista de tweets, según los siguientes parámetros (`query params`):
   - TWITTER_ACCESS_TOKEN_KEY=accesos a Twitter API.
   - TWITTER_ACCESS_TOKEN_SECRET=accesos a Twitter API.
   - JWT_KEY=key para generar tokens
+  - CACHE_TTL=*Time To Live* en segundos para los elementos en *cache*
+  - CACHE_CHECKPERIOD=valor en segundos para determinar el *delete check interval*
 
 ## Ejecutar
 
