@@ -1,5 +1,6 @@
 const Twitter = require("twitter");
 const { TweetDAO } = require("../api/tweet/dao");
+const { BlacklistDAO } = require("../api/blacklist/dao");
 const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
 
 const maxTweets = process.env.CRAWLER_MAX_TWEETS || 1400;
@@ -63,7 +64,9 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       if (
         tweet.entities &&
         tweet.entities.media &&
-        tweet.entities.media.length > 0
+        tweet.entities.media.length > 0 &&
+        tweet.user &&
+        !BlacklistDAO.isBlacklisted(tweet.user.id_str)
       ) {
         const myUsefulTweet = {
           tweet_created_at: tweet.created_at,
@@ -72,6 +75,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
           hashtags: [],
           media: [],
           user: {
+            id_str: tweet.user.id_str,
             name: tweet.user.name,
             screen_name: tweet.user.screen_name,
             location: tweet.user.location,
@@ -89,7 +93,8 @@ const getTweets = async (sinceId, maxId, hashtags) => {
             media_url_thumb: `${baseUrl}?format=${format}&name=thumb`,
             media_url_small: `${baseUrl}?format=${format}&name=small`,
             media_url_medium: `${baseUrl}?format=${format}&name=medium`,
-            media_url_large: `${baseUrl}?format=${format}&name=large`
+            media_url_large: `${baseUrl}?format=${format}&name=large`,
+            sizes: m.sizes
           });
         });
         if (

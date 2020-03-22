@@ -16,7 +16,7 @@ const TweetSchema = mongoose.Schema({
       media_url_small: { type: String, trim: true },
       media_url_medium: { type: String, trim: true },
       media_url_large: { type: String, trim: true },
-      sizes: [{ }],
+      sizes: { },
     }],
     required: true,
   },

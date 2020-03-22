@@ -1,6 +1,6 @@
 const { TweetSchema } = require('./model');
 const { TweetController } = require('./controller');
-const { shapeQuery } = require("../../middleware/shape-query");
+const { shapeQuery } = require("../middleware/shape-query");
 const auth = require('../middleware/auth')
 
 class TweetRoutes {
