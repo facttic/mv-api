@@ -28,13 +28,13 @@ const getTweets = async (sinceId, maxId, hashtags) => {
   if (sinceId) {
     options.since_id = sinceId;
     delete options.max_id;
-    console.log(`Fetching from since ${sinceId}`);
+    // console.log(`Fetching from since ${sinceId}`);
   } else if (maxId) {
     const maxIdLength = maxId.length;
     const [start, end] = splitString(maxId, maxIdLength - 4);
     const endInt = parseInt(end) - 1;
     options.max_id = `${start}${endInt}`;
-    console.log(`Fetching from max ${maxId}`);
+    // console.log(`Fetching from max ${maxId}`);
   }
 
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`;
@@ -48,11 +48,11 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       return;
     }
     if (tweets.statuses.length === 0) {
-      console.log(`No more tweets. Totals ${tweetCount}.`);
+      // console.log(`No more tweets. Totals ${tweetCount}.`);
       return;
     }
     if (tweetCount >= maxTweets) {
-      console.log(`Hit maxTweets soft limit. Totals ${tweetCount}.`);
+      // console.log(`Hit maxTweets soft limit. Totals ${tweetCount}.`);
       return;
     }
 
@@ -108,7 +108,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
     TweetDAO.insertMany(myArrayOfTweets)
       .then(async tweetResults => {
-        console.log(`Success! Inserted ${tweetResults.insertedCount}`);
+        console.log(`We're still fetching tweets! Inserted ${tweetResults.insertedCount}`);
         const { id_str: id_str_bottom, created_at: created_at_bottom } = statuses[statuses.length - 1];
         const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
 
@@ -118,7 +118,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
         }
       })
       .catch(err => {
-        console.log("Something failed at saving many");
+        console.log("Something failed at saving many. And got the error below");
         console.error(err);
       });
   });

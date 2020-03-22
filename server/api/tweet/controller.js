@@ -27,18 +27,14 @@ class TweetController {
 
   async getAll(req, res, next) {
     try {
-      
       const { shapedQuery } = req;
+
       const key = `tweets_getAll_skip_${shapedQuery.skip}_limit_${shapedQuery.limit}`;
       const value = cache.get(key);
-      
-      // check if there are cached tweets
+
       if (value) {
-        console.log("Serving from cache");
         return res.status(200).json(value);
       }
-
-      console.log("Fetching from DB");
 
       const tweets = await TweetDAO.getAll(shapedQuery);
       cache.set(key, tweets);
