@@ -39,7 +39,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`;
 
-  console.log(`With the following options: ${JSON.stringify(options)}`);
+  // console.log(`With the following options: ${JSON.stringify(options)}`);
 
   client.get("search/tweets", options, function(error, tweets, response) {
     if (error) {
