@@ -27,6 +27,7 @@ class UserRoutes {
                 return res.status(401).send({error: 'Login failed! Check authentication credentials'})
             }
             const token = await user.generateAuthToken()
+            delete user.password
             res.send({ user, token })
         } catch (error) {
             res.status(400).send(error)
