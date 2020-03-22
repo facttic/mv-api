@@ -61,9 +61,9 @@ UserSchema.statics.findByCredentials = async (email, password) => {
     if (!isPasswordMatch) {
         throw new Error({ error: 'Invalid login credentials' })
     }
-    let cleanUser = user.toObject();
-    delete cleanUser.password;
-    return cleanUser;
+    // let cleanUser = user.toObject();
+    // delete cleanUser.password;
+    return user;
 }
 
 const User = mongoose.model('User', UserSchema)
