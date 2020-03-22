@@ -31,7 +31,15 @@ const UserSchema = mongoose.Schema({
             required: true
         }
     }]
-})
+}, {
+    toJSON: {
+      transform(doc, ret) {
+        delete ret.password;
+
+        return ret;
+      }
+    }
+  })
 
 UserSchema.pre('save', async function (next) {
     // Hash the password before saving the user model
