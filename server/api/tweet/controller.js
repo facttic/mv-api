@@ -3,12 +3,7 @@ const _ = require("lodash");
 const assert = require("assert");
 
 const { TweetDAO } = require("./dao");
-
-// node-cache
-const NodeCache = require("node-cache");
-const stdTTL = process.env.CACHE_TTL;
-const checkperiod = process.env.checkperiod;
-const cache = new NodeCache({ stdTTL, checkperiod, useClones: false });
+const { CacheConfig } = require("../../config/cache.config");
 
 class TweetController {
   async createNew(req, res, next) {
@@ -26,6 +21,7 @@ class TweetController {
 
   async getAll(req, res, next) {
     try {
+      const cache = CacheConfig.get();
       const { shapedQuery } = req;
 
       const key = `tweets_getAll_skip_${shapedQuery.skip}_limit_${shapedQuery.limit}`;
@@ -52,6 +48,7 @@ class TweetController {
           message: "Tweet not found with id " + req.params.hashtagId
         });
       }
+      const cache = CacheConfig.get();
       cache.flushAll();
       res.status(200).json(tweetDeleted);
     } catch (err) {
