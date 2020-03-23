@@ -28,11 +28,9 @@ class TweetController {
       const value = cache.get(key);
 
       if (value) {
-        console.log("Serving from cache");
         return res.status(200).json(value);
       }
 
-      console.log("Serving from DB");
       const tweets = await TweetDAO.getAll(shapedQuery);
       cache.set(key, tweets);
       res.status(200).json(tweets);
