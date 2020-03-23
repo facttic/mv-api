@@ -9,13 +9,13 @@ class BlacklistRoutes {
 
     router
       .route("/blacklists")
-      .get([shapeQuery, blacklistController.getAll]);
+      .get([shapeQuery, blacklistController.getAll])
       .post([auth, blacklistController.createNew]);
 
     router
       .route("/blacklists/:blacklistId")
-      .get(blacklistController.getOne);
-      .put([auth, blacklistController.update]);
+      .get(blacklistController.getOne)
+      .put([auth, blacklistController.update])
       .delete([auth, blacklistController.delete]);
   }
 }

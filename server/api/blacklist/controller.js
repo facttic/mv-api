@@ -12,8 +12,12 @@ class BlacklistController {
       assert(_.isObject(blacklist), "Blacklist is not a valid object.");
 
       const newBlacklist = await BlacklistDAO.createNew(blacklist);
-      TweetDAO.removeByUserId(newBlacklist.user_id_str);
-      res.status(201).json(newBlacklist);
+      const removeResults = await TweetDAO.removeByUserId(newBlacklist.user_id_str, req.user._id);
+
+      res.status(201).json({
+        inserted: newBlacklist,
+        removedTweetsCount: removeResults.nModified
+      });
     } catch (error) {
       console.error(error);
       next(error);

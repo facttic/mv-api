@@ -10,6 +10,7 @@ const MAX_CONTENT_LENGTH_ACCEPTED = 9999;
 const { TweetRoutes } = require('../api/tweet/routes');
 const { HashtagRoutes } = require('../api/hashtag/routes');
 const { UserRoutes } = require('../api/user/routes');
+const { BlacklistRoutes } = require('../api/blacklist/routes');
 
 class RoutesConfig {
   static init(app, router) {
@@ -26,6 +27,7 @@ class RoutesConfig {
     TweetRoutes.init(router);
     HashtagRoutes.init(router);
     UserRoutes.init(router);
+    BlacklistRoutes.init(router);
 
     app.use('/api', router);
   }

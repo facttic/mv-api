@@ -25,7 +25,7 @@ const options = {
   include_entities: true
 };
 
-const processStatuses = async ({ statuses }) => {
+const processStatuses = async (statuses) => {
   const myArrayOfTweets = [];
   for (const tweet of statuses) {
     const blacklist = await BlacklistDAO.isBlacklisted(tweet.user.id_str);
@@ -95,7 +95,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`;
 
-  // console.log(`With the following options: ${JSON.stringify(options)}`);
+  console.log(`With the following options: ${JSON.stringify(options)}`);
   client.get("search/tweets", options, async function(error, tweets, response) {
     if (error) {
       console.log(`Processed ${tweetCount}. And got the error below. With the following options: ${JSON.stringify(options)}`);
@@ -103,15 +103,16 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       return;
     }
     if (tweets.statuses.length === 0) {
-      // console.log(`No more tweets. Totals ${tweetCount}.`);
+      console.log(`No more tweets. Totals ${tweetCount}.`);
       return;
     }
     if (tweetCount >= maxTweets) {
-      // console.log(`Hit maxTweets soft limit. Totals ${tweetCount}.`);
+      console.log(`Hit maxTweets soft limit. Totals ${tweetCount}.`);
       return;
     }
 
-    const myArrayOfTweets = await processStatuses(tweets);
+    const { statuses } = tweets;
+    const myArrayOfTweets = await processStatuses(statuses);
 
     TweetDAO.insertMany(myArrayOfTweets)
       .then(async tweetResults => {
