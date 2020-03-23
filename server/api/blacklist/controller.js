@@ -16,7 +16,7 @@ class BlacklistController {
       const newBlacklist = await BlacklistDAO.createNew(blacklist);
       const removeResults = await TweetDAO.removeByUserId(newBlacklist.user_id_str, req.user._id);
 
-      cache = CacheConfig.get();
+      const cache = CacheConfig.get();
       cache.flushAll();
       res.status(201).json({
         inserted: newBlacklist,
