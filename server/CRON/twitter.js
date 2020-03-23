@@ -95,7 +95,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`;
 
-  console.log(`With the following options: ${JSON.stringify(options)}`);
+  // console.log(`With the following options: ${JSON.stringify(options)}`);
   client.get("search/tweets", options, async function(error, tweets, response) {
     if (error) {
       console.log(`Processed ${tweetCount}. And got the error below. With the following options: ${JSON.stringify(options)}`);
@@ -103,7 +103,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       return;
     }
     if (tweets.statuses.length === 0) {
-      console.log(`No more tweets. Totals ${tweetCount}.`);
+      // console.log(`No more tweets. Totals ${tweetCount}.`);
       return;
     }
     if (tweetCount >= maxTweets) {
