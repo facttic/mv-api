@@ -11,7 +11,6 @@ const checkperiod = process.env.checkperiod;
 const cache = new NodeCache({ stdTTL, checkperiod, useClones: false });
 
 class TweetController {
-
   async createNew(req, res, next) {
     try {
       const tweet = req.body;
@@ -42,6 +41,21 @@ class TweetController {
     } catch (error) {
       console.error(error);
       next(error);
+    }
+  }
+
+  async delete(req, res, next) {
+    try {
+      const tweetDeleted = await TweetDAO.delete({ _id: req.params.tweetId }, req.user._id);
+      if (!tweetDeleted) {
+        return res.status(404).send({
+          message: "Tweet not found with id " + req.params.hashtagId
+        });
+      }
+      res.status(200).json(tweetDeleted);
+    } catch (err) {
+      console.error(er);
+      next(err);
     }
   }
 }

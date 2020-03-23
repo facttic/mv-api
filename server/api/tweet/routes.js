@@ -10,6 +10,10 @@ class TweetRoutes {
     router
       .route('/tweets')
       .get([shapeQuery(TweetSchema), tweetController.getAll]);
+
+    router
+      .route('/tweets/:tweetId')
+      .delete([auth, tweetController.delete]);
   }
 }
 
