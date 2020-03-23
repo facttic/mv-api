@@ -52,6 +52,7 @@ class TweetController {
           message: "Tweet not found with id " + req.params.hashtagId
         });
       }
+      cache.flushAll();
       res.status(200).json(tweetDeleted);
     } catch (err) {
       console.error(er);
