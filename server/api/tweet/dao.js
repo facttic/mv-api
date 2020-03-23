@@ -48,6 +48,16 @@ TweetSchema.statics.removeByUserId = async function removeById(twitterUserId, us
   return deleteResults;
 };
 
+TweetSchema.statics.removeByUserId = async function removeById(twitterUserId, userId) {
+  const deleteResults = await TweetDAO.delete({ "user.id_str": twitterUserId }, userId);
+  return deleteResults;
+};
+
+TweetSchema.statics.countUsers = async function countUsers() {
+  const count = await TweetDAO.distinct("user.id_str").exec();
+  return count.length;
+};
+
 TweetSchema.plugin(mongooseDelete, { deletedAt: true, deletedBy: true, overrideMethods: true, indexFields: ["deleted"] });
 
 const TweetDAO = mongoose.model("Tweet", TweetSchema);

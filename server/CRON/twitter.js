@@ -1,5 +1,6 @@
 const Twitter = require("twitter");
 const { TweetDAO } = require("../api/tweet/dao");
+const { TwitterUsersDAO } = require("../api/twitter_users/dao");
 const { BlacklistDAO } = require("../api/blacklist/dao");
 const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
 
@@ -123,6 +124,8 @@ const getTweets = async (sinceId, maxId, hashtags) => {
         const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str_top, tweet_created_at: created_at_top });
         if (!sinceId) {
           getTweets(sinceId, id_str_bottom, hashtags);
+        } else {
+          TwitterUsersDAO.saveCount();
         }
       })
       .catch(err => {
