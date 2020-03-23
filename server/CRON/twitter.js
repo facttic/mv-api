@@ -25,6 +25,61 @@ const options = {
   include_entities: true
 };
 
+const processStatuses = async ({ statuses }) => {
+  const myArrayOfTweets = [];
+  for (const tweet of statuses) {
+    const blacklist = await BlacklistDAO.isBlacklisted(tweet.user.id_str);
+    if (
+      tweet.entities &&
+      tweet.entities.media &&
+      tweet.entities.media.length > 0 &&
+      !blacklist
+      
+    ) {
+      const myUsefulTweet = {
+        tweet_created_at: tweet.created_at,
+        tweet_id_str: tweet.id_str,
+        full_text: tweet.full_text,
+        hashtags: [],
+        media: [],
+        user: {
+          id_str: tweet.user.id_str,
+          name: tweet.user.name,
+          screen_name: tweet.user.screen_name,
+          location: tweet.user.location,
+          profile_image_url: tweet.user.profile_image_url,
+          profile_image_url_https: tweet.user.profile_image_url_https
+        },
+        geo: tweet.geo,
+        coordinates: tweet.coordinates
+      };
+      tweet.entities.media.forEach(function(m) {
+        const [baseUrl, format] = m.media_url_https.split(/\.(?=[^\.]+$)/);
+        myUsefulTweet.media.push({
+          media_url: m.media_url,
+          media_url_https: m.media_url_https,
+          media_url_thumb: `${baseUrl}?format=${format}&name=thumb`,
+          media_url_small: `${baseUrl}?format=${format}&name=small`,
+          media_url_medium: `${baseUrl}?format=${format}&name=medium`,
+          media_url_large: `${baseUrl}?format=${format}&name=large`,
+          sizes: m.sizes
+        });
+      });
+      if (
+        tweet.entities.hashtags &&
+        tweet.entities.hashtags.length > 0
+      ) {
+        tweet.entities.hashtags.forEach(function(h) {
+          myUsefulTweet.hashtags.push(h.text);
+        });
+      }
+      myArrayOfTweets.push(myUsefulTweet);
+      tweetCount++;
+    }
+  }
+  return myArrayOfTweets;
+}
+
 const getTweets = async (sinceId, maxId, hashtags) => {
   if (sinceId) {
     options.since_id = sinceId;
@@ -41,8 +96,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`;
 
   // console.log(`With the following options: ${JSON.stringify(options)}`);
-
-  client.get("search/tweets", options, function(error, tweets, response) {
+  client.get("search/tweets", options, async function(error, tweets, response) {
     if (error) {
       console.log(`Processed ${tweetCount}. And got the error below. With the following options: ${JSON.stringify(options)}`);
       console.error(error);
@@ -57,59 +111,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       return;
     }
 
-    const { statuses } = tweets;
-    const myArrayOfTweets = [];
-
-    statuses.forEach(function(tweet) {
-      if (
-        tweet.entities &&
-        tweet.entities.media &&
-        tweet.entities.media.length > 0 &&
-        tweet.user &&
-        !BlacklistDAO.isBlacklisted(tweet.user.id_str)
-      ) {
-        const myUsefulTweet = {
-          tweet_created_at: tweet.created_at,
-          tweet_id_str: tweet.id_str,
-          full_text: tweet.full_text,
-          hashtags: [],
-          media: [],
-          user: {
-            id_str: tweet.user.id_str,
-            name: tweet.user.name,
-            screen_name: tweet.user.screen_name,
-            location: tweet.user.location,
-            profile_image_url: tweet.user.profile_image_url,
-            profile_image_url_https: tweet.user.profile_image_url_https
-          },
-          geo: tweet.geo,
-          coordinates: tweet.coordinates
-        };
-        tweet.entities.media.forEach(function(m) {
-          const [baseUrl, format] = m.media_url_https.split(/\.(?=[^\.]+$)/);
-          myUsefulTweet.media.push({
-            media_url: m.media_url,
-            media_url_https: m.media_url_https,
-            media_url_thumb: `${baseUrl}?format=${format}&name=thumb`,
-            media_url_small: `${baseUrl}?format=${format}&name=small`,
-            media_url_medium: `${baseUrl}?format=${format}&name=medium`,
-            media_url_large: `${baseUrl}?format=${format}&name=large`,
-            sizes: m.sizes
-          });
-        });
-        if (
-          tweet.entities &&
-          tweet.entities.hashtags &&
-          tweet.entities.hashtags.length > 0
-        ) {
-          tweet.entities.hashtags.forEach(function(h) {
-            myUsefulTweet.hashtags.push(h.text);
-          });
-        }
-        myArrayOfTweets.push(myUsefulTweet);
-        tweetCount++;
-      }
-    });
+    const myArrayOfTweets = await processStatuses(tweets);
 
     TweetDAO.insertMany(myArrayOfTweets)
       .then(async tweetResults => {
