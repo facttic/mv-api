@@ -117,16 +117,17 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
     TweetDAO.insertMany(myArrayOfTweets)
       .then(async tweetResults => {
-        console.log(`We're still fetching tweets! Inserted ${tweetResults.insertedCount}`);
         const { id_str: id_str_bottom, created_at: created_at_bottom } = statuses[statuses.length - 1];
         const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
-
+        
         const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str_top, tweet_created_at: created_at_top });
         if (!sinceId) {
           getTweets(sinceId, id_str_bottom, hashtags);
         } else {
-          TwitterUsersDAO.saveCount();
+          const usersCount = await TwitterUsersDAO.saveCount();
         }
+        console.log(JSON.stringify(usersCount));
+        console.log(`We're still fetching tweets! Inserted ${tweetResults.insertedCount}`);
       })
       .catch(err => {
         console.log("Something failed at saving many. And got the error below");
