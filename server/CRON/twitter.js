@@ -121,12 +121,13 @@ const getTweets = async (sinceId, maxId, hashtags) => {
         const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
         
         const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str_top, tweet_created_at: created_at_top });
+        let usersCount;
         if (!sinceId) {
           getTweets(sinceId, id_str_bottom, hashtags);
         } else {
-          const usersCount = await TwitterUsersDAO.saveCount();
+          usersCount = await TwitterUsersDAO.saveCount();
         }
-        console.log(JSON.stringify(usersCount));
+        console.log(usersCount);
         console.log(`We're still fetching tweets! Inserted ${tweetResults.insertedCount}`);
       })
       .catch(err => {
