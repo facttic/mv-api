@@ -121,14 +121,13 @@ const getTweets = async (sinceId, maxId, hashtags) => {
         const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
         
         const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str_top, tweet_created_at: created_at_top });
-        let usersCount;
+        let users;
         if (!sinceId) {
           getTweets(sinceId, id_str_bottom, hashtags);
         } else {
-          usersCount = await TwitterUsersDAO.saveCount();
+          users = await TwitterUsersDAO.saveCount();
         }
-        console.log(usersCount);
-        console.log(`We're still fetching tweets! Inserted ${tweetResults.insertedCount}`);
+        console.log(`We're still fetching tweets! Inserted ${tweetResults.insertedCount}. Total users: ${users && users.count}`);
       })
       .catch(err => {
         console.log("Something failed at saving many. And got the error below");
