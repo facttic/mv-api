@@ -1,10 +1,23 @@
 const schedule = require('node-schedule');
 const { getTweets } = require('../CRON/twitter');
+const { cleanTweetsMedia } = require('../CRON/media_cleaner');
 const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
 const { HashtagDAO } = require("../api/hashtag/dao");
 
 class SchedulerConfig {
   static init() {
+    console.log("Cleaning tweets");
+    cleanTweetsMedia(1);
+    if (process.env.MEDIA_CLEANER && process.env.MEDIA_CLEANER === "true") {
+      schedule.scheduleJob(`*/${process.env.MEDIA_CLEANER_CRON_TIMELAPSE || 5} * * * *`, async () => {
+        try {
+          // console.log("Cleaning tweets");
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+
     if (process.env.CRON_ACTIVE && process.env.CRON_ACTIVE === "true") {
       return schedule.scheduleJob(`*/${process.env.CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
@@ -17,7 +30,7 @@ class SchedulerConfig {
           }
           if (hashtags && hashtags.list && hashtags.list.length) {
             const hashtag_names = hashtags.list.map(h => h.name);
-            getTweets(since_id, null, hashtag_names);
+            return getTweets(since_id, null, hashtag_names);
           } else {
             console.log("No hashtags are present in the DDBB. Please add some for the process to run.")
           }
