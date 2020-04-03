@@ -6,12 +6,11 @@ const { HashtagDAO } = require("../api/hashtag/dao");
 
 class SchedulerConfig {
   static init() {
-    console.log("Cleaning tweets");
-    cleanTweetsMedia(1);
     if (process.env.MEDIA_CLEANER && process.env.MEDIA_CLEANER === "true") {
-      schedule.scheduleJob(`*/${process.env.MEDIA_CLEANER_CRON_TIMELAPSE || 5} * * * *`, async () => {
+      schedule.scheduleJob(process.env.MEDIA_CLEANER_CRON_TIMELAPSE || "59 23 * * 0", async () => {
         try {
-          // console.log("Cleaning tweets");
+          cleanTweetsMedia(0);
+          console.log("Clean tweets scheduled");
         } catch (err) {
           console.error(err);
         }
