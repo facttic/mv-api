@@ -17,7 +17,7 @@ RoutesConfig.init(app, express.Router());
 SchedulerConfig.init();
 CacheConfig.init();
 
-// const httpServer = http.createServer(app).listen(PORT, HOST, () => {
-//   console.log(`Server listening at ${HOST}:${PORT}`);
-//   SocketIoConfig.init(httpServer);
-// });
+const httpServer = http.createServer(app).listen(PORT, HOST, () => {
+  console.log(`Server listening at ${HOST}:${PORT}`);
+  // SocketIoConfig.init(httpServer);
+});
