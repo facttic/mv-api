@@ -12,6 +12,7 @@ const { HashtagRoutes } = require('../api/hashtag/routes');
 const { UserRoutes } = require('../api/user/routes');
 const { BlacklistRoutes } = require('../api/blacklist/routes');
 const { TwitterUsersRoutes } = require('../api/twitter_users/routes');
+const { PostRoutes } = require('../api/post/routes');
 
 class RoutesConfig {
   static init(app, router) {
@@ -30,6 +31,7 @@ class RoutesConfig {
     UserRoutes.init(router);
     BlacklistRoutes.init(router);
     TwitterUsersRoutes.init(router);
+    PostRoutes.init(router);
 
     app.use('/api', router);
   }
