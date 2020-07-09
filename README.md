@@ -21,10 +21,14 @@ Devuelve la lista de tweets, según los siguientes parámetros (`query params`):
 
 - Usamos `dotenv` para levantar la configuración de un archivo `.env`.
 - Se puede tomar el archivo `.env-example` de base.
-  - CRON_ACTIVE=indicar `true` para configurar si esta instancia va a levantar tweets. Opcional. Default=false.
-  - CRAWLER_MAX_TWEETS=cantidad de tweets total a obtener al llenar BBDD la 1era vez. Opcional. Default: 1400.
-  - CRAWLER_MAX_TWEETS_PER_QUERY=Cantidad de tweets a obtener en cada llamada a la API de twitter. Opcional. Default: 100.
-  - CRON_TIMELAPSE=tiempo en minutos entre llamads a la API de twitter. Opcional. Default: 5 (minutos).
+  - TWITTER_CRON_ACTIVE=indicar `true` para configurar si esta instancia va a levantar tweets. Opcional. Default=false.
+  - TWITTER_CRAWLER_MAX_TWEETS=cantidad de tweets total a obtener al llenar BBDD la 1era vez. Opcional. Default: 1400.
+  - TWITTER_CRAWLER_MAX_TWEETS_PER_QUERY=Cantidad de tweets a obtener en cada llamada a la API de twitter. Opcional. Default: 100.
+  - TWITTER_CRON_TIMELAPSE=tiempo en minutos entre llamads a la API de twitter. Opcional. Default: 5 (minutos).
+  - TWITTER_CONSUMER_KEY=accesos a Twitter API.
+  - TWITTER_CONSUMER_SECRET=accesos a Twitter API.
+  - TWITTER_ACCESS_TOKEN_KEY=accesos a Twitter API.
+  - TWITTER_ACCESS_TOKEN_SECRET=accesos a Twitter API.
   - API_PORT=puerto donde va a escuchar express. Opcional. Default: `3333`.
   - API_HOST=host para express. Opcional. Default: `localhost`.
   - MONGODB_URI=conexión a bbdd con formato URI. Mandatorio. E.g.: `mongodb://localhost:27017/24m`
@@ -34,10 +38,6 @@ Devuelve la lista de tweets, según los siguientes parámetros (`query params`):
   - DOCKER_MONGODB_PORT=puerto de la bbdd para el contenedor. Opcional. Para usar con Docker.
   - DOCKER_API_PORT=puerto de la api para el contenedor. Opcional. Para usar con Docker.
   - FB_TOKEN=token de fb. En desuso.
-  - TWITTER_CONSUMER_KEY=accesos a Twitter API.
-  - TWITTER_CONSUMER_SECRET=accesos a Twitter API.
-  - TWITTER_ACCESS_TOKEN_KEY=accesos a Twitter API.
-  - TWITTER_ACCESS_TOKEN_SECRET=accesos a Twitter API.
   - JWT_KEY=key para generar tokens
   - CACHE_TTL=*Time To Live* en segundos para los elementos en *cache*
   - CACHE_CHECKPERIOD=valor en segundos para determinar el *delete check interval*
