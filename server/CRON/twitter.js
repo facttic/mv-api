@@ -74,6 +74,7 @@ const processStatuses = async (statuses) => {
           myUsefulTweet.hashtags.push(h.text);
         });
       }
+      myUsefulTweet.source = "twitter";
       myArrayOfTweets.push(myUsefulTweet);
       tweetCount++;
     }
@@ -85,18 +86,15 @@ const getTweets = async (sinceId, maxId, hashtags) => {
   if (sinceId) {
     options.since_id = sinceId;
     delete options.max_id;
-    // console.log(`Fetching from since ${sinceId}`);
   } else if (maxId) {
     const maxIdLength = maxId.length;
     const [start, end] = splitString(maxId, maxIdLength - 4);
     const endInt = parseInt(end) - 1;
     options.max_id = `${start}${endInt}`;
-    // console.log(`Fetching from max ${maxId}`);
   }
 
   options.q = `${hashtags.join(" OR ")} -filter:retweets -filter:replies filter:images`;
 
-  // console.log(`With the following options: ${JSON.stringify(options)}`);
   client.get("search/tweets", options, async function(error, tweets, response) {
     if (error) {
       console.log(`Processed ${tweetCount}. And got the error below. With the following options: ${JSON.stringify(options)}`);
@@ -104,7 +102,6 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       return;
     }
     if (tweets.statuses.length === 0) {
-      // console.log(`No more tweets. Totals ${tweetCount}.`);
       return;
     }
     if (tweetCount >= maxTweets) {
@@ -125,7 +122,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
         if (!sinceId) {
           getTweets(sinceId, id_str_bottom, hashtags);
         } else {
-          users = await TwitterUsersDAO.saveCount();
+          users = await PostUserDAO.saveCount();
         }
         console.log(`We're still fetching tweets! Inserted ${tweetResults.insertedCount}. Total users: ${users && users.count}`);
       })
