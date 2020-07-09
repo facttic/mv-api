@@ -17,11 +17,11 @@ class SchedulerConfig {
       });
     }
 
+    const hashtags = await HashtagDAO.getAll();
     if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
-      return schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
+      schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
           const lastTweetCrawlStatus = await TweetCrawlStatusDAO.getLast();
-          const hashtags = await HashtagDAO.getAll();
 
           let since_id = null;
           if (lastTweetCrawlStatus) {
@@ -29,7 +29,7 @@ class SchedulerConfig {
           }
           if (hashtags && hashtags.list && hashtags.list.length) {
             const hashtag_names = hashtags.list.map(h => h.name);
-            return getTweets(since_id, null, hashtag_names);
+            getTweets(since_id, null, hashtag_names);
           } else {
             console.log("No hashtags are present in the DDBB. Please add some for the process to run.")
           }
