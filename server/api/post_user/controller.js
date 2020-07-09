@@ -3,24 +3,23 @@ const _ = require("lodash");
 const assert = require("assert");
 
 const { CacheConfig } = require("../../config/cache.config");
-const { TwitterUsersDAO } = require("./dao");
+const { PostUserDAO } = require("./dao");
 
-class TwitterUsersController {
-
+class PostUserController {
   async getUsersCount(req, res, next) {
     try {
       const cache = CacheConfig.get();
-      const key = `twitter_users_count`;
+      const key = `post_users_count`;
       const value = cache.get(key);
 
       if (value) {
         return res.status(200).json(value);
       }
 
-      const usersCount = await TwitterUsersDAO.findOne();
+      const usersCount = await PostUserDAO.findOne();
       if (!usersCount) {
         return res.status(404).send({
-          message: "twitter users count not found"
+          message: "users count not found"
         });
       }
       cache.set(key, usersCount);
@@ -32,4 +31,4 @@ class TwitterUsersController {
   }
 }
 
-module.exports = { TwitterUsersController };
+module.exports = { PostUserController };
