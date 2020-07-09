@@ -17,10 +17,10 @@ class SchedulerConfig {
       });
     }
 
-    const hashtags = await HashtagDAO.getAll();
     if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
       schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
+          const hashtags = await HashtagDAO.getAll();
           const lastTweetCrawlStatus = await TweetCrawlStatusDAO.getLast();
 
           let since_id = null;
