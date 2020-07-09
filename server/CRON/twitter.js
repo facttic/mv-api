@@ -1,11 +1,11 @@
 const Twitter = require("twitter");
-const { TweetDAO } = require("../api/tweet/dao");
-const { TwitterUsersDAO } = require("../api/twitter_users/dao");
-const { BlacklistDAO } = require("../api/blacklist/dao");
+const { PostDAO } = require("../api/post/dao");
+const { PostUserDAO } = require("../api/post_user/dao");
+const { DenyListDAO } = require("../api/deny_list/dao");
 const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
 
-const maxTweets = process.env.CRAWLER_MAX_TWEETS || 1400;
-const tweetsPerQuery = process.env.CRAWLER_MAX_TWEETS_PER_QUERY || 100;
+const maxTweets = process.env.TWITTER_CRAWLER_MAX_TWEETS || 1400;
+const tweetsPerQuery = process.env.TWITTER_CRAWLER_MAX_TWEETS_PER_QUERY || 100;
 
 const splitString = (value, index) => {
   return [value.substring(0, index), value.substring(index)];
@@ -29,12 +29,12 @@ const options = {
 const processStatuses = async (statuses) => {
   const myArrayOfTweets = [];
   for (const tweet of statuses) {
-    const blacklist = await BlacklistDAO.isBlacklisted(tweet.user.id_str);
+    const denyListed = await DenyListDAO.isDenyListed(tweet.user.id_str);
     if (
       tweet.entities &&
       tweet.entities.media &&
       tweet.entities.media.length > 0 &&
-      !blacklist
+      !denyListed
       
     ) {
       const myUsefulTweet = {
