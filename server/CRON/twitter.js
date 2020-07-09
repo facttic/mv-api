@@ -112,7 +112,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
     const { statuses } = tweets;
     const myArrayOfTweets = await processStatuses(statuses);
 
-    TweetDAO.insertMany(myArrayOfTweets)
+    PostDAO.insertMany(myArrayOfTweets)
       .then(async tweetResults => {
         const { id_str: id_str_bottom, created_at: created_at_bottom } = statuses[statuses.length - 1];
         const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
