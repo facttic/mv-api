@@ -52,7 +52,7 @@ const shapeQuery = model => async (req, res, next) => {
     const limit = +perPage || 5;
     const currentPage = +page || 1;
     const skip = +limit * (+currentPage - 1) || 0;
-    const sort = sortBy || "-tweet_id_str";
+    const sort = sortBy || "-post_created_at";
     const regexQuery = castQueryToRegex(query);
     req.shapedQuery = {
       skip,
