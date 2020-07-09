@@ -17,8 +17,8 @@ class SchedulerConfig {
       });
     }
 
-    if (process.env.CRON_ACTIVE && process.env.CRON_ACTIVE === "true") {
-      return schedule.scheduleJob(`*/${process.env.CRON_TIMELAPSE || 5} * * * *`, async () => {
+    if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
+      return schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
           const lastTweetCrawlStatus = await TweetCrawlStatusDAO.getLast();
           const hashtags = await HashtagDAO.getAll();
