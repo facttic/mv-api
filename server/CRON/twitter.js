@@ -2,7 +2,7 @@ const Twitter = require("twitter");
 const { PostDAO } = require("../api/post/dao");
 const { PostUserDAO } = require("../api/post_user/dao");
 const { DenyListDAO } = require("../api/deny_list/dao");
-const { TweetCrawlStatusDAO } = require("../api/tweet_crawl_status/dao");
+const { PostCrawlStatusDAO } = require("../api/post_crawl_status/dao");
 
 const maxTweets = process.env.TWITTER_CRAWLER_MAX_TWEETS || 1400;
 const tweetsPerQuery = process.env.TWITTER_CRAWLER_MAX_TWEETS_PER_QUERY || 100;
@@ -117,7 +117,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
         const { id_str: id_str_bottom, created_at: created_at_bottom } = statuses[statuses.length - 1];
         const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
         
-        const insertedTweetCrawlStatus = await TweetCrawlStatusDAO.createNew({ tweet_id_str: id_str_top, tweet_created_at: created_at_top });
+        const insertedTweetCrawlStatus = await PostCrawlStatusDAO.createNew({ post_id_str: id_str_top, post_created_at: created_at_top, source: "twitter" });
         let users;
         if (!sinceId) {
           getTweets(sinceId, id_str_bottom, hashtags);
