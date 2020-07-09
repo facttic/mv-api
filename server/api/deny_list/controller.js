@@ -2,24 +2,24 @@ const mongoose = require("mongoose");
 const _ = require("lodash");
 const assert = require("assert");
 
-const { BlacklistDAO } = require("./dao");
+const { DenyListDAO } = require("./dao");
 const { TweetDAO } = require("../tweet/dao");
 const { CacheConfig } = require("../../config/cache.config");
 
 
-class BlacklistController {
+class DenyListController {
   async createNew(req, res, next) {
     try {
-      const blacklist = req.body;
-      assert(_.isObject(blacklist), "Blacklist is not a valid object.");
+      const denyList = req.body;
+      assert(_.isObject(denyList), "DenyList is not a valid object.");
 
-      const newBlacklist = await BlacklistDAO.createNew(blacklist);
-      const removeResults = await TweetDAO.removeByUserId(newBlacklist.user_id_str, req.user._id);
+      const newDenyList = await DenyListDAO.createNew(denyList);
+      const removeResults = await TweetDAO.removeByUserId(newDenyList.user_id_str, req.user._id);
 
       const cache = CacheConfig.get();
       cache.flushAll();
       res.status(201).json({
-        inserted: newBlacklist,
+        inserted: newDenyList,
         removedTweetsCount: removeResults.nModified
       });
     } catch (error) {
@@ -30,8 +30,8 @@ class BlacklistController {
 
   async getAll(req, res, next) {
     try {
-      const blacklists = await BlacklistDAO.getAll();
-      res.status(200).json(blacklists);
+      const denyLists = await DenyListDAO.getAll();
+      res.status(200).json(denyLists);
     } catch (error) {
       console.error(error);
       next(error);
@@ -40,13 +40,13 @@ class BlacklistController {
 
   async getOne(req, res, next) {
     try {
-      const blacklist = await BlacklistDAO.findById(req.params.blacklistId);
-      if (!blacklist) {
+      const denyList = await DenyListDAO.findById(req.params.denyListId);
+      if (!denyList) {
         return res.status(404).send({
-          message: "blacklist not found with id " + req.params.blacklistId
+          message: "denyList not found with id " + req.params.denyListId
         });
       }
-      res.status(200).json(blacklist);
+      res.status(200).json(denyList);
     } catch (error) {
       console.error(error);
       next(error);
@@ -57,24 +57,24 @@ class BlacklistController {
     try {
       if (!req.body.name) {
         return res.status(400).send({
-          message: "Blacklist content can not be empty"
+          message: "DenyList content can not be empty"
         });
       }
 
-      const blacklist = await BlacklistDAO.findByIdAndUpdate(
-        req.params.blacklistId,
+      const denyList = await DenyListDAO.findByIdAndUpdate(
+        req.params.denyListId,
         {
           name: req.body.name
         },
         { new: true }
       );
 
-      if (!blacklist) {
+      if (!denyList) {
         return res.status(404).send({
-          message: "blacklist not found with id " + req.params.blacklistId
+          message: "denyList not found with id " + req.params.denyListId
         });
       }
-      res.status(200).json(blacklist);
+      res.status(200).json(denyList);
     } catch (error) {
       console.error(error);
       next(error);
@@ -83,15 +83,15 @@ class BlacklistController {
 
   async delete(req, res, next) {
     try {
-      const blacklist = await BlacklistDAO.findByIdAndRemove(
-        req.params.blacklistId
+      const denyList = await DenyListDAO.findByIdAndRemove(
+        req.params.denyListId
       );
-      if (!blacklist) {
+      if (!denyList) {
         return res.status(404).send({
-          message: "blacklist not found with id " + req.params.blacklistId
+          message: "denyList not found with id " + req.params.denyListId
         });
       }
-      res.status(200).json(blacklist);
+      res.status(200).json(denyList);
     } catch (error) {
       console.error(error);
       next(error);
@@ -99,4 +99,4 @@ class BlacklistController {
   }
 }
 
-module.exports = { BlacklistController };
+module.exports = { DenyListController };
