@@ -102,6 +102,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
       return;
     }
     if (tweets.statuses.length === 0) {
+      console.log("We're still fetching tweets! But there was nothing new.");
       return;
     }
     if (tweetCount >= maxTweets) {

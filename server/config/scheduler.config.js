@@ -20,8 +20,8 @@ class SchedulerConfig {
       console.log(".env variable MEDIA_CLEANER was not set to 'true' or undefined. CRON to clean medias will not run.")
     }
 
-    // if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
-    //   schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
+    if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
+      schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
           const hashtags = await HashtagDAO.getAll();
           const lastTweetCrawlStatus = await PostCrawlStatusDAO.getLast("twitter");
@@ -40,13 +40,13 @@ class SchedulerConfig {
         } catch (err) {
           console.error(err);
         }
-    //  });
-    // } else {
-    //   console.log(".env variable TWITTER_CRON_ACTIVE was not set to 'true' or undefined. CRON to fetch Tweets will not run.")
-    // }
+     });
+    } else {
+      console.log(".env variable TWITTER_CRON_ACTIVE was not set to 'true' or undefined. CRON to fetch Tweets will not run.")
+    }
 
-    // if (process.env.INSTAGRAM_CRON_ACTIVE && process.env.INSTAGRAM_CRON_ACTIVE === "true") {
-    //   schedule.scheduleJob(`*/${process.env.INSTAGRAM_CRON_TIMELAPSE || 5} * * * *`, async () => {
+    if (process.env.INSTAGRAM_CRON_ACTIVE && process.env.INSTAGRAM_CRON_ACTIVE === "true") {
+      schedule.scheduleJob(`*/${process.env.INSTAGRAM_CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
           const hashtags = await HashtagDAO.getAll();
           const lastPostCrawlStatus = await PostCrawlStatusDAO.getLast("instagram");
@@ -65,10 +65,10 @@ class SchedulerConfig {
         } catch (err) {
           console.error(err);
         }
-    //  });
-    // } else {
-    //   console.log(".env variable INSTAGRAM_CRON_ACTIVE was not set to 'true' or undefined. CRON to fetch Instagram posts will not run.")
-    // }
+     });
+    } else {
+      console.log(".env variable INSTAGRAM_CRON_ACTIVE was not set to 'true' or undefined. CRON to fetch Instagram posts will not run.")
+    }
   }
 }
 
