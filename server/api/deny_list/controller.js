@@ -3,7 +3,7 @@ const _ = require("lodash");
 const assert = require("assert");
 
 const { DenyListDAO } = require("./dao");
-const { TweetDAO } = require("../tweet/dao");
+const { PostDAO } = require("../post/dao");
 const { CacheConfig } = require("../../config/cache.config");
 
 
@@ -14,13 +14,13 @@ class DenyListController {
       assert(_.isObject(denyList), "DenyList is not a valid object.");
 
       const newDenyList = await DenyListDAO.createNew(denyList);
-      const removeResults = await TweetDAO.removeByUserId(newDenyList.user_id_str, req.user._id);
+      const removeResults = await PostDAO.removeByUserId(newDenyList.user_id_str, req.user._id);
 
       const cache = CacheConfig.get();
       cache.flushAll();
       res.status(201).json({
         inserted: newDenyList,
-        removedTweetsCount: removeResults.nModified
+        removedPostsCount: removeResults.nModified
       });
     } catch (error) {
       console.error(error);

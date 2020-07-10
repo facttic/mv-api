@@ -7,7 +7,6 @@ const cors = require('cors');
 
 const MAX_CONTENT_LENGTH_ACCEPTED = 9999;
 
-const { TweetRoutes } = require('../api/tweet/routes');
 const { HashtagRoutes } = require('../api/hashtag/routes');
 const { UserRoutes } = require('../api/user/routes');
 const { DenyListRoutes } = require('../api/deny_list/routes');
@@ -26,7 +25,6 @@ class RoutesConfig {
     app.use(bodyParser.json());
     app.use(helmet());
 
-    TweetRoutes.init(router);
     HashtagRoutes.init(router);
     UserRoutes.init(router);
     DenyListRoutes.init(router);

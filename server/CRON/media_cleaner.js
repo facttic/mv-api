@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { TweetDAO } = require("../api/tweet/dao");
+const { PostDAO } = require("../api/post/dao");
 const _ = require("lodash");
 
 const limit = 1000;
@@ -14,31 +14,31 @@ const verify404Url = async ({media, _id}) => {
       result = await axios.get(m.media_url_thumb)
     } catch (err) {
       if (err.response && (err.response.status === 404 || err.response.status === 403)) {
-        console.log("[OK] Removed a tweet with _id:", _id);
-        return TweetDAO.removeById(_id);
+        console.log("[OK] Removed a post with _id:", _id);
+        return PostDAO.removeById(_id);
       }
       console.error("[NO-OK] An error ocurred at verify404Url for _id: ", _id, err.message, err.config && err.config.url);
     }
   }
 }
 
-const cleanTweetsMedia = async (currentPage) => {
+const cleanPostsMedia = async (currentPage) => {
   const skip = +limit * (+currentPage);
   const nextPage = ++currentPage;
 
-  const tweets = await TweetDAO.getAll({ skip, limit, sort, query: {} });
+  const posts = await PostDAO.getAll({ skip, limit, sort, query: {} });
 
-  if (tweets && tweets.list && tweets.count) {
-    console.log(`[OK] Cleaning tweets between ${tweets.list[0].tweet_created_at} and ${tweets.list[tweets.list.length - 1].tweet_created_at}`);
-    for (const tweet of tweets.list) {
+  if (posts && posts.list && posts.count) {
+    console.log(`[OK] Cleaning posts between ${posts.list[0].post_created_at} and ${posts.list[posts.list.length - 1].post_created_at}`);
+    for (const post of posts.list) {
       count++;
       throttledLog();
-      await verify404Url(tweet);
+      await verify404Url(post);
     }
-    cleanTweetsMedia(nextPage);
+    cleanPostsMedia(nextPage);
   } else {
-    console.log(`[OK] Finished cleaning ${count} tweets`);
+    console.log(`[OK] Finished cleaning ${count} posts`);
   }
 }
 
-module.exports = { cleanTweetsMedia };
+module.exports = { cleanPostsMedia };

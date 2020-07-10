@@ -38,8 +38,8 @@ const processStatuses = async (statuses) => {
       
     ) {
       const myUsefulTweet = {
-        tweet_created_at: tweet.created_at,
-        tweet_id_str: tweet.id_str,
+        post_created_at: tweet.created_at,
+        post_id_str: tweet.id_str,
         full_text: tweet.full_text,
         hashtags: [],
         media: [],
@@ -120,7 +120,7 @@ const getTweets = async (sinceId, maxId, hashtags) => {
         const insertedTweetCrawlStatus = await PostCrawlStatusDAO.createNew({ post_id_str: id_str_top, post_created_at: created_at_top, source: "twitter" });
         let users;
         if (!sinceId) {
-          getTweets(sinceId, id_str_bottom, hashtags);
+          return getTweets(sinceId, id_str_bottom, hashtags);
         } else {
           users = await PostUserDAO.saveCount();
         }
