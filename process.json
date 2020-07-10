@@ -1,6 +1,6 @@
 {
   "apps" : [{
-    "name"        : "24m_api",
+    "name"        : "15j_api",
     "script"      : "index.js",
     "args"        : [],
     "log_date_format" : "YYYY-MM-DD HH:mm Z",
@@ -12,7 +12,7 @@
     "exec_mode"   : "cluster",
     "instances"   : "1",
     "env": {
-      "NODE_ENV": "local"
+      "NODE_ENV": "production"
     }
   }]
 }
