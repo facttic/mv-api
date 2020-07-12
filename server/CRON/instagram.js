@@ -15,7 +15,7 @@ const processEdges = async (edges, sinceId) => {
     const { node } = edge;
     const denyListed = await DenyListDAO.isDenyListed(node.owner.id);
     if (!denyListed) {
-      bigInt(node.id).lesserOrEquals(sinceId) {
+      if (bigInt(node.id).lesserOrEquals(sinceId)) {
         return { myArrayOfPosts, foundLast: true };
       }
       const myUsefulPost = {
