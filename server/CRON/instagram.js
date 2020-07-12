@@ -13,7 +13,7 @@ const processEdges = async (edges, sinceId) => {
     const { node } = edge;
     const denyListed = await DenyListDAO.isDenyListed(node.owner.id);
     if (!denyListed) {
-      if (node.id <= sinceId) {
+      if (BigInt(node.id) <= BigInt(sinceId)) {
         return { myArrayOfPosts, foundLast: true };
       }
       const myUsefulPost = {
@@ -30,7 +30,7 @@ const processEdges = async (edges, sinceId) => {
           media_url_small: node.thumbnail_resources[1].src,
           media_url_medium: node.thumbnail_resources[2].src,
           media_url_large:  node.thumbnail_resources[3].src,
-          sizes: [{
+          sizes: {
             source: {
               w: node.dimensions.width,
               h: node.dimensions.height,
@@ -56,7 +56,7 @@ const processEdges = async (edges, sinceId) => {
               h: node.thumbnail_resources[3].config_height,
               resize: "crop",
             }
-          }]
+          }
         }],
         user: {
           id_str: node.owner.id,
@@ -78,8 +78,8 @@ const processEdges = async (edges, sinceId) => {
   return { myArrayOfPosts, foundLast: false };
 }
 
-const getPosts = async(sinceId, maxId, hashtags) => {
-  let url = `https://www.instagram.com/explore/tags/${hashtags[0]}/?__a=1`;
+const getPosts = async(sinceId, maxId, hashtag) => {
+  let url = `https://www.instagram.com/explore/tags/${hashtag}/?__a=1`;
 
   if (maxId) {
     url += `&max_id=${maxId}`;
@@ -108,7 +108,7 @@ const getPosts = async(sinceId, maxId, hashtags) => {
           const insertedPostCrawlStatus = await PostCrawlStatusDAO.createNew({ post_id_str: id_str_top, post_created_at, source: "instagram" });
           let users;
           if(page_info.has_next_page && !foundLast) {
-            return getPosts(sinceId, page_info.end_cursor, hashtags);
+            return getPosts(sinceId, page_info.end_cursor, hashtag);
           } else {
             users = await PostUserDAO.saveCount();
           }
