@@ -23,7 +23,7 @@ class SchedulerConfig {
     if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
       schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
-          const hashtags = await HashtagDAO.getAll();
+          const hashtags = await HashtagDAO.getBySource("twitter");
           const lastTweetCrawlStatus = await PostCrawlStatusDAO.getLast("twitter");
 
           let since_id = null;
@@ -48,7 +48,7 @@ class SchedulerConfig {
     if (process.env.INSTAGRAM_CRON_ACTIVE && process.env.INSTAGRAM_CRON_ACTIVE === "true") {
       schedule.scheduleJob(`*/${process.env.INSTAGRAM_CRON_TIMELAPSE || 5} * * * *`, async () => {
         try {
-          const hashtags = await HashtagDAO.getAll();
+          const hashtags = await HashtagDAO.getBySource("instagram");
           const lastPostCrawlStatus = await PostCrawlStatusDAO.getLast("instagram");
 
           let since_id = null;
@@ -56,9 +56,10 @@ class SchedulerConfig {
             since_id = lastPostCrawlStatus.post_id_str;
           }
           if (hashtags && hashtags.list && hashtags.list.length) {
-            const hashtag_names = hashtags.list.map(h => h.name);
-            console.log(`Instagram CRON: running for a total of ${hashtag_names.length} hashtags.${since_id ? ` Starting at id: ${since_id}` : ""}`)
-            getPosts(since_id, null, hashtag_names);
+            console.log(`Instagram CRON: running for a total of ${hashtags.list.length} hashtags.${since_id ? ` Starting at id: ${since_id}` : ""}`)
+            hashtags.list.forEach(async (hashtag) => {
+              await getPosts(since_id, null, hashtag.name);
+            });
           } else {
             console.log("Instagram CRON: No hashtags are present in the DDBB. Please add some for the process to run.")
           }
