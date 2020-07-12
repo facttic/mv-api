@@ -89,13 +89,14 @@ const getPosts = async(sinceId, maxId, hashtag) => {
 
   axios.get(url)
     .then(async ({ data }) => {
+      let softLimit = false;
       const { graphql } = data;
       if (graphql.hashtag.edge_hashtag_to_media.count === 0) {
         return;
       }
       if (postCount >= maxPosts) {
         console.log(`Hit maxPosts soft limit. Totals ${postCount}.`);
-        return;
+        softLimit = true;
       }
 
       const { page_info } = graphql.hashtag.edge_hashtag_to_media;
@@ -109,7 +110,7 @@ const getPosts = async(sinceId, maxId, hashtag) => {
           
           const insertedPostCrawlStatus = await PostCrawlStatusDAO.createNew({ post_id_str: id_str_top, post_created_at, source: "instagram" });
           let users;
-          if(page_info.has_next_page && !foundLast) {
+          if(page_info.has_next_page && !foundLast && !softLimit) {
             return getPosts(sinceId, page_info.end_cursor, hashtag);
           } else {
             users = await PostUserDAO.saveCount();
