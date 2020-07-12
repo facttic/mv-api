@@ -1,4 +1,6 @@
 const axios = require("axios");
+const bigInt = require("big-integer");
+
 const { PostDAO } = require("../api/post/dao");
 const { PostUserDAO } = require("../api/post_user/dao");
 const { DenyListDAO } = require("../api/deny_list/dao");
@@ -13,7 +15,7 @@ const processEdges = async (edges, sinceId) => {
     const { node } = edge;
     const denyListed = await DenyListDAO.isDenyListed(node.owner.id);
     if (!denyListed) {
-      if (BigInt(node.id) <= BigInt(sinceId)) {
+      bigInt(node.id).lesserOrEquals(sinceId) {
         return { myArrayOfPosts, foundLast: true };
       }
       const myUsefulPost = {
