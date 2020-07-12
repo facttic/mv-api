@@ -28,5 +28,5 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
 
 volumes:
-  mongo-data:
+  mongo-data-15j:
     external: true
