@@ -21,7 +21,7 @@ services:
     ports:
      - "${MONGODB_PORT}:${DOCKER_MONGODB_PORT}"
     volumes:
-      - mongo-data:/data/db/15j
+      - mongo-data-15j:/data/db/15j
     command: "--logpath=/dev/null --setParameter failIndexKeyTooLong=false"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USERNAME
