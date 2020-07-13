@@ -10,7 +10,7 @@
       "name": "Launch Program",
       "program": "${workspaceFolder}/index.js",
       "restart": true,
-      "runtimeExecutable": "nodemon",
+      "runtimeExecutable": "node",
       "console": "integratedTerminal"
     }
   ]
