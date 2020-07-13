@@ -20,6 +20,11 @@ const client = new Twitter({
 
 let tweetCount = 0;
 
+
+const resetTwitterCron = () => {
+  tweetCount = 0;
+}
+
 const options = {
   tweet_mode: "extended",
   count: tweetsPerQuery,
@@ -134,4 +139,4 @@ const getTweets = async (sinceId, maxId, hashtags) => {
   });
 };
 
-module.exports = { getTweets };
+module.exports = { getTweets, resetTwitterCron };

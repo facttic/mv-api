@@ -8,6 +8,12 @@ const { PostCrawlStatusDAO } = require("../api/post_crawl_status/dao");
 
 const maxPosts = process.env.INSTAGRAM_CRAWLER_MAX_POSTS || 1400;
 let postCount = 0;
+let insertedCrawlStatus = false;
+
+const resetInstagramCron = () => {
+  postCount = 0;
+  insertedCrawlStatus = false;
+}
 
 const processEdges = async (edges, sinceId) => {
   const myArrayOfPosts = [];
@@ -15,7 +21,7 @@ const processEdges = async (edges, sinceId) => {
     const { node } = edge;
     const denyListed = await DenyListDAO.isDenyListed(node.owner.id);
     if (!denyListed) {
-      if (bigInt(node.id).lesserOrEquals(sinceId)) {
+      if (sinceId && bigInt(node.id).lesserOrEquals(sinceId)) {
         return { myArrayOfPosts, foundLast: true };
       }
       const myUsefulPost = {
@@ -87,7 +93,7 @@ const getPosts = async(sinceId, maxId, hashtag) => {
     url += `&max_id=${maxId}`;
   }
 
-  axios.get(url)
+  await axios.get(url)
     .then(async ({ data }) => {
       let softLimit = false;
       const { graphql } = data;
@@ -104,11 +110,13 @@ const getPosts = async(sinceId, maxId, hashtag) => {
       const { myArrayOfPosts, foundLast } = await processEdges(edges, sinceId);
 
       if (myArrayOfPosts.length) {
-        PostDAO.insertMany(myArrayOfPosts)
+        await PostDAO.insertMany(myArrayOfPosts)
         .then(async postResults => {
-          const { id: id_str_top, taken_at_timestamp: post_created_at } = edges[0].node;
-          
-          const insertedPostCrawlStatus = await PostCrawlStatusDAO.createNew({ post_id_str: id_str_top, post_created_at, source: "instagram" });
+          if (!insertedCrawlStatus) {
+            const { id: id_str_top, taken_at_timestamp: post_created_at } = edges[0].node;
+            await PostCrawlStatusDAO.createNew({ post_id_str: id_str_top, post_created_at, source: "instagram", hashtag });
+            insertedCrawlStatus = true;
+          }
           let users;
           if(page_info.has_next_page && !foundLast && !softLimit) {
             return getPosts(sinceId, page_info.end_cursor, hashtag);
@@ -116,7 +124,7 @@ const getPosts = async(sinceId, maxId, hashtag) => {
             users = await PostUserDAO.saveCount();
           }
 
-          console.log(`We're still fetching posts! Inserted ${postResults.insertedCount}. Total users: ${users && users.count}`);
+          console.log(`We're still fetching posts! Processed ${postCount}. Inserted ${postResults.insertedCount}. Total users: ${users && users.count}`);
         })
         .catch(err => {
           console.log("Something failed at saving many. And got the error below");
@@ -133,4 +141,4 @@ const getPosts = async(sinceId, maxId, hashtag) => {
     });
 };
 
-module.exports = { getPosts };
+module.exports = { getPosts, resetInstagramCron };
