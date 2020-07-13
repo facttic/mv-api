@@ -53,6 +53,11 @@ PostSchema.statics.countUsers = async function countUsers() {
   return count.length;
 };
 
+PostSchema.statics.findByIdStr = async function findByIdStr(post_id_str, source) {
+  const found = await PostDAO.findOne({ post_id_str, source }).exec();
+  return found;
+};
+
 PostSchema.statics.removeById = async function removeById(_id, userId = null) {
   const deleteResults = await PostDAO.delete({ _id }, userId);
   return deleteResults;

@@ -19,11 +19,14 @@ const processEdges = async (edges, sinceId) => {
   const myArrayOfPosts = [];
   for (const edge of edges) {
     const { node } = edge;
+    if (sinceId && bigInt(node.id).lesserOrEquals(sinceId)) {
+      return { myArrayOfPosts, foundLast: true };
+    }
+
     const denyListed = await DenyListDAO.isDenyListed(node.owner.id);
-    if (!denyListed) {
-      if (sinceId && bigInt(node.id).lesserOrEquals(sinceId)) {
-        return { myArrayOfPosts, foundLast: true };
-      }
+    const exists = await PostDAO.findByIdStr(node.id, "instagram");
+
+    if (!denyListed && !exists) {
       const myUsefulPost = {
         post_created_at: node.taken_at_timestamp,
         post_id_str: node.id,
