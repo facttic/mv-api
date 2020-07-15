@@ -1,4 +1,5 @@
 const schedule = require('node-schedule');
+const heapdump = require('heapdump');
 const { getTweets, resetTwitterCron } = require('../CRON/twitter');
 const { getPosts, resetInstagramCron } = require('../CRON/instagram');
 const { cleanTweetsMedia } = require('../CRON/media_cleaner');
@@ -7,6 +8,10 @@ const { HashtagDAO } = require("../api/hashtag/dao");
 
 class SchedulerConfig {
   static async init() {
+    heapdump.writeSnapshot(function(err, filename) {
+      console.log('Initial dump written to', filename);
+    });
+
     if (process.env.MEDIA_CLEANER && process.env.MEDIA_CLEANER === "true") {
       schedule.scheduleJob(process.env.MEDIA_CLEANER_CRON_SCHEDULE || "59 23 * * 0", async () => {
         try {
@@ -22,6 +27,10 @@ class SchedulerConfig {
 
     if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
       schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
+        heapdump.writeSnapshot(function(err, filename) {
+          console.log('Twitter dump written to', filename);
+        });
+
         try {
           const hashtags = await HashtagDAO.getBySource("twitter");
           const lastTweetCrawlStatus = await PostCrawlStatusDAO.getLast("twitter");
@@ -34,7 +43,7 @@ class SchedulerConfig {
             const hashtag_names = hashtags.list.map(h => h.name);
             console.log(`Twitter CRON: running for a total of ${hashtag_names.length} hashtags.${since_id ? ` Starting at id: ${since_id}` : ""}`)
             resetTwitterCron()
-            getTweets(since_id, null, hashtag_names);
+            return getTweets(since_id, null, hashtag_names);
           } else {
             console.log("Twitter CRON: No hashtags are present in the DDBB. Please add some for the process to run.")
           }
@@ -66,7 +75,7 @@ class SchedulerConfig {
           const hashtags = await HashtagDAO.getBySource("instagram");
           
           if (hashtags && hashtags.list && hashtags.list.length) {
-            processHashtags(hashtags.list);
+            return processHashtags(hashtags.list);
           } else {
             console.log("Instagram CRON: No hashtags are present in the DDBB. Please add some for the process to run.")
           }
