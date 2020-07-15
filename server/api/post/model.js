@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const PostSchema = mongoose.Schema({
-  post_created_at: { type: String, trim: true, required: true, index: true },
+  post_created_at: { type: Number, trim: true, required: true, index: true },
   post_id_str: { type: String, trim: true, required: true, index: true },
   full_text: { type: String, trim: true },
   hastags: {
