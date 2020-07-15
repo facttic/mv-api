@@ -1,5 +1,5 @@
 const schedule = require('node-schedule');
-const heapdump = require('heapdump');
+// const heapdump = require('heapdump');
 const { getTweets, resetTwitterCron } = require('../CRON/twitter');
 const { getPosts, resetInstagramCron } = require('../CRON/instagram');
 const { cleanTweetsMedia } = require('../CRON/media_cleaner');
@@ -8,9 +8,9 @@ const { HashtagDAO } = require("../api/hashtag/dao");
 
 class SchedulerConfig {
   static async init() {
-    heapdump.writeSnapshot(function(err, filename) {
-      console.log('Initial dump written to', filename);
-    });
+    // heapdump.writeSnapshot(function(err, filename) {
+    //   console.log('Initial dump written to', filename);
+    // });
 
     if (process.env.MEDIA_CLEANER && process.env.MEDIA_CLEANER === "true") {
       schedule.scheduleJob(process.env.MEDIA_CLEANER_CRON_SCHEDULE || "59 23 * * 0", async () => {
@@ -27,9 +27,9 @@ class SchedulerConfig {
 
     if (process.env.TWITTER_CRON_ACTIVE && process.env.TWITTER_CRON_ACTIVE === "true") {
       schedule.scheduleJob(`*/${process.env.TWITTER_CRON_TIMELAPSE || 5} * * * *`, async () => {
-        heapdump.writeSnapshot(function(err, filename) {
-          console.log('Twitter dump written to', filename);
-        });
+        // heapdump.writeSnapshot(function(err, filename) {
+        //   console.log('Twitter dump written to', filename);
+        // });
 
         try {
           const hashtags = await HashtagDAO.getBySource("twitter");
