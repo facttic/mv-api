@@ -43,7 +43,7 @@ const processStatuses = async (statuses) => {
       
     ) {
       const myUsefulTweet = {
-        post_created_at: new NumberInt(Date.parse(tweet.created_at) / 1000),
+        post_created_at: parseInt(Date.parse(tweet.created_at) / 1000),
         post_id_str: tweet.id_str,
         full_text: tweet.full_text,
         hashtags: [],
