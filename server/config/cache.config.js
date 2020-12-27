@@ -6,8 +6,8 @@ let cache;
 class CacheConfig {
   static init() {
     const stdTTL = process.env.CACHE_TTL;
-    const checkperiod = process.env.checkperiod;
-    cache = new NodeCache({ stdTTL, checkperiod, useClones: false });
+    const checkPeriod = process.env.CACHE_CHECKPERIOD;
+    cache = new NodeCache({ stdTTL, checkPeriod, useClones: false });
   }
 
   static get() {
