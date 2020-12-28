@@ -29,44 +29,44 @@ PostSchema.statics.insertMany = async function insertMany(posts) {
 };
 
 // Unused for now
-async function queryOembed(posts) {
-  const newSetOfPosts = await Promise.all(
-    posts.map(async (post) => {
-      const { source, post_id_str, user } = post;
+// async function queryOembed(posts) {
+//   const newSetOfPosts = await Promise.all(
+//     posts.map(async (post) => {
+//       const { source, post_id_str, user } = post;
 
-      if (source === "instagram") {
-        const cache = CacheConfig.get();
-        const key = `oembed_${post_id_str}`;
-        const value = cache.get(key);
+//       if (source === "instagram") {
+//         const cache = CacheConfig.get();
+//         const key = `oembed_${post_id_str}`;
+//         const value = cache.get(key);
 
-        if (value) {
-          console.log("returning from cache");
-          user.profile_image_url_https = value;
-          return post;
-        } else {
-          console.log(`No value for key ${key}`);
-        }
+//         if (value) {
+//           console.log("returning from cache");
+//           user.profile_image_url_https = value;
+//           return post;
+//         } else {
+//           console.log(`No value for key ${key}`);
+//         }
 
-        try {
-          const results = await axios.get(
-            `https://graph.facebook.com/v9.0/instagram_oembed?url=${user.profile_image_url_https}&fields=thumbnail_url&maxwidth=360`,
-            {
-              headers: {
-                Authorization: `Bearer ${APP_ID}|${CLIENT_TOKEN}`,
-              },
-            }
-          );
-          user.profile_image_url_https = results.data.thumbnail_url;
-          cache.set(key, results.data.thumbnail_url);
-        } catch (err) {
-          console.log("oembed error", err);
-        }
-      }
-      return post;
-    })
-  );
-  return newSetOfPosts;
-}
+//         try {
+//           const results = await axios.get(
+//             `https://graph.facebook.com/v9.0/instagram_oembed?url=${user.profile_image_url_https}&fields=thumbnail_url&maxwidth=360`,
+//             {
+//               headers: {
+//                 Authorization: `Bearer ${APP_ID}|${CLIENT_TOKEN}`,
+//               },
+//             }
+//           );
+//           user.profile_image_url_https = results.data.thumbnail_url;
+//           cache.set(key, results.data.thumbnail_url);
+//         } catch (err) {
+//           console.log("oembed error", err);
+//         }
+//       }
+//       return post;
+//     })
+//   );
+//   return newSetOfPosts;
+// }
 
 PostSchema.statics.getAll = async function getAll({
   skip,
@@ -86,9 +86,6 @@ PostSchema.statics.getAll = async function getAll({
     .skip(skip)
     .limit(limit)
     .sort(sort);
-
-  // messy workaround
-  // posts = await queryOembed(posts);
 
   return {
     count: postsCount,
