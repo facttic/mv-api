@@ -221,7 +221,7 @@ const processEdges = async (edges, sinceId) => {
 const getPosts = async (sinceId, maxId, hashtag) => {
   let url = `https://www.instagram.com/explore/tags/${hashtag}/?__a=1`;
 
-  await login();
+  // await login();
 
   if (maxId) {
     url += `&max_id=${maxId}`;
