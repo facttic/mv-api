@@ -6,6 +6,11 @@ const { cleanTweetsMedia } = require("../CRON/media_cleaner");
 const { PostCrawlStatusDAO } = require("../api/post_crawl_status/dao");
 const { HashtagDAO } = require("../api/hashtag/dao");
 
+const puppeteer = require("puppeteer");
+
+const igUsername = process.env.INSTAGRAM_IMPERSONATE_USERNAME;
+const igPassword = process.env.INSTAGRAM_IMPERSONATE_PASSWORD;
+
 class SchedulerConfig {
   static async init() {
     // heapdump.writeSnapshot(function(err, filename) {
@@ -77,7 +82,7 @@ class SchedulerConfig {
       );
     }
 
-    async function processHashtags(hashtags) {
+    async function processHashtags(hashtags, page) {
       for (const hashtag of hashtags) {
         let since_id = null;
         const { name } = hashtag;
@@ -94,7 +99,7 @@ class SchedulerConfig {
           }`
         );
         resetInstagramCron();
-        await getPosts(since_id, null, name);
+        await getPosts(since_id, null, name, page);
       }
     }
 
@@ -109,7 +114,30 @@ class SchedulerConfig {
             const hashtags = await HashtagDAO.getBySource("instagram");
 
             if (hashtags && hashtags.list && hashtags.list.length) {
-              return processHashtags(hashtags.list);
+              const browser = await puppeteer.launch();
+              const page = await browser.newPage();
+
+              await page.setUserAgent(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36"
+              );
+
+              await page.goto("https://www.instagram.com/accounts/login/", {
+                waitUntil: "networkidle2",
+              });
+
+              await page.waitForSelector('input[name="username"]');
+              await page.type('input[name="username"]', igUsername);
+              await page.type('input[name="password"]', igPassword);
+              await page.click('button[type="submit"]');
+              // Add a wait for some selector on the home page to load to ensure the next step works correctly
+              await page.waitForSelector(
+                `img[alt="${igUsername}'s profile picture"]`
+              );
+              const result = await processHashtags(hashtags.list, page);
+
+              console.log("closing browser");
+              await browser.close();
+              return result;
             } else {
               console.log(
                 "Instagram CRON: No hashtags are present in the DDBB. Please add some for the process to run."

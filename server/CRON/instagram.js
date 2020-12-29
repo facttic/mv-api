@@ -10,110 +10,107 @@ const { SeaweedConfig } = require("../config/seaweed.config");
 
 const maxPosts = process.env.INSTAGRAM_CRAWLER_MAX_POSTS || 1400;
 
-const igUsername = process.env.INSTAGRAM_IMPERSONATE_USERNAME;
-const igPassword = process.env.INSTAGRAM_IMPERSONATE_PASSWORD;
-
 let postCount = 0;
 let insertedCrawlStatus = false;
-let reqHeaders;
+// let reqHeaders;
 
-const login = async () => {
-  try {
-    let response = await axios.get("https://www.instagram.com");
+// const login = async () => {
+//   try {
+//     let response = await axios.get("https://www.instagram.com");
 
-    let csrftoken = response.headers["set-cookie"]
-      .find((cookie) => cookie.match("csrftoken="))
-      .split(";")[0]
-      .split("=")[1];
+//     let csrftoken = response.headers["set-cookie"]
+//       .find((cookie) => cookie.match("csrftoken="))
+//       .split(";")[0]
+//       .split("=")[1];
 
-    let mid = response.headers["set-cookie"]
-      .find((cookie) => cookie.match("mid="))
-      .split(";")[0]
-      .split("=")[1];
+//     let mid = response.headers["set-cookie"]
+//       .find((cookie) => cookie.match("mid="))
+//       .split(";")[0]
+//       .split("=")[1];
 
-    const headers = {
-      cookie: `ig_cb=1; csrftoken=${csrftoken}; mid=${mid};`,
-      referer: "https://www.instagram.com/",
-      "x-csrftoken": csrftoken,
-      "X-CSRFToken": csrftoken,
-      "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36",
-    };
+//     const headers = {
+//       cookie: `ig_cb=1; csrftoken=${csrftoken}; mid=${mid};`,
+//       referer: "https://www.instagram.com/",
+//       "x-csrftoken": csrftoken,
+//       "X-CSRFToken": csrftoken,
+//       "user-agent":
+//         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36",
+//     };
 
-    const payload = `username=${igUsername}&enc_password=${encodeURIComponent(
-      `#PWD_INSTAGRAM_BROWSER:0:${Math.ceil(
-        new Date().getTime() / 1000
-      )}:${igPassword}`
-    )}`;
+//     const payload = `username=${igUsername}&enc_password=${encodeURIComponent(
+//       `#PWD_INSTAGRAM_BROWSER:0:${Math.ceil(
+//         new Date().getTime() / 1000
+//       )}:${igPassword}`
+//     )}`;
 
-    response = await axios({
-      method: "post",
-      url: "https://www.instagram.com/accounts/login/ajax/",
-      data: payload,
-      headers,
-    });
+//     response = await axios({
+//       method: "post",
+//       url: "https://www.instagram.com/accounts/login/ajax/",
+//       data: payload,
+//       headers,
+//     });
 
-    if (!response.data.user) {
-      throw { error: "User not found" };
-    } else if (!response.data.authenticated) {
-      throw { error: "Password is wrong" };
-    } else {
-      csrftoken = response.headers["set-cookie"]
-        .find((cookie) => cookie.match("csrftoken="))
-        .split(";")[0];
+//     if (!response.data.user) {
+//       throw { error: "User not found" };
+//     } else if (!response.data.authenticated) {
+//       throw { error: "Password is wrong" };
+//     } else {
+//       csrftoken = response.headers["set-cookie"]
+//         .find((cookie) => cookie.match("csrftoken="))
+//         .split(";")[0];
 
-      let ds_user_id = response.headers["set-cookie"]
-        .find((cookie) => cookie.match("ds_user_id="))
-        .split(";")[0]
-        .split("=")[1];
+//       let ds_user_id = response.headers["set-cookie"]
+//         .find((cookie) => cookie.match("ds_user_id="))
+//         .split(";")[0]
+//         .split("=")[1];
 
-      let ig_did = response.headers["set-cookie"]
-        .find((cookie) => cookie.match("ig_did="))
-        .split(";")[0]
-        .split("=")[1];
+//       let ig_did = response.headers["set-cookie"]
+//         .find((cookie) => cookie.match("ig_did="))
+//         .split(";")[0]
+//         .split("=")[1];
 
-      let rur = response.headers["set-cookie"]
-        .find((cookie) => cookie.match("rur="))
-        .split(";")[0]
-        .split("=")[1];
+//       let rur = response.headers["set-cookie"]
+//         .find((cookie) => cookie.match("rur="))
+//         .split(";")[0]
+//         .split("=")[1];
 
-      let sessionid = response.headers["set-cookie"]
-        .find((cookie) => cookie.match("sessionid="))
-        .split(";")[0]
-        .split("=")[1];
+//       let sessionid = response.headers["set-cookie"]
+//         .find((cookie) => cookie.match("sessionid="))
+//         .split(";")[0]
+//         .split("=")[1];
 
-      const cookies = {
-        csrftoken,
-        ds_user_id,
-        ig_did,
-        rur,
-        sessionid,
-        mid,
-      };
+//       const cookies = {
+//         csrftoken,
+//         ds_user_id,
+//         ig_did,
+//         rur,
+//         sessionid,
+//         mid,
+//       };
 
-      let cookiesString = "";
+//       let cookiesString = "";
 
-      Object.keys(cookies).forEach((key) => {
-        cookiesString += `${key}=${cookies[key]}; `;
-      });
+//       Object.keys(cookies).forEach((key) => {
+//         cookiesString += `${key}=${cookies[key]}; `;
+//       });
 
-      const csrf = cookies.csrftoken;
+//       const csrf = cookies.csrftoken;
 
-      reqHeaders = {
-        cookie: cookiesString,
-        referer: "https://www.instagram.com/",
-        "x-csrftoken": csrf,
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36",
-      };
-    }
-  } catch (error) {
-    console.log(error);
-    if ((error.response.data.message = "checkpoint_required")) {
-      console.log("Account blocked");
-    }
-  }
-};
+//       reqHeaders = {
+//         cookie: cookiesString,
+//         referer: "https://www.instagram.com/",
+//         "x-csrftoken": csrf,
+//         "user-agent":
+//           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36",
+//       };
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     if ((error.response.data.message = "checkpoint_required")) {
+//       console.log("Account blocked");
+//     }
+//   }
+// };
 
 const resetInstagramCron = () => {
   postCount = 0;
@@ -218,86 +215,86 @@ const processEdges = async (edges, sinceId) => {
   return { myArrayOfPosts, foundLast: false };
 };
 
-const getPosts = async (sinceId, maxId, hashtag) => {
+const getPosts = async (sinceId, maxId, hashtag, page) => {
   let url = `https://www.instagram.com/explore/tags/${hashtag}/?__a=1`;
-
-  // await login();
 
   if (maxId) {
     url += `&max_id=${maxId}`;
   }
 
-  await axios
-    .get(url, reqHeaders)
-    .then(async (response) => {
-      let softLimit = false;
-      const { graphql } = response.data;
+  await page.goto(url, { waitUntil: "networkidle2" });
+  await page.waitForSelector("pre");
+  await page.waitForTimeout(1000);
+  const pre = await page.$("pre");
+  const value = await page.evaluate((el) => el.textContent, pre);
+  const { graphql } = JSON.parse(value);
+  let softLimit = false;
 
-      if (
-        !graphql ||
-        !graphql.hashtag ||
-        graphql.hashtag.edge_hashtag_to_media.count === 0
-      ) {
-        console.log(
-          `Processed ${postCount}. There was nothing at the following url: ${url}`
-        );
-        return;
-      }
-      if (postCount >= maxPosts) {
-        console.log(`Hit maxPosts soft limit. Totals ${postCount}.`);
-        softLimit = true;
-      }
-
-      const { page_info } = graphql.hashtag.edge_hashtag_to_media;
-      const { edges } = graphql.hashtag.edge_hashtag_to_media;
-      const { myArrayOfPosts, foundLast } = await processEdges(edges, sinceId);
-
-      if (myArrayOfPosts.length) {
-        await PostDAO.insertMany(myArrayOfPosts)
-          .then(async (postResults) => {
-            if (!insertedCrawlStatus) {
-              const {
-                id: id_str_top,
-                taken_at_timestamp: post_created_at,
-              } = edges[0].node;
-              await PostCrawlStatusDAO.createNew({
-                post_id_str: id_str_top,
-                post_created_at,
-                source: "instagram",
-                hashtag,
-              });
-              insertedCrawlStatus = true;
-            }
-            let users;
-            if (page_info.has_next_page && !foundLast && !softLimit) {
-              return getPosts(sinceId, page_info.end_cursor, hashtag);
-            } else {
-              users = await PostUserDAO.saveCount();
-            }
-
-            console.log(
-              `We're still fetching posts! Processed ${postCount}. Inserted ${
-                postResults.insertedCount
-              }. Total users: ${users && users.count}`
-            );
-          })
-          .catch((err) => {
-            console.log(
-              "Something failed at saving many. And got the error below"
-            );
-            console.error(err);
-          });
-      } else {
-        console.log("We're still fetching posts! But there was nothing new.");
-      }
-    })
-    .catch((err) => {
+  try {
+    if (
+      !graphql ||
+      !graphql.hashtag ||
+      graphql.hashtag.edge_hashtag_to_media.count === 0
+    ) {
       console.log(
-        `Processed ${postCount}. And got the error below. With the following url: ${url}`
+        `Processed ${postCount}. There was nothing at the following url: ${url}`
       );
-      console.error(err);
       return;
-    });
+    }
+    if (postCount >= maxPosts) {
+      console.log(`Hit maxPosts soft limit. Totals ${postCount}.`);
+      softLimit = true;
+    }
+
+    const { page_info } = graphql.hashtag.edge_hashtag_to_media;
+    const { edges } = graphql.hashtag.edge_hashtag_to_media;
+    const { myArrayOfPosts, foundLast } = await processEdges(edges, sinceId);
+
+    if (myArrayOfPosts.length) {
+      await PostDAO.insertMany(myArrayOfPosts)
+        .then(async (postResults) => {
+          if (!insertedCrawlStatus) {
+            const {
+              id: id_str_top,
+              taken_at_timestamp: post_created_at,
+            } = edges[0].node;
+            await PostCrawlStatusDAO.createNew({
+              post_id_str: id_str_top,
+              post_created_at,
+              source: "instagram",
+              hashtag,
+            });
+            insertedCrawlStatus = true;
+          }
+          let users;
+          if (page_info.has_next_page && !foundLast && !softLimit) {
+            return getPosts(sinceId, page_info.end_cursor, hashtag);
+          } else {
+            users = await PostUserDAO.saveCount();
+          }
+
+          console.log(
+            `We're still fetching posts! Processed ${postCount}. Inserted ${
+              postResults.insertedCount
+            }. Total users: ${users && users.count}`
+          );
+        })
+        .catch((err) => {
+          console.log(
+            "Something failed at saving many. And got the error below"
+          );
+          console.error(err);
+        });
+    } else {
+      console.log("We're still fetching posts! But there was nothing new.");
+    }
+  } catch (err) {
+    console.log(
+      `Processed ${postCount}. And got the error below. With the following url: ${url}`
+    );
+    console.error(err);
+    return;
+  }
 };
 
 module.exports = { getPosts, resetInstagramCron };
