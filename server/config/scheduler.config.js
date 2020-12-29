@@ -58,7 +58,7 @@ class SchedulerConfig {
                   hashtag_names.length
                 } hashtags.${since_id ? ` Starting at id: ${since_id}` : ""}`
               );
-              console.log(hashtags_names.join(", "));
+              console.log(hashtag_names.join(", "));
               resetTwitterCron();
               return getTweets(since_id, null, hashtag_names);
             } else {
