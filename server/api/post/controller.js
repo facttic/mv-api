@@ -42,10 +42,7 @@ class PostController {
 
   async delete(req, res, next) {
     try {
-      const postDeleted = await PostDAO.delete(
-        { _id: req.params.postId },
-        req.user._id
-      );
+      const postDeleted = await PostDAO.delete({ _id: req.params.postId }, req.user._id);
       if (!postDeleted) {
         return res.status(404).send({
           message: "Post not found with id " + req.params.postId,

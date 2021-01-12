@@ -1,11 +1,6 @@
 module.exports = {
-  "extends": "standard",
-  "globals": {
-    "Parse": true,
-    "desc": true,
-    "task": true
+  extends: ["standard", "plugin:prettier/recommended"],
+  rules: {
+    "one-var": ["error", "never"],
   },
-  "rules": {
-    "one-var": ["error", "never"]
-  }
-}
+};

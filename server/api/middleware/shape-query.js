@@ -5,26 +5,36 @@ const fieldIsContainedInModelKeys = (keys, field) => {
   return keys.includes(normalizedField);
 };
 
-const validatePaginationQuery = (model, {
-  perPage, page, sortBy
-}) => {
+const validatePaginationQuery = (model, { perPage, page, sortBy }) => {
   if (page) {
-    assert(Number.isSafeInteger(+page), `Page number value value must be numeric, but received: ${page}`);
+    assert(
+      Number.isSafeInteger(+page),
+      `Page number value value must be numeric, but received: ${page}`,
+    );
     assert(+page >= 0, `Page number value must be non-negative, but received: ${page}`);
   }
   if (perPage) {
-    assert(Number.isSafeInteger(+perPage), `Items per page value must be numeric, but received: ${perPage}`);
+    assert(
+      Number.isSafeInteger(+perPage),
+      `Items per page value must be numeric, but received: ${perPage}`,
+    );
     assert(+perPage >= 0, `Items per page value must be non-negative, but received: ${perPage}`);
   }
   if (sortBy) {
-    assert(fieldIsContainedInModelKeys(Object.keys(model.obj), sortBy), `Sort by field defined (${sortBy}) does not match a valid model property`);
+    assert(
+      fieldIsContainedInModelKeys(Object.keys(model.obj), sortBy),
+      `Sort by field defined (${sortBy}) does not match a valid model property`,
+    );
   }
 };
 
 const validateFieldsQuery = (model, fieldsQuery) => {
   const modelKeys = Object.keys(model.obj);
   Object.keys(fieldsQuery).forEach((key) => {
-    assert(fieldIsContainedInModelKeys(modelKeys, key), `Filter for field defined (${key}) does not match a valid model property`);
+    assert(
+      fieldIsContainedInModelKeys(modelKeys, key),
+      `Filter for field defined (${key}) does not match a valid model property`,
+    );
   });
   Object.entries(fieldsQuery).forEach((entry) => {
     assert(entry[1] !== "", `Filter for field defined (${entry[0]}) cannot be empty`);
@@ -39,12 +49,10 @@ const castQueryToRegex = (query) => {
   return regexQuery;
 };
 
-const shapeQuery = model => async (req, res, next) => {
+const shapeQuery = (model) => async (req, res, next) => {
   try {
     const { query: reqQuery } = req;
-    const {
-      perPage, page, sortBy, ...query
-    } = reqQuery;
+    const { perPage, page, sortBy, ...query } = reqQuery;
 
     validatePaginationQuery(model, reqQuery);
     validateFieldsQuery(model, query);
@@ -58,7 +66,7 @@ const shapeQuery = model => async (req, res, next) => {
       skip,
       limit,
       sort,
-      query: regexQuery
+      query: regexQuery,
     };
     next();
   } catch (err) {

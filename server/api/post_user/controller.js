@@ -19,7 +19,7 @@ class PostUserController {
       const usersCount = await PostUserDAO.findOne();
       if (!usersCount) {
         return res.status(404).send({
-          message: "users count not found"
+          message: "users count not found",
         });
       }
       cache.set(key, usersCount);

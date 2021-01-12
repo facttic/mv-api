@@ -231,14 +231,8 @@ const getPosts = async (sinceId, maxId, hashtag, page) => {
   let softLimit = false;
 
   try {
-    if (
-      !graphql ||
-      !graphql.hashtag ||
-      graphql.hashtag.edge_hashtag_to_media.count === 0
-    ) {
-      console.log(
-        `Processed ${postCount}. There was nothing at the following url: ${url}`
-      );
+    if (!graphql || !graphql.hashtag || graphql.hashtag.edge_hashtag_to_media.count === 0) {
+      console.log(`Processed ${postCount}. There was nothing at the following url: ${url}`);
       return;
     }
     if (postCount >= maxPosts) {
@@ -254,10 +248,7 @@ const getPosts = async (sinceId, maxId, hashtag, page) => {
       await PostDAO.insertMany(myArrayOfPosts)
         .then(async (postResults) => {
           if (!insertedCrawlStatus) {
-            const {
-              id: id_str_top,
-              taken_at_timestamp: post_created_at,
-            } = edges[0].node;
+            const { id: id_str_top, taken_at_timestamp: post_created_at } = edges[0].node;
             await PostCrawlStatusDAO.createNew({
               post_id_str: id_str_top,
               post_created_at,
@@ -276,24 +267,19 @@ const getPosts = async (sinceId, maxId, hashtag, page) => {
           console.log(
             `We're still fetching posts! Processed ${postCount}. Inserted ${
               postResults.insertedCount
-            }. Total users: ${users && users.count}`
+            }. Total users: ${users && users.count}`,
           );
         })
         .catch((err) => {
-          console.log(
-            "Something failed at saving many. And got the error below"
-          );
+          console.log("Something failed at saving many. And got the error below");
           console.error(err);
         });
     } else {
       console.log("We're still fetching posts! But there was nothing new.");
     }
   } catch (err) {
-    console.log(
-      `Processed ${postCount}. And got the error below. With the following url: ${url}`
-    );
+    console.log(`Processed ${postCount}. And got the error below. With the following url: ${url}`);
     console.error(err);
-    return;
   }
 };
 

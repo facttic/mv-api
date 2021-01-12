@@ -12,7 +12,7 @@ PostUserSchema.statics.saveCount = async function saveCount() {
   const _postUser = new PostUserDAO({ count });
   const newPostUser = await _postUser.save();
   return newPostUser;
-}
+};
 
 const PostUserDAO = mongoose.model("PostUser", PostUserSchema);
 

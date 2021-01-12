@@ -6,7 +6,6 @@ const { DenyListDAO } = require("./dao");
 const { PostDAO } = require("../post/dao");
 const { CacheConfig } = require("../../config/cache.config");
 
-
 class DenyListController {
   async createNew(req, res, next) {
     try {
@@ -20,7 +19,7 @@ class DenyListController {
       cache.flushAll();
       res.status(201).json({
         inserted: newDenyList,
-        removedPostsCount: removeResults.nModified
+        removedPostsCount: removeResults.nModified,
       });
     } catch (error) {
       console.error(error);
@@ -43,7 +42,7 @@ class DenyListController {
       const denyList = await DenyListDAO.findById(req.params.denyListId);
       if (!denyList) {
         return res.status(404).send({
-          message: "denyList not found with id " + req.params.denyListId
+          message: "denyList not found with id " + req.params.denyListId,
         });
       }
       res.status(200).json(denyList);
@@ -57,21 +56,21 @@ class DenyListController {
     try {
       if (!req.body.name) {
         return res.status(400).send({
-          message: "DenyList content can not be empty"
+          message: "DenyList content can not be empty",
         });
       }
 
       const denyList = await DenyListDAO.findByIdAndUpdate(
         req.params.denyListId,
         {
-          name: req.body.name
+          name: req.body.name,
         },
-        { new: true }
+        { new: true },
       );
 
       if (!denyList) {
         return res.status(404).send({
-          message: "denyList not found with id " + req.params.denyListId
+          message: "denyList not found with id " + req.params.denyListId,
         });
       }
       res.status(200).json(denyList);
@@ -83,12 +82,10 @@ class DenyListController {
 
   async delete(req, res, next) {
     try {
-      const denyList = await DenyListDAO.findByIdAndRemove(
-        req.params.denyListId
-      );
+      const denyList = await DenyListDAO.findByIdAndRemove(req.params.denyListId);
       if (!denyList) {
         return res.status(404).send({
-          message: "denyList not found with id " + req.params.denyListId
+          message: "denyList not found with id " + req.params.denyListId,
         });
       }
       res.status(200).json(denyList);

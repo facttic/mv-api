@@ -7,7 +7,7 @@ HashtagSchema.statics.createNew = async function createNew(hashtag) {
   const _hashtag = new HashtagDAO(hashtag);
   const newHashtag = await _hashtag.save();
   return newHashtag;
-}
+};
 
 HashtagSchema.statics.getAll = async function getAll() {
   const hashtagsCount = await this.model("Hashtag").countDocuments({ deleted: false });
@@ -15,9 +15,9 @@ HashtagSchema.statics.getAll = async function getAll() {
 
   return {
     count: hashtagsCount,
-    list: hashtags
+    list: hashtags,
   };
-}
+};
 
 HashtagSchema.statics.getBySource = async function getBySource(source) {
   const hashtagsCount = await HashtagDAO.countDocuments({ deleted: false, source });
@@ -25,9 +25,9 @@ HashtagSchema.statics.getBySource = async function getBySource(source) {
 
   return {
     count: hashtagsCount,
-    list: hashtags
+    list: hashtags,
   };
-}
+};
 
 const HashtagDAO = mongoose.model("Hashtag", HashtagSchema);
 

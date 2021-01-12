@@ -5,7 +5,6 @@ const assert = require("assert");
 const { HashtagDAO } = require("./dao");
 
 class HashtagController {
-
   async createNew(req, res, next) {
     try {
       const hashtag = req.body;
@@ -32,10 +31,10 @@ class HashtagController {
   async getOne(req, res, next) {
     try {
       const hashtag = await HashtagDAO.findById(req.params.hashtagId);
-      if(!hashtag) {
-          return res.status(404).send({
-              message: "hashtag not found with id " + req.params.hashtagId
-          });            
+      if (!hashtag) {
+        return res.status(404).send({
+          message: "hashtag not found with id " + req.params.hashtagId,
+        });
       }
       res.status(200).json(hashtag);
     } catch (error) {
@@ -46,20 +45,24 @@ class HashtagController {
 
   async update(req, res, next) {
     try {
-      if(!req.body.name) {
-          return res.status(400).send({
-              message: "Hashtag content can not be empty"
-          });
+      if (!req.body.name) {
+        return res.status(400).send({
+          message: "Hashtag content can not be empty",
+        });
       }
 
-      const hashtag = await HashtagDAO.findByIdAndUpdate(req.params.hashtagId, {
-        name: req.body.name
-      }, {new: true})
-      
-      if(!hashtag) {
-          return res.status(404).send({
-              message: "hashtag not found with id " + req.params.hashtagId
-          });            
+      const hashtag = await HashtagDAO.findByIdAndUpdate(
+        req.params.hashtagId,
+        {
+          name: req.body.name,
+        },
+        { new: true },
+      );
+
+      if (!hashtag) {
+        return res.status(404).send({
+          message: "hashtag not found with id " + req.params.hashtagId,
+        });
       }
       res.status(200).json(hashtag);
     } catch (error) {
@@ -71,10 +74,10 @@ class HashtagController {
   async delete(req, res, next) {
     try {
       const hashtag = await HashtagDAO.findByIdAndRemove(req.params.hashtagId);
-      if(!hashtag) {
-          return res.status(404).send({
-              message: "hashtag not found with id " + req.params.hashtagId
-          });            
+      if (!hashtag) {
+        return res.status(404).send({
+          message: "hashtag not found with id " + req.params.hashtagId,
+        });
       }
       res.status(200).json(hashtag);
     } catch (error) {
@@ -82,7 +85,6 @@ class HashtagController {
       next(error);
     }
   }
-
 }
 
 module.exports = { HashtagController };

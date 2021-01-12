@@ -7,7 +7,7 @@ DenyListSchema.statics.createNew = async function createNew(denyList) {
   const _denyList = new DenyListDAO(denyList);
   const newDenyList = await _denyList.save();
   return newDenyList;
-}
+};
 
 DenyListSchema.statics.getAll = async function getAll() {
   const denyListsCount = await this.model("DenyList").countDocuments({ deleted: false });
@@ -15,7 +15,7 @@ DenyListSchema.statics.getAll = async function getAll() {
 
   return {
     count: denyListsCount,
-    list: denyLists
+    list: denyLists,
   };
 };
 
