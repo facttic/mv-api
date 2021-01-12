@@ -23,11 +23,16 @@ const dbUri = `mongodb://${
 
 const app = express();
 
-MvModels.init(dbUri);
 RoutesConfig.init(app, express.Router());
 CacheConfig.init();
 // SeaweedConfig.init();
 
-http.createServer(app).listen(apiPort, apiHost, () => {
-  console.log(`Server listening at ${apiHost}:${apiPort}`);
-});
+MvModels.init(dbUri)
+  .then(() => {
+    http.createServer(app).listen(apiPort, apiHost, () => {
+      console.log(`Server listening at ${apiHost}:${apiPort}`);
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+  });
