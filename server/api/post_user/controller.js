@@ -1,5 +1,5 @@
 const { CacheConfig } = require("../../config/cache.config");
-const { PostUserDAO } = require("./dao");
+const { PostUserDAO } = require("mv-models");
 
 class PostUserController {
   async getUsersCount(req, res, next) {

@@ -1,7 +1,7 @@
 {
-  "name": "24m-api",
+  "name": "mv-api",
   "version": "1.0.0",
-  "description": "Back para consumir determinados hashtags de la API de twitter. Acción virtual para el 24 de marzo",
+  "description": "Rest API for 'Marchas Virtuales'",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
@@ -10,44 +10,31 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nayracoop/24m-api.git"
+    "url": "git+https://github.com/facttic/mv-api.git"
   },
   "keywords": [
     "marcha",
-    "24demarzo",
+    "virtual",
     "nodejs"
   ],
   "author": "FACTTIC",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/nayracoop/24m-api/issues"
+    "url": "https://github.com/facttic/mv-api/issues"
   },
-  "homepage": "https://github.com/nayracoop/24m-api#readme",
+  "homepage": "https://github.com/facttic/mv-api#readme",
   "dependencies": {
-    "axios": "^0.21.1",
-    "bcryptjs": "^2.4.3",
-    "big-integer": "^1.6.48",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "heapdump": "^0.3.15",
     "helmet": "^3.21.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.19",
-    "moment": "^2.24.0",
-    "mongoose": "^5.9.5",
-    "mongoose-delete": "^0.5.1",
     "mv-models": "^1.0.1",
     "node-cache": "^5.1.0",
-    "node-schedule": "^1.3.2",
-    "node-seaweedfs": "^1.4.0",
-    "puppeteer": "^5.5.0",
-    "socket.io": "^2.3.0",
-    "twitter": "^1.7.1",
-    "validator": "^13.0.0",
-    "zlib": "^1.0.5"
+    "node-seaweedfs": "^1.4.0"
   },
   "devDependencies": {
     "eslint": "^7.17.0",

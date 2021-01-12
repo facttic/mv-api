@@ -1,9 +1,8 @@
-# 24m-api
+# mv-api (Marchas Virtuales API)
 
-- CRON para levantar tweets con imagen y determinados hash.
-- API para servir estos tweets.
+- Rest API for the project called "Marchas Virtuales".
 
-## Restore de BBDD
+## Restore base BBDD
 
 - Para utilizar una BBDD modelo (tiene tweets de ejemplo y la iremos actualizando), se puede usar el backup que está en la carpeta `/dbdump`.
   - Ir a la carpeta y ejecutar el comando mongorestore con las opciones que correspondan, [sin corchetes]: `mongorestore --db [db_name] --port [mongo_PORT] [--authenticationDatabase auth_db_name_if_needed --username my_user_if_needed --password "my_password_if_needed"] --archive=24m.2020-03-21.gz --gzip`

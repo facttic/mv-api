@@ -1,4 +1,4 @@
-const User = require("./model");
+const { UserDAO } = require("mv-models");
 const auth = require("../middleware/auth");
 
 class UserRoutes {
@@ -19,7 +19,7 @@ class UserRoutes {
       // Login a registered user
       try {
         const { email, password } = req.body;
-        const user = await User.findByCredentials(email, password);
+        const user = await UserDAO.findByCredentials(email, password);
         if (!user) {
           return res.status(401).send({ error: "Login failed! Check authentication credentials" });
         }

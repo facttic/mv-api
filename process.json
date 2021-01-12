@@ -1,6 +1,6 @@
 {
   "apps" : [{
-    "name"        : "15j_api",
+    "name"        : "mv",
     "script"      : "index.js",
     "args"        : [],
     "log_date_format" : "YYYY-MM-DD HH:mm Z",

@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const assert = require("assert");
 
-const { HashtagDAO } = require("./dao");
+const { HashtagDAO } = require("mv-models");
 
 class HashtagController {
   async createNew(req, res, next) {
