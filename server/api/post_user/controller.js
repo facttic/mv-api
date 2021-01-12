@@ -1,4 +1,4 @@
-const { CacheConfig } = require("../../config/cache.config");
+const { CacheConfig } = require("../../cache");
 const { PostUserDAO } = require("mv-models");
 
 class PostUserController {

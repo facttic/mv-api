@@ -1,0 +1,17 @@
+{
+  "api": {
+    "host": "API_HOST",
+    "port": "API_PORT"
+  },
+  "db": {
+    "host": "DB_HOST",
+    "port": "DB_PORT",
+    "username": "DB_USERNAME",
+    "password": "DB_PASSWORD",
+    "auth": "DB_AUTH"
+  },
+  "cache": {
+    "ttl": "CACHE_TTL",
+    "checkPeriod": "CACHE_CHECKPERIOD"
+  }
+}

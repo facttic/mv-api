@@ -1,12 +1,13 @@
 // node-cache
 const NodeCache = require("node-cache");
+const config = require("config");
 
 let cache;
 
 class CacheConfig {
   static init() {
-    const stdTTL = process.env.CACHE_TTL;
-    const checkPeriod = process.env.CACHE_CHECKPERIOD;
+    const stdTTL = config.get("cache.ttl");
+    const checkPeriod = config.get("cache.checkPeriod");
     cache = new NodeCache({ stdTTL, checkPeriod, useClones: false });
   }
 

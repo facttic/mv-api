@@ -1,0 +1,18 @@
+{
+  "api": {
+    "host": "localhost",
+    "port": 3333
+  },
+  "db": {
+    "host": "localhost",
+    "port": 27017,
+    "name": "mv",
+    "username": "",
+    "password": "",
+    "auth": ""
+  },
+  "cache": {
+    "ttl": 60,
+    "checkPeriod": 30
+  }
+}

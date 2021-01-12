@@ -5,11 +5,11 @@ const compression = require("compression");
 const zlib = require("zlib");
 const cors = require("cors");
 
-const { HashtagRoutes } = require("../api/hashtag/routes");
-const { UserRoutes } = require("../api/user/routes");
-const { DenyListRoutes } = require("../api/deny_list/routes");
-const { PostUserRoutes } = require("../api/post_user/routes");
-const { PostRoutes } = require("../api/post/routes");
+const { HashtagRoutes } = require("./api/hashtag/routes");
+const { UserRoutes } = require("./api/user/routes");
+const { DenyListRoutes } = require("./api/deny_list/routes");
+const { PostUserRoutes } = require("./api/post_user/routes");
+const { PostRoutes } = require("./api/post/routes");
 
 class RoutesConfig {
   static init(app, router) {

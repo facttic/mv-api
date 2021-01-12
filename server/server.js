@@ -1,21 +1,33 @@
 const http = require("http");
 const express = require("express");
+const config = require("config");
 const MvModels = require("mv-models");
 
-const { RoutesConfig } = require("./config/routes.config");
-const { CacheConfig } = require("./config/cache.config");
-// const { SeaweedConfig } = require("./config/seaweed.config");
+const { RoutesConfig } = require("./routes");
+const { CacheConfig } = require("./cache");
+// const { SeaweedConfig } = require("./seaweed");
 
-const PORT = process.env.API_PORT || 3333;
-const HOST = process.env.API_HOST || "localhost";
+const apiPort = config.get("api.port") || 3333;
+const apiHost = config.get("api.host") || "localhost";
+
+const dbHost = config.get("db.host");
+const dbPort = config.get("db.port");
+const dbName = config.get("db.name");
+const dbUsername = config.get("db.username");
+const dbPassword = config.get("db.password");
+const dbAuth = config.get("db.auth");
+
+const dbUri = `mongodb://${
+  dbUsername ? `${dbUsername}:${dbPassword}@` : ""
+}${dbHost}:${dbPort}/${dbName}${dbAuth ? `?authSource=${dbAuth}` : ""}`;
 
 const app = express();
 
-MvModels.init("mongodb://localhost:27017/mv_dev");
+MvModels.init(dbUri);
 RoutesConfig.init(app, express.Router());
 CacheConfig.init();
 // SeaweedConfig.init();
 
-http.createServer(app).listen(PORT, HOST, () => {
-  console.log(`Server listening at ${HOST}:${PORT}`);
+http.createServer(app).listen(apiPort, apiHost, () => {
+  console.log(`Server listening at ${apiHost}:${apiPort}`);
 });
