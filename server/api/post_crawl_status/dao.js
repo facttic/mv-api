@@ -1,7 +1,6 @@
 /* eslint-disable no-use-before-define */
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
-const moment = require("moment");
 
 const { PostCrawlStatusSchema } = require("./model");
 

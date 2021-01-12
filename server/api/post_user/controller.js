@@ -1,7 +1,3 @@
-const mongoose = require("mongoose");
-const _ = require("lodash");
-const assert = require("assert");
-
 const { CacheConfig } = require("../../config/cache.config");
 const { PostUserDAO } = require("./dao");
 

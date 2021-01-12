@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const _ = require("lodash");
 const assert = require("assert");
 
@@ -52,7 +51,7 @@ class PostController {
       cache.flushAll();
       res.status(200).json(postDeleted);
     } catch (err) {
-      console.error(er);
+      console.error(err);
       next(err);
     }
   }

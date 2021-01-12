@@ -6,14 +6,14 @@ const limit = 1000;
 const sort = "-_id";
 let count = 0;
 
-throttledLog = _.throttle(() => {
+const throttledLog = _.throttle(() => {
   console.log(`Processed ${count}`);
 }, 180000);
 
 const verify404Url = async ({ media, _id }) => {
   for (const m of media) {
     try {
-      result = await axios.get(m.media_url_thumb);
+      await axios.get(m.media_url_thumb);
     } catch (err) {
       if (err.response && (err.response.status === 404 || err.response.status === 403)) {
         console.log("[OK] Removed a post with _id:", _id);

@@ -1,4 +1,5 @@
-const axios = require("axios");
+/* eslint camelcase:0 */
+// const axios = require("axios");
 const bigInt = require("big-integer");
 
 const { PostDAO } = require("../api/post/dao");
@@ -6,7 +7,7 @@ const { PostUserDAO } = require("../api/post_user/dao");
 const { DenyListDAO } = require("../api/deny_list/dao");
 const { PostCrawlStatusDAO } = require("../api/post_crawl_status/dao");
 
-const { SeaweedConfig } = require("../config/seaweed.config");
+// const { SeaweedConfig } = require("../config/seaweed.config");
 
 const maxPosts = process.env.INSTAGRAM_CRAWLER_MAX_POSTS || 1400;
 
@@ -117,22 +118,22 @@ const resetInstagramCron = () => {
   insertedCrawlStatus = false;
 };
 
-const storeImage = async (image) => {
-  const client = SeaweedConfig.get();
+// const storeImage = async (image) => {
+//   const client = SeaweedConfig.get();
 
-  console.log("image", image);
+//   console.log("image", image);
 
-  const response = await axios.get(image, { responseType: "stream" });
+//   const response = await axios.get(image, { responseType: "stream" });
 
-  try {
-    // const fileInfo = await client.write(image);
-    const fileInfo = await client.write(response);
-    return fileInfo;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-};
+//   try {
+//     // const fileInfo = await client.write(image);
+//     const fileInfo = await client.write(response);
+//     return fileInfo;
+//   } catch (err) {
+//     console.error(err);
+//     return false;
+//   }
+// };
 
 const processEdges = async (edges, sinceId) => {
   const myArrayOfPosts = [];

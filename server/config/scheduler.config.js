@@ -1,3 +1,4 @@
+/* eslint camelcase:0 */
 const schedule = require("node-schedule");
 // const heapdump = require('heapdump');
 const { getTweets, resetTwitterCron } = require("../CRON/twitter");

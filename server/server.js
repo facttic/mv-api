@@ -18,6 +18,6 @@ SchedulerConfig.init();
 CacheConfig.init();
 SeaweedConfig.init();
 
-const httpServer = http.createServer(app).listen(PORT, HOST, () => {
+http.createServer(app).listen(PORT, HOST, () => {
   console.log(`Server listening at ${HOST}:${PORT}`);
 });

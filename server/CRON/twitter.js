@@ -1,3 +1,4 @@
+/* eslint camelcase:0 */
 const Twitter = require("twitter");
 const { PostDAO } = require("../api/post/dao");
 const { PostUserDAO } = require("../api/post_user/dao");
@@ -53,6 +54,7 @@ const processStatuses = async (statuses) => {
         coordinates: tweet.coordinates,
       };
       tweet.entities.media.forEach(function (m) {
+        // eslint-disable-next-line no-useless-escape
         const [baseUrl, format] = m.media_url_https.split(/\.(?=[^\.]+$)/);
         myUsefulTweet.media.push({
           media_url: m.media_url,
@@ -114,12 +116,10 @@ const getTweets = async (sinceId, maxId, hashtags) => {
 
     PostDAO.insertMany(myArrayOfTweets)
       .then(async (tweetResults) => {
-        const { id_str: id_str_bottom, created_at: created_at_bottom } = statuses[
-          statuses.length - 1
-        ];
+        const { id_str: id_str_bottom } = statuses[statuses.length - 1];
         const { id_str: id_str_top, created_at: created_at_top } = statuses[0];
 
-        const insertedTweetCrawlStatus = await PostCrawlStatusDAO.createNew({
+        await PostCrawlStatusDAO.createNew({
           post_id_str: id_str_top,
           post_created_at: created_at_top,
           source: "twitter",

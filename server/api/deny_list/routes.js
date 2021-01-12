@@ -1,4 +1,3 @@
-const { DenyListSchema } = require("./model");
 const { DenyListController } = require("./controller");
 const { shapeQuery } = require("../middleware/shape-query");
 const auth = require("../middleware/auth");

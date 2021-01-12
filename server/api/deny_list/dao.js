@@ -19,8 +19,8 @@ DenyListSchema.statics.getAll = async function getAll() {
   };
 };
 
-DenyListSchema.statics.isDenyListed = async function isDenyListed(id_str) {
-  const denyList = await DenyListDAO.findOne({ user_id_str: id_str });
+DenyListSchema.statics.isDenyListed = async function isDenyListed(idStr) {
+  const denyList = await DenyListDAO.findOne({ user_id_str: idStr });
 
   return denyList;
 };

@@ -1,15 +1,8 @@
 /* eslint-disable no-use-before-define */
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
-const moment = require("moment");
-
-const axios = require("axios");
 
 const { PostSchema } = require("./model");
-const { CacheConfig } = require("../../config/cache.config");
-
-const APP_ID = process.env.INSTAGRAM_APP_ID;
-const CLIENT_TOKEN = process.env.INSTAGRAM_CLIENT_TOKEN;
 
 PostSchema.statics.createNew = async function createNew(post) {
   const _post = new PostDAO(post);
@@ -96,8 +89,8 @@ PostSchema.statics.countUsers = async function countUsers() {
   return count.length;
 };
 
-PostSchema.statics.findByIdStr = async function findByIdStr(post_id_str, source) {
-  const found = await PostDAO.findOne({ post_id_str, source }).exec();
+PostSchema.statics.findByIdStr = async function findByIdStr(postIdStr, source) {
+  const found = await PostDAO.findOne({ post_id_str: postIdStr, source }).exec();
   return found;
 };
 

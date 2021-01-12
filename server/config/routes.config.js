@@ -5,8 +5,6 @@ const compression = require("compression");
 const zlib = require("zlib");
 const cors = require("cors");
 
-const MAX_CONTENT_LENGTH_ACCEPTED = 9999;
-
 const { HashtagRoutes } = require("../api/hashtag/routes");
 const { UserRoutes } = require("../api/user/routes");
 const { DenyListRoutes } = require("../api/deny_list/routes");
