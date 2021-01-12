@@ -1,5 +1,6 @@
 const http = require("http");
 const express = require("express");
+const MvModels = require("mv-models");
 
 const { DBConfig } = require("./config/db.conf");
 const { RoutesConfig } = require("./config/routes.config");
@@ -11,6 +12,8 @@ const PORT = process.env.API_PORT || 3333;
 const HOST = process.env.API_HOST || "localhost";
 
 const app = express();
+
+MvModels.init("mongodb://localhost:27017/mv_dev");
 
 DBConfig.init();
 RoutesConfig.init(app, express.Router());

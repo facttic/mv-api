@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const assert = require("assert");
 
-const { PostDAO } = require("./dao");
+const { PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../config/cache.config");
 
 class PostController {

@@ -39,6 +39,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.9.5",
     "mongoose-delete": "^0.5.1",
+    "mv-models": "^1.0.1",
     "node-cache": "^5.1.0",
     "node-schedule": "^1.3.2",
     "node-seaweedfs": "^1.4.0",

@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { PostDAO } = require("../api/post/dao");
+const { PostDAO } = require("mv-models");
 const _ = require("lodash");
 
 const limit = 1000;

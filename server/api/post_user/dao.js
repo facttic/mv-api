@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const { PostUserSchema } = require("./model");
-const { PostDAO } = require("../post/dao");
+const { PostDAO } = require("mv-models");
 
 PostUserSchema.statics.saveCount = async function saveCount() {
   await this.model("PostUser").remove();

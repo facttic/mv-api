@@ -1,6 +1,6 @@
 /* eslint camelcase:0 */
 const Twitter = require("twitter");
-const { PostDAO } = require("../api/post/dao");
+const { PostDAO } = require("mv-models");
 const { PostUserDAO } = require("../api/post_user/dao");
 const { DenyListDAO } = require("../api/deny_list/dao");
 const { PostCrawlStatusDAO } = require("../api/post_crawl_status/dao");

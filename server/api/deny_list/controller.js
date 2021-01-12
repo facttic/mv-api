@@ -2,7 +2,7 @@ const _ = require("lodash");
 const assert = require("assert");
 
 const { DenyListDAO } = require("./dao");
-const { PostDAO } = require("../post/dao");
+const { PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../config/cache.config");
 
 class DenyListController {

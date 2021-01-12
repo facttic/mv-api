@@ -2,7 +2,7 @@
 // const axios = require("axios");
 const bigInt = require("big-integer");
 
-const { PostDAO } = require("../api/post/dao");
+const { PostDAO } = require("mv-models");
 const { PostUserDAO } = require("../api/post_user/dao");
 const { DenyListDAO } = require("../api/deny_list/dao");
 const { PostCrawlStatusDAO } = require("../api/post_crawl_status/dao");
