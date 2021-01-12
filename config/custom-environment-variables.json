@@ -1,5 +1,6 @@
 {
   "api": {
+    "jwtKey": "API_JWT_KEY",
     "host": "API_HOST",
     "port": "API_PORT"
   },

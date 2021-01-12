@@ -1,5 +1,6 @@
 {
   "api": {
+    "jwtKey": "an_encription_key",
     "host": "localhost",
     "port": 3333
   },
