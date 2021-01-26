@@ -10,6 +10,7 @@ const { UserRoutes } = require("./api/user/routes");
 const { DenyListRoutes } = require("./api/deny_list/routes");
 const { PostUserRoutes } = require("./api/post_user/routes");
 const { PostRoutes } = require("./api/post/routes");
+const { ManifestationRoutes } = require("./api/manifestation/routes");
 
 class RoutesConfig {
   static init(app, router) {
@@ -30,7 +31,8 @@ class RoutesConfig {
     DenyListRoutes.init(router);
     PostUserRoutes.init(router);
     PostRoutes.init(router);
-
+    ManifestationRoutes.init(router);
+    
     app.use("/api", router);
   }
 }
