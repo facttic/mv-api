@@ -7,7 +7,7 @@ class ManifestationRoutes {
 
     router.route("/manifestations").get(manifestationController.getAll);
     router.route("/manifestations/:manifestationId").get(manifestationController.getOne);
-    router.route("/manifestations").post(auth, manifestationController.createNew);
+    router.route("/manifestations").post(auth, manifestationController.create);
     router.route("/manifestations/:manifestationId").put(auth, manifestationController.update);
     router.route("/manifestations/:manifestationId").delete(auth, manifestationController.delete);
   }

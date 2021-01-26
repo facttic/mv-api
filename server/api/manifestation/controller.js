@@ -5,7 +5,7 @@ const { ManifestationDAO } = require("mv-models");
 const { CacheConfig } = require("../../cache");
 
 class ManifestationController {
-  async createNew(req, res, next) {
+  async create(req, res, next) {
     try {
       const manifestation = req.body;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
