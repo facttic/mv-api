@@ -41,7 +41,10 @@ class ManifestationController {
 
   async delete(req, res, next) {
     try {
-      const manifestationDeleted = await ManifestationDAO.delete({ _id: req.params.manifestationId }, req.user._id);
+      const manifestationDeleted = await ManifestationDAO.delete(
+        { _id: req.params.manifestationId },
+        req.user._id,
+      );
       if (!manifestationDeleted) {
         return res.status(404).send({
           message: "Manifestation not found with id " + req.params.manifestationId,
