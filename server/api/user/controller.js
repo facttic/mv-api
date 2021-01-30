@@ -1,13 +1,76 @@
+const _ = require("lodash");
 const { UserDAO } = require("mv-models");
+const assert = require("assert");
+const { CacheConfig } = require("../../cache");
 
 class UserController {
-  async create(req, res, next) {}
+  async create(req, res, next) {
+    try {
+      const user = req.body;
+      assert(_.isObject(user), "user is not a valid object.");
+      if (await UserDAO.findByEmail(user.email)) {
+        return res.status(404).send({
+          message: "Email " + user.email + " is used",
+        });
+      }
+      const newUser = await UserDAO.createNew(user);
+      res.status(201).json(newUser);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
 
-  async getAll(req, res, next) {}
+  async getAll(req, res, next) {
+    try {
+      const cache = CacheConfig.get();
+      const { query } = req;
 
-  async delete(req, res, next) {}
+      const key = `user_getAll_skip_${query.skip}_limit_${query.limit}`;
+      const value = cache.get(key);
 
-  async update(req, res, next) {}
+      if (value) {
+        return res.status(200).json(value);
+      }
+
+      const user = await UserDAO.getAll(query);
+      cache.set(key, user);
+      res.status(200).json(user);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+
+  async delete(req, res, next) {
+    try {
+      const userDeleted = await UserDAO.delete({ _id: req.params.userId }, req.user._id);
+      if (!userDeleted) {
+        return res.status(404).send({
+          message: "user not found with id " + req.params.userId,
+        });
+      }
+      const cache = CacheConfig.get();
+      cache.flushAll();
+      res.status(200).json(userDeleted);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  }
+
+  async update(req, res, next) {
+    try {
+      const user = req.body;
+      assert(_.isObject(user), "User is not a valid object.");
+
+      const updatedUser = await UserDAO.udpate(user);
+      res.status(201).json(updatedUser);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
 
   async userProfile(req, res, next) {
     // View logged in user profile
