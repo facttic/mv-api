@@ -23,19 +23,15 @@ class UserController {
 
   async getAll(req, res, next) {
     try {
-      const cache = CacheConfig.get();
       const { query } = req;
-
-      const key = `user_getAll_skip_${query.skip}_limit_${query.limit}`;
-      const value = cache.get(key);
-
-      if (value) {
-        return res.status(200).json(value);
-      }
-
-      const user = await UserDAO.getAll(query);
-      cache.set(key, user);
-      res.status(200).json(user);
+      const users = await UserDAO.getAll(query);
+      const count = await UserDAO.countDocuments();
+      console.log(query);
+      const ret = {
+        data: users,
+        total: count,
+      };
+      res.status(200).json(ret);
     } catch (error) {
       console.error(error);
       next(error);
@@ -44,6 +40,8 @@ class UserController {
 
   async delete(req, res, next) {
     try {
+      console.log("delete called");
+      console.log(req.params);
       const userDeleted = await UserDAO.delete({ _id: req.params.userId }, req.user._id);
       if (!userDeleted) {
         return res.status(404).send({
