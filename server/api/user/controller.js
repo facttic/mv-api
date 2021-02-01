@@ -1,7 +1,6 @@
 const _ = require("lodash");
 const { UserDAO } = require("mv-models");
 const assert = require("assert");
-const { CacheConfig } = require("../../cache");
 
 class UserController {
   async create(req, res, next) {
@@ -16,6 +15,11 @@ class UserController {
       const newUser = await UserDAO.createNew(user);
       res.status(201).json(newUser);
     } catch (error) {
+      if (error.name === "ValidationError") {
+        return res.status(404).send({
+          message: "Some fields are needed",
+        });
+      }
       console.error(error);
       next(error);
     }
@@ -38,6 +42,23 @@ class UserController {
     }
   }
 
+  async getOne(req, res, next) {
+    try {
+      console.log("getOne called");
+      console.log(req.params);
+      const user = await UserDAO.findById({ _id: req.params.userId });
+      if (!user) {
+        return res.status(404).send({
+          message: "user not found with id " + req.params.userId,
+        });
+      }
+      res.status(200).json(user);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  }
+
   async delete(req, res, next) {
     try {
       console.log("delete called");
@@ -48,8 +69,6 @@ class UserController {
           message: "user not found with id " + req.params.userId,
         });
       }
-      const cache = CacheConfig.get();
-      cache.flushAll();
       res.status(200).json(userDeleted);
     } catch (err) {
       console.error(err);
@@ -59,10 +78,10 @@ class UserController {
 
   async update(req, res, next) {
     try {
+      console.log("update called");
       const user = req.body;
       assert(_.isObject(user), "User is not a valid object.");
-
-      const updatedUser = await UserDAO.udpate(user);
+      const updatedUser = await UserDAO.udpate(user.id, user);
       res.status(201).json(updatedUser);
     } catch (error) {
       console.error(error);
