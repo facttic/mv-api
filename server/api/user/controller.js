@@ -7,14 +7,14 @@ class UserController {
     try {
       const user = req.body;
       assert(_.isObject(user), "user is not a valid object.");
-      if (await UserDAO.findByEmail(user.email)) {
-        return res.status(404).send({
-          message: "Email " + user.email + " is used",
-        });
-      }
       const newUser = await UserDAO.createNew(user);
       res.status(201).json(newUser);
     } catch (error) {
+      if (error.message.includes("Email is in use")) {
+        return res.status(404).send({
+          message: "Email is in use",
+        });
+      }
       if (error.name === "ValidationError") {
         return res.status(404).send({
           message: "Some fields are needed",
@@ -30,7 +30,6 @@ class UserController {
       const { query } = req;
       const users = await UserDAO.getAll(query);
       const count = await UserDAO.countDocuments();
-      console.log(query);
       const ret = {
         data: users,
         total: count,
@@ -44,8 +43,6 @@ class UserController {
 
   async getOne(req, res, next) {
     try {
-      console.log("getOne called");
-      console.log(req.params);
       const user = await UserDAO.findById({ _id: req.params.userId });
       if (!user) {
         return res.status(404).send({
@@ -61,8 +58,6 @@ class UserController {
 
   async delete(req, res, next) {
     try {
-      console.log("delete called");
-      console.log(req.params);
       const userDeleted = await UserDAO.delete({ _id: req.params.userId }, req.user._id);
       if (!userDeleted) {
         return res.status(404).send({
@@ -78,7 +73,6 @@ class UserController {
 
   async update(req, res, next) {
     try {
-      console.log("update called");
       const user = req.body;
       assert(_.isObject(user), "User is not a valid object.");
       const updatedUser = await UserDAO.udpate(user.id, user);
