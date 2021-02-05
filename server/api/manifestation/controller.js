@@ -1,17 +1,31 @@
 const _ = require("lodash");
 const assert = require("assert");
 
-const { ManifestationDAO } = require("mv-models");
+const { ManifestationDAO, UserDAO } = require("mv-models");
 const { CacheConfig } = require("../../cache");
 
 class ManifestationController {
   async create(req, res, next) {
     try {
       const manifestation = req.body;
+      const userId = manifestation.user;
+      delete manifestation.user;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-
+      const user = await UserDAO.getById(userId);
+      if (!user) {
+        return res.status(404).send({
+          message: "User not found with id " + userId,
+        });
+      }
+      if (user.superadmin || user.manifestation_id) {
+        return res.status(404).send({
+          message: "User selected is not eligible for this manifestation, please select other",
+        });
+      }
       const newManifestation = await ManifestationDAO.createNew(manifestation);
-      res.status(201).json(newManifestation);
+      user.manifestation_id = newManifestation._id;
+      await UserDAO.udpate(user._id, user);
+      res.status(201).json(manifestation);
     } catch (error) {
       console.error(error);
       next(error);
@@ -20,19 +34,14 @@ class ManifestationController {
 
   async getAll(req, res, next) {
     try {
-      const cache = CacheConfig.get();
-      const { shapedQuery } = req;
-
-      const key = `manifestation_getAll_skip_${shapedQuery.skip}_limit_${shapedQuery.limit}`;
-      const value = cache.get(key);
-
-      if (value) {
-        return res.status(200).json(value);
-      }
-
-      const manifestation = await ManifestationDAO.getAll(shapedQuery);
-      cache.set(key, manifestation);
-      res.status(200).json(manifestation);
+      const { query } = req;
+      query.skip = parseInt(query.skip);
+      query.limit = parseInt(query.limit);
+      const manifestation = await ManifestationDAO.getAll(query);
+      res.status(200).json({
+        data: manifestation.list,
+        total: manifestation.total,
+      });
     } catch (error) {
       console.error(error);
       next(error);

@@ -103,7 +103,6 @@ class UserController {
   async logOut(req, res, next) {
     // Log user out of the application
     try {
-      console.log("logout");
       req.user.tokens = req.user.tokens.filter((token) => {
         return token.token !== req.token;
       });
