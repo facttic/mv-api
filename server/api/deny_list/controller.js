@@ -15,6 +15,7 @@ class DenyListController {
 
       const cache = CacheConfig.get();
       cache.flushAll();
+
       res.status(201).json({
         inserted: newDenyList,
         removedPostsCount: removeResults.nModified,
@@ -27,7 +28,10 @@ class DenyListController {
 
   async getAll(req, res, next) {
     try {
-      const denyLists = await DenyListDAO.getAll();
+      const { manifestationId } = req.params;
+
+      const denyLists = await DenyListDAO.getAllByManifestationId(manifestationId);
+
       res.status(200).json(denyLists);
     } catch (error) {
       console.error(error);

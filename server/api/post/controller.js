@@ -5,6 +5,11 @@ const { PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../cache");
 
 class PostController {
+  /**
+   * This method is not in use for now
+   * Post creation is performed by CRON directly
+   * through the DAOs
+   */
   async createNew(req, res, next) {
     try {
       const post = req.body;
@@ -22,17 +27,19 @@ class PostController {
     try {
       const cache = CacheConfig.get();
       const { shapedQuery } = req;
+      const { manifestationId } = req.params;
 
-      const key = `post_getAll_skip_${shapedQuery.skip}_limit_${shapedQuery.limit}`;
+      const key = `post_getAll_manifestationId_${manifestationId}_skip_${shapedQuery.skip}_limit_${shapedQuery.limit}`;
       const value = cache.get(key);
 
       if (value) {
         return res.status(200).json(value);
       }
 
-      const post = await PostDAO.getAll(shapedQuery);
-      cache.set(key, post);
-      res.status(200).json(post);
+      const posts = await PostDAO.getAllByManifestationId(manifestationId, shapedQuery);
+      cache.set(key, posts);
+
+      res.status(200).json(posts);
     } catch (error) {
       console.error(error);
       next(error);
@@ -41,14 +48,22 @@ class PostController {
 
   async delete(req, res, next) {
     try {
-      const postDeleted = await PostDAO.delete({ _id: req.params.postId }, req.user._id);
+      const { manifestationId, postId } = req.params;
+
+      const postDeleted = await PostDAO.removeByManifestationId(
+        manifestationId,
+        postId,
+        req.user._id,
+      );
+
       if (!postDeleted) {
         return res.status(404).send({
-          message: "Post not found with id " + req.params.postId,
+          message: `Post not found with id ${postId}`,
         });
       }
       const cache = CacheConfig.get();
       cache.flushAll();
+
       res.status(200).json(postDeleted);
     } catch (err) {
       console.error(err);

@@ -1,5 +1,6 @@
 const { DenyListController } = require("./controller");
 const { shapeQuery } = require("../middleware/shape-query");
+const { manifestationChild } = require("../middleware/manifestation-child");
 const auth = require("../middleware/auth");
 
 class DenyListRoutes {
@@ -8,7 +9,7 @@ class DenyListRoutes {
 
     router
       .route("/deny_lists")
-      .get([shapeQuery, denyListController.getAll])
+      .get([manifestationChild, shapeQuery, denyListController.getAll])
       .post([auth, denyListController.createNew]);
 
     router
