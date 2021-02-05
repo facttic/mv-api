@@ -32,7 +32,7 @@ class RoutesConfig {
     PostUserRoutes.init(router);
     PostRoutes.init(router);
     ManifestationRoutes.init(router);
-    
+
     app.use("/api", router);
   }
 }

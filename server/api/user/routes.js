@@ -1,63 +1,18 @@
-const { UserDAO } = require("mv-models");
+const { UserController } = require("./controller");
 const auth = require("../middleware/auth");
 
 class UserRoutes {
   static init(router) {
-    /* router.post('/users', async (req, res) => {
-        // Create a new user
-        try {
-            const user = new User(req.body)
-            await user.save()
-            const token = await user.generateAuthToken()
-            res.status(201).send({ user, token })
-        } catch (error) {
-            res.status(400).send(error)
-        }
-    }) */
-
-    router.post("/users/login", async (req, res) => {
-      // Login a registered user
-      try {
-        const { email, password } = req.body;
-        const user = await UserDAO.findByCredentials(email, password);
-        if (!user) {
-          return res.status(401).send({ error: "Login failed! Check authentication credentials" });
-        }
-        const token = await user.generateAuthToken();
-        res.send({ user, token });
-      } catch (error) {
-        res.status(400).send(error);
-      }
-    });
-
-    router.get("/users/me", auth, async (req, res) => {
-      // View logged in user profile
-      res.send(req.user);
-    });
-
-    router.post("/users/me/logout", auth, async (req, res) => {
-      // Log user out of the application
-      try {
-        req.user.tokens = req.user.tokens.filter((token) => {
-          return token.token !== req.token;
-        });
-        await req.user.save();
-        res.send();
-      } catch (error) {
-        res.status(500).send(error);
-      }
-    });
-
-    router.post("/users/me/logoutall", auth, async (req, res) => {
-      // Log user out of all devices
-      try {
-        req.user.tokens.splice(0, req.user.tokens.length);
-        await req.user.save();
-        res.send();
-      } catch (error) {
-        res.status(500).send(error);
-      }
-    });
+    const userController = new UserController();
+    router.route("/users/").post(auth, userController.create);
+    router.route("/users/").get(auth, userController.getAll);
+    router.route("/users/:userId").get(auth, userController.getOne);
+    router.route("/users/:userId").delete(auth, userController.delete);
+    router.route("/users/:userId").put(auth, userController.update);
+    router.route("/users/login").post(userController.logIn);
+    router.route("/users/me").get(auth, userController.userProfile);
+    router.route("/users/me/logout").post(auth, userController.logOut);
+    router.route("/users/me/logoutall").post(auth, userController.logOutAll);
   }
 }
 
