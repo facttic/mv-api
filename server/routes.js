@@ -8,7 +8,6 @@ const cors = require("cors");
 const { HashtagRoutes } = require("./api/hashtag/routes");
 const { UserRoutes } = require("./api/user/routes");
 const { DenyListRoutes } = require("./api/deny_list/routes");
-const { PostUserRoutes } = require("./api/post_user/routes");
 const { PostRoutes } = require("./api/post/routes");
 const { ManifestationRoutes } = require("./api/manifestation/routes");
 
@@ -29,7 +28,6 @@ class RoutesConfig {
     HashtagRoutes.init(router);
     UserRoutes.init(router);
     DenyListRoutes.init(router);
-    PostUserRoutes.init(router);
     PostRoutes.init(router);
     ManifestationRoutes.init(router);
 

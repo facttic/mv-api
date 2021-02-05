@@ -6,7 +6,7 @@ const { ManifestationDAO } = require("mv-models");
 class HashtagController {
   async createNew(req, res, next) {
     try {
-      const manifestation = ManifestationDAO.getById(req.params.manifestationId);
+      const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       const hashtag = req.body;
       assert(_.isObject(hashtag), "Hashtag is not a valid object.");
 
@@ -20,7 +20,7 @@ class HashtagController {
 
   async getAll(req, res, next) {
     try {
-      const manifestation = ManifestationDAO.getById(req.params.manifestationId);
+      const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       const hashtags = await manifestation.getAllHashtags();
       res.status(200).json(hashtags);
     } catch (error) {
@@ -52,7 +52,7 @@ class HashtagController {
         });
       }
       const { manifestationId, hashtagId } = req.params;
-      const manifestation = ManifestationDAO.getById(manifestationId);
+      const manifestation = await ManifestationDAO.getById(manifestationId);
 
       const hashtag = await manifestation.updateHashtag(hashtagId, {
         name: req.body.name,
@@ -75,7 +75,7 @@ class HashtagController {
     try {
       const { manifestationId, hashtagId } = req.params;
 
-      const manifestation = ManifestationDAO.getById(manifestationId);
+      const manifestation = await ManifestationDAO.getById(manifestationId);
       const hashtag = await manifestation.deleteHashtag(hashtagId);
 
       if (!hashtag) {
