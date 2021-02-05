@@ -103,10 +103,11 @@ class UserController {
   async logOut(req, res, next) {
     // Log user out of the application
     try {
+      console.log("logout");
       req.user.tokens = req.user.tokens.filter((token) => {
         return token.token !== req.token;
       });
-      await req.user.save();
+      await UserDAO.findByIdAndUpdate(req.user._id, req.user);
       res.send();
     } catch (error) {
       res.status(500).send(error);
