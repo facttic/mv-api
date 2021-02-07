@@ -37,6 +37,7 @@ class ManifestationController {
       const { query } = req;
       query.skip = parseInt(query.skip);
       query.limit = parseInt(query.limit);
+
       const manifestation = await ManifestationDAO.getAll(query);
       res.status(200).json({
         data: manifestation.list,
@@ -70,6 +71,7 @@ class ManifestationController {
 
   async getOne(req, res, next) {
     try {
+      console.log("get one");
       const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       if (!manifestation) {
         return res.status(404).send({
@@ -87,8 +89,15 @@ class ManifestationController {
     try {
       const manifestation = req.body;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-
-      const updatedManifestation = await ManifestationDAO.udpate(manifestation);
+      const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
+      const user = await UserDAO.getById(manifestation.user_id);
+      if (!user) {
+        return res.status(404).send({
+          message: "User not found with id " + manifestation.user_id,
+        });
+      }
+      user.manifestation_id = updatedManifestation._id;
+      await UserDAO.udpate(user._id, user);
       res.status(201).json(updatedManifestation);
     } catch (error) {
       console.error(error);
