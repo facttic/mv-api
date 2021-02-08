@@ -75,6 +75,11 @@ class UserController {
     try {
       const user = req.body;
       assert(_.isObject(user), "User is not a valid object.");
+      if (user.superadmin && user.manifestation_id) {
+        return res.status(404).send({
+          message: "User can't have a manifestation if is superadmin or vice versa",
+        });
+      }
       const updatedUser = await UserDAO.udpate(user.id, user);
       res.status(201).json(updatedUser);
     } catch (error) {

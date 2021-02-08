@@ -71,7 +71,6 @@ class ManifestationController {
 
   async getOne(req, res, next) {
     try {
-      console.log("get one");
       const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       if (!manifestation) {
         return res.status(404).send({
