@@ -77,7 +77,6 @@ class ManifestationController {
 
   async getOne(req, res, next) {
     try {
-      console.log(req.params);
       const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       if (!manifestation) {
         return res.status(404).send({
@@ -99,14 +98,26 @@ class ManifestationController {
       const manifestation = req.body;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
       const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
-      const user = await UserDAO.getById(manifestation.user_id);
-      if (!user) {
-        return res.status(404).send({
-          message: "User not found with id " + manifestation.user_id,
-        });
+      const usersId = manifestation.users_id;
+      //remove manifestations from all users that have it
+      const usersWithThisManifestation = await UserDAO.find({ manifestation_id: manifestation.id });
+      for (const i in usersWithThisManifestation) {
+        const user = usersWithThisManifestation[i];
+        user.manifestation_id = null;
+        await UserDAO.udpate(user._id, user);
       }
-      user.manifestation_id = updatedManifestation._id;
-      await UserDAO.udpate(user._id, user);
+      //re assigns users selected
+      for (const i in usersId) {
+        const user = await UserDAO.getById(usersId[i]);
+        if (!user) {
+          return res.status(404).send({
+            message: "User not found with id " + usersId[i],
+          });
+        }
+        user.manifestation_id = updatedManifestation._id;
+        await UserDAO.udpate(user._id, user);
+      }
+
       res.status(201).json(updatedManifestation);
     } catch (error) {
       console.error(error);
