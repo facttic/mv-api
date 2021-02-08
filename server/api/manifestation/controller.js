@@ -9,23 +9,31 @@ class ManifestationController {
     try {
       const manifestation = req.body;
       const userId = manifestation.user;
+      const users = [];
       delete manifestation.user;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-      const user = await UserDAO.getById(userId);
-      if (!user) {
-        return res.status(404).send({
-          message: "User not found with id " + userId,
-        });
-      }
-      if (user.superadmin || user.manifestation_id) {
-        return res.status(404).send({
-          message: "User selected is not eligible for this manifestation, please select other",
-        });
+      for (const i in userId) {
+        const user = await UserDAO.getById(userId[i]);
+        if (!user) {
+          return res.status(404).send({
+            message: "User not found with id " + userId,
+          });
+        }
+        if (user.superadmin) {
+          return res.status(404).send({
+            message:
+              "User " + user.name + " is not eligible for this manifestation, please select other",
+          });
+        }
+        users.push(user);
       }
       const newManifestation = await ManifestationDAO.createNew(manifestation);
-      user.manifestation_id = newManifestation._id;
-      await UserDAO.udpate(user._id, user);
-      res.status(201).json(manifestation);
+      for (const i in users) {
+        const user = users[i];
+        user.manifestation_id = newManifestation._id;
+        await UserDAO.udpate(user._id, user);
+      }
+      res.status(201).json(newManifestation);
     } catch (error) {
       console.error(error);
       next(error);
@@ -60,8 +68,6 @@ class ManifestationController {
           message: "Manifestation not found with id " + req.params.manifestationId,
         });
       }
-      const cache = CacheConfig.get();
-      cache.flushAll();
       res.status(200).json(manifestationDeleted);
     } catch (err) {
       console.error(err);
@@ -71,6 +77,7 @@ class ManifestationController {
 
   async getOne(req, res, next) {
     try {
+      console.log(req.params);
       const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       if (!manifestation) {
         return res.status(404).send({
@@ -79,7 +86,10 @@ class ManifestationController {
       }
       res.status(200).json(manifestation);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      res.status(404).send({
+        message: "manifestation not found with id " + req.params.manifestationId,
+      });
       next(error);
     }
   }
