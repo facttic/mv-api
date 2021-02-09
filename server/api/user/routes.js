@@ -10,7 +10,7 @@ class UserRoutes {
     router.route("/users/:userId").delete(auth, userController.delete);
     router.route("/users/:userId").put(auth, userController.update);
     router.route("/users/login").post(userController.logIn);
-    router.route("/users/me").get(auth, userController.userProfile);
+    router.route("/users/me").post(auth, userController.userProfile);
     router.route("/users/me/logout").post(auth, userController.logOut);
     router.route("/users/me/logoutall").post(auth, userController.logOutAll);
   }

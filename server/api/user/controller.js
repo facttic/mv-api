@@ -90,7 +90,7 @@ class UserController {
 
   async userProfile(req, res, next) {
     // View logged in user profile
-    res.send(req.user);
+    res.status(201).json(req.user);
   }
 
   async logOutAll(req, res, next) {

@@ -45,7 +45,7 @@ class ManifestationController {
       const { query } = req;
       query.skip = parseInt(query.skip);
       query.limit = parseInt(query.limit);
-
+      query.filter = query.filter === undefined ? {} : JSON.parse(query.filter);
       const manifestation = await ManifestationDAO.getAll(query);
       res.status(200).json({
         data: manifestation.list,
@@ -99,14 +99,14 @@ class ManifestationController {
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
       const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
       const usersId = manifestation.users_id;
-      //remove manifestations from all users that have it
+      // remove manifestations from all users that have it
       const usersWithThisManifestation = await UserDAO.find({ manifestation_id: manifestation.id });
       for (const i in usersWithThisManifestation) {
         const user = usersWithThisManifestation[i];
         user.manifestation_id = null;
         await UserDAO.udpate(user._id, user);
       }
-      //re assigns users selected
+      // re assigns users selected
       for (const i in usersId) {
         const user = await UserDAO.getById(usersId[i]);
         if (!user) {
