@@ -74,8 +74,10 @@ class UserController {
   async update(req, res, next) {
     try {
       const user = req.body;
+      delete user.manifestation_id;
       assert(_.isObject(user), "User is not a valid object.");
-      if (user.superadmin && user.manifestation_id) {
+      const actualUser = await UserDAO.findById(user.id);
+      if (user.superadmin && actualUser.manifestation_id) {
         return res.status(404).send({
           message: "User can't have a manifestation if is superadmin or vice versa",
         });

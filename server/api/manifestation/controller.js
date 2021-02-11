@@ -97,8 +97,10 @@ class ManifestationController {
     try {
       const manifestation = req.body;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-      const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
       const usersId = manifestation.users_id;
+      delete manifestation.users_id;
+      const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
+
       // remove manifestations from all users that have it
       const usersWithThisManifestation = await UserDAO.find({ manifestation_id: manifestation.id });
       for (const i in usersWithThisManifestation) {
