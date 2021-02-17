@@ -2,7 +2,6 @@ const _ = require("lodash");
 const assert = require("assert");
 
 const { ManifestationDAO, UserDAO } = require("mv-models");
-const { CacheConfig } = require("../../cache");
 
 class ManifestationController {
   async create(req, res, next) {
@@ -42,11 +41,8 @@ class ManifestationController {
 
   async getAll(req, res, next) {
     try {
-      const { query } = req;
-      query.skip = parseInt(query.skip);
-      query.limit = parseInt(query.limit);
-      query.filter = query.filter === undefined ? {} : JSON.parse(query.filter);
-      const manifestation = await ManifestationDAO.getAll(query);
+      const { shapedQuery } = req;
+      const manifestation = await ManifestationDAO.getAll(shapedQuery);
       res.status(200).json({
         data: manifestation.list,
         total: manifestation.total,

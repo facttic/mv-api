@@ -2,7 +2,7 @@ const assert = require("assert");
 
 const fieldIsContainedInModelKeys = (keys, field) => {
   const normalizedField = field.replace(/^-/, "");
-  return keys.includes(normalizedField);
+  return field === "_id" || keys.includes(normalizedField);
 };
 
 const validatePaginationQuery = (model, { perPage, page, sortBy }) => {
@@ -44,7 +44,9 @@ const validateFieldsQuery = (model, fieldsQuery) => {
 const castQueryToRegex = (query) => {
   const regexQuery = {};
   Object.entries(query).forEach((entry) => {
-    regexQuery[entry[0]] = { $regex: new RegExp(entry[1], "ig") };
+    regexQuery[entry[0]] = entry[1];
+    // Error: Can't use $regex (revisar)
+    // regexQuery[entry[0]] = { $regex: new RegExp(entry[1], "ig") };
   });
   return regexQuery;
 };
@@ -60,7 +62,7 @@ const shapeQuery = (model) => async (req, res, next) => {
     const limit = +perPage || 5;
     const currentPage = +page || 1;
     const skip = +limit * (+currentPage - 1) || 0;
-    const sort = sortBy || "-post_created_at";
+    const sort = sortBy || "-_id";
     const regexQuery = castQueryToRegex(query);
     req.shapedQuery = {
       skip,

@@ -27,8 +27,8 @@ class UserController {
 
   async getAll(req, res, next) {
     try {
-      const { query } = req;
-      const users = await UserDAO.getAll(query);
+      const { shapedQuery } = req;
+      const users = await UserDAO.getAll(shapedQuery);
       const count = await UserDAO.countDocuments();
       const ret = {
         data: users,
