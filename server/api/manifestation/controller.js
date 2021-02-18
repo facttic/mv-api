@@ -81,7 +81,6 @@ class ManifestationController {
       }
       res.status(200).json(manifestation);
     } catch (error) {
-      // console.error(error);
       res.status(404).send({
         message: "manifestation not found with id " + req.params.manifestationId,
       });
@@ -89,16 +88,12 @@ class ManifestationController {
     }
   }
 
-  async update(req, res, next) {
-    try {
-      const manifestation = req.body;
-      assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-      const usersId = manifestation.users_id;
-      delete manifestation.users_id;
-      const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
-
+  async assingUsers(res, reqUser, manifestation, usersId, updatedManifestation) {
+    if (reqUser.superadmin) {
       // remove manifestations from all users that have it
-      const usersWithThisManifestation = await UserDAO.find({ manifestation_id: manifestation.id });
+      const usersWithThisManifestation = await UserDAO.find({
+        manifestation_id: manifestation.id,
+      });
       for (const i in usersWithThisManifestation) {
         const user = usersWithThisManifestation[i];
         user.manifestation_id = null;
@@ -115,7 +110,23 @@ class ManifestationController {
         user.manifestation_id = updatedManifestation._id;
         await UserDAO.udpate(user._id, user);
       }
+    }
+  }
 
+  async update(req, res, next) {
+    try {
+      const manifestation = req.body;
+      assert(_.isObject(manifestation), "Manifestation is not a valid object.");
+      const usersId = manifestation.users_id;
+      delete manifestation.users_id;
+      const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
+      new ManifestationController().assingUsers(
+        res,
+        req.user,
+        manifestation,
+        usersId,
+        updatedManifestation,
+      );
       res.status(201).json(updatedManifestation);
     } catch (error) {
       console.error(error);
