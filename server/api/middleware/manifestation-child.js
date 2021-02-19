@@ -17,6 +17,7 @@ const manifestationChild = async (req, res, next) => {
     );
 
     req.params.manifestationId = manifestationId;
+    delete req.query.manifestationId;
 
     next();
   } catch (err) {

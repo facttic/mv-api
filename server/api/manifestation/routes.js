@@ -9,11 +9,14 @@ class ManifestationRoutes {
 
     router
       .route("/manifestations")
-      .get(shapeQuery(ManifestationDAO.schema), manifestationController.getAll);
-    router.route("/manifestations/:manifestationId").get(manifestationController.getOne);
-    router.route("/manifestations").post(auth, manifestationController.create);
-    router.route("/manifestations/:manifestationId").put(auth, manifestationController.update);
-    router.route("/manifestations/:manifestationId").delete(auth, manifestationController.delete);
+      .get([shapeQuery(ManifestationDAO.schema), manifestationController.getAll])
+      .post([manifestationController.create]);
+
+    router
+      .route("/manifestations/:manifestationId")
+      .get(manifestationController.getOne)
+      .put([auth, manifestationController.update])
+      .delete([auth, manifestationController.delete]);
   }
 }
 

@@ -4,35 +4,26 @@ const config = require("config");
 const MvModels = require("mv-models");
 
 const { RoutesConfig } = require("./routes");
-const { CacheConfig } = require("./cache");
-// const { SeaweedConfig } = require("./seaweed");
+const { CacheConfig } = require("./services/cache");
+const S3Config = require("./services/s3");
+const dbHelper = require("./helpers/db");
 
 const apiPort = config.get("api.port") || 3333;
 const apiHost = config.get("api.host") || "localhost";
-
-const dbHost = config.get("db.host");
-const dbPort = config.get("db.port");
-const dbName = config.get("db.name");
-const dbUsername = config.get("db.username");
-const dbPassword = config.get("db.password");
-const dbAuth = config.get("db.auth");
-
-const dbUri = `mongodb://${
-  dbUsername ? `${dbUsername}:${dbPassword}@` : ""
-}${dbHost}:${dbPort}/${dbName}${dbAuth ? `?authSource=${dbAuth}` : ""}`;
+const dbUri = dbHelper.getDbUri(config);
 
 const app = express();
 
-RoutesConfig.init(app, express.Router());
-CacheConfig.init();
-// SeaweedConfig.init();
+(async () => {
+  try {
+    RoutesConfig.init(app, express.Router());
+    CacheConfig.init();
+    S3Config.init("seaweed");
 
-MvModels.init(dbUri)
-  .then(() => {
-    http.createServer(app).listen(apiPort, apiHost, () => {
-      console.log(`Server listening at ${apiHost}:${apiPort}`);
-    });
-  })
-  .catch((err) => {
+    await MvModels.init(dbUri);
+    await http.createServer(app).listen(apiPort, apiHost);
+    console.log(`Server listening at ${apiHost}:${apiPort}`);
+  } catch (err) {
     console.error(err);
-  });
+  }
+})();

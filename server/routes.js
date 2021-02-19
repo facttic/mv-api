@@ -32,6 +32,10 @@ class RoutesConfig {
     ManifestationRoutes.init(router);
 
     app.use("/api", router);
+
+    app.use(function (err, _req, res, _next) {
+      res.status(500).send({ message: err.message });
+    });
   }
 }
 
