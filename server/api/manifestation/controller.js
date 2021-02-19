@@ -5,6 +5,8 @@ const assert = require("assert");
 
 const { ManifestationDAO, UserDAO } = require("mv-models");
 
+const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
+
 class ManifestationController {
   async create(req, res, next) {
     try {
@@ -16,15 +18,13 @@ class ManifestationController {
       for (const i in userId) {
         const user = await UserDAO.getById(userId[i]);
         if (!user) {
-          return res.status(404).send({
-            message: "User not found with id " + userId,
-          });
+          throw new NotFoundError(404, `User not found with id ${userId}`);
         }
         if (user.superadmin) {
-          return res.status(404).send({
-            message:
-              "User " + user.name + " is not eligible for this manifestation, please select other",
-          });
+          throw new NotFoundError(
+            404,
+            `User ${user.name} is not eligible for this manifestation, please select other`,
+          );
         }
         users.push(user);
       }
@@ -36,8 +36,8 @@ class ManifestationController {
       }
       res.status(201).json(newManifestation);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Manifestation", req, error);
+      next(throwable);
     }
   }
 
@@ -50,8 +50,8 @@ class ManifestationController {
         total: manifestation.total,
       });
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Manifestation", req, error);
+      next(throwable);
     }
   }
 
@@ -62,14 +62,15 @@ class ManifestationController {
         req.user._id,
       );
       if (!manifestationDeleted) {
-        return res.status(404).send({
-          message: "Manifestation not found with id " + req.params.manifestationId,
-        });
+        throw new NotFoundError(
+          404,
+          `Manifestation not found with id ${req.params.manifestationId}`,
+        );
       }
       res.status(200).json(manifestationDeleted);
     } catch (err) {
-      console.error(err);
-      next(err);
+      const throwable = normalizeAndLogError("Manifestation", req, err);
+      next(throwable);
     }
   }
 
@@ -77,16 +78,15 @@ class ManifestationController {
     try {
       const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       if (!manifestation) {
-        return res.status(404).send({
-          message: "manifestation not found with id " + req.params.manifestationId,
-        });
+        throw new NotFoundError(
+          404,
+          `Manifestation not found with id ${req.params.manifestationId}`,
+        );
       }
       res.status(200).json(manifestation);
     } catch (error) {
-      res.status(404).send({
-        message: "manifestation not found with id " + req.params.manifestationId,
-      });
-      next(error);
+      const throwable = normalizeAndLogError("Manifestation", req, error);
+      next(throwable);
     }
   }
 
@@ -105,9 +105,7 @@ class ManifestationController {
       for (const i in usersId) {
         const user = await UserDAO.getById(usersId[i]);
         if (!user) {
-          return res.status(404).send({
-            message: "User not found with id " + usersId[i],
-          });
+          throw new NotFoundError(404, `User not found with id ${usersId[i]}`);
         }
         user.manifestation_id = updatedManifestation._id;
         await UserDAO.udpate(user._id, user);
@@ -153,8 +151,8 @@ class ManifestationController {
       );
       res.status(201).json(updatedManifestation);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Manifestation", req, error);
+      next(throwable);
     }
   }
 }

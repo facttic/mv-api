@@ -11,6 +11,8 @@ const { DenyListRoutes } = require("./api/deny_list/routes");
 const { PostRoutes } = require("./api/post/routes");
 const { ManifestationRoutes } = require("./api/manifestation/routes");
 
+const { handleError } = require("./helpers/errors");
+
 class RoutesConfig {
   static init(app, router) {
     app.use(
@@ -33,9 +35,7 @@ class RoutesConfig {
 
     app.use("/api", router);
 
-    app.use(function (err, _req, res, _next) {
-      res.status(500).send({ message: err.message });
-    });
+    app.use(handleError);
   }
 }
 

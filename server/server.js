@@ -5,6 +5,7 @@ const MvModels = require("mv-models");
 
 const { RoutesConfig } = require("./routes");
 const { CacheConfig } = require("./services/cache");
+const { LoggerConfig } = require("./services/logger");
 const S3Config = require("./services/s3");
 const dbHelper = require("./helpers/db");
 
@@ -16,14 +17,17 @@ const app = express();
 
 (async () => {
   try {
+    LoggerConfig.init(app);
     RoutesConfig.init(app, express.Router());
     CacheConfig.init();
     S3Config.init("seaweed");
 
     await MvModels.init(dbUri);
     await http.createServer(app).listen(apiPort, apiHost);
-    console.log(`Server listening at ${apiHost}:${apiPort}`);
+    LoggerConfig.getChild("server.js").info(`Server started on ${apiHost}:${apiPort}`);
   } catch (err) {
-    console.error(err);
+    LoggerConfig.getChild("server.js").error(err);
   }
 })();
+
+module.exports = app;

@@ -4,6 +4,8 @@ const assert = require("assert");
 const { PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../services/cache");
 
+const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
+
 class PostController {
   /**
    * This method is not in use for now
@@ -18,8 +20,8 @@ class PostController {
       const newPost = await PostDAO.createNew(post);
       res.status(201).json(newPost);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Post", req, error);
+      next(throwable);
     }
   }
 
@@ -41,8 +43,8 @@ class PostController {
 
       res.status(200).json(posts);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Post", req, error);
+      next(throwable);
     }
   }
 
@@ -57,9 +59,7 @@ class PostController {
       );
 
       if (!postDeleted) {
-        return res.status(404).send({
-          message: `Post not found with id ${postId}`,
-        });
+        throw new NotFoundError(404, `Post not found with id ${postId}`);
       }
       const cache = CacheConfig.get();
       cache.flushAll();

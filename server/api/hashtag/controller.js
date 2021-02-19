@@ -3,6 +3,8 @@ const assert = require("assert");
 
 const { ManifestationDAO } = require("mv-models");
 
+const { normalizeAndLogError, NotFoundError, BadRequestError } = require("../../helpers/errors");
+
 class HashtagController {
   async createNew(req, res, next) {
     try {
@@ -13,8 +15,8 @@ class HashtagController {
       const newHashtag = await manifestation.newHashtag(hashtag);
       res.status(201).json(newHashtag);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Hashtag", req, error);
+      next(throwable);
     }
   }
 
@@ -24,8 +26,8 @@ class HashtagController {
       const hashtags = await manifestation.getAllHashtags();
       res.status(200).json(hashtags);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Hashtag", req, error);
+      next(throwable);
     }
   }
 
@@ -47,9 +49,7 @@ class HashtagController {
   async update(req, res, next) {
     try {
       if (!req.body.name) {
-        return res.status(400).send({
-          message: "Hashtag content can not be empty",
-        });
+        throw new BadRequestError(400, "Hashtag content can not be empty");
       }
       const { manifestationId, hashtagId } = req.params;
       const manifestation = await ManifestationDAO.getById(manifestationId);
@@ -59,15 +59,13 @@ class HashtagController {
       });
 
       if (!hashtag) {
-        return res.status(404).send({
-          message: "hashtag not found with id " + req.params.hashtagId,
-        });
+        throw new NotFoundError(404, "Hashtag not found with id " + hashtagId);
       }
 
       res.status(200).json(hashtag);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Hashtag", req, error);
+      next(throwable);
     }
   }
 
@@ -79,15 +77,13 @@ class HashtagController {
       const hashtag = await manifestation.deleteHashtag(hashtagId);
 
       if (!hashtag) {
-        return res.status(404).send({
-          message: "hashtag not found with id " + req.params.hashtagId,
-        });
+        throw new NotFoundError(404, "Hashtag not found with id " + hashtagId);
       }
 
       res.status(200).json(hashtag);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("Hashtag", req, error);
+      next(throwable);
     }
   }
 }

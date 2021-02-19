@@ -4,6 +4,8 @@ const assert = require("assert");
 const { DenyListDAO, PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../services/cache");
 
+const { normalizeAndLogError, NotFoundError, BadRequestError } = require("../../helpers/errors");
+
 class DenyListController {
   async createNew(req, res, next) {
     try {
@@ -21,8 +23,8 @@ class DenyListController {
         removedPostsCount: removeResults.nModified,
       });
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
@@ -34,32 +36,30 @@ class DenyListController {
 
       res.status(200).json(denyLists);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
   async getOne(req, res, next) {
     try {
       const denyList = await DenyListDAO.findById(req.params.denyListId);
+
       if (!denyList) {
-        return res.status(404).send({
-          message: "denyList not found with id " + req.params.denyListId,
-        });
+        throw new NotFoundError(404, "DenyList not found with id " + req.params.denyListId);
       }
+
       res.status(200).json(denyList);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
   async update(req, res, next) {
     try {
       if (!req.body.name) {
-        return res.status(400).send({
-          message: "DenyList content can not be empty",
-        });
+        throw new BadRequestError(400, "DenyList content can not be empty");
       }
 
       const denyList = await DenyListDAO.findByIdAndUpdate(
@@ -71,14 +71,13 @@ class DenyListController {
       );
 
       if (!denyList) {
-        return res.status(404).send({
-          message: "denyList not found with id " + req.params.denyListId,
-        });
+        throw new NotFoundError(404, "DenyList not found with id " + req.params.denyListId);
       }
+
       res.status(200).json(denyList);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
@@ -86,14 +85,12 @@ class DenyListController {
     try {
       const denyList = await DenyListDAO.findByIdAndRemove(req.params.denyListId);
       if (!denyList) {
-        return res.status(404).send({
-          message: "denyList not found with id " + req.params.denyListId,
-        });
+        throw new NotFoundError(404, "DenyList not found with id " + req.params.denyListId);
       }
       res.status(200).json(denyList);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 }

@@ -2,6 +2,12 @@ const _ = require("lodash");
 const { UserDAO } = require("mv-models");
 const assert = require("assert");
 
+const {
+  normalizeAndLogError,
+  NotFoundError,
+  AuthenticationError,
+} = require("../../helpers/errors");
+
 class UserController {
   async create(req, res, next) {
     try {
@@ -10,18 +16,20 @@ class UserController {
       const newUser = await UserDAO.createNew(user);
       res.status(201).json(newUser);
     } catch (error) {
-      if (error.message.includes("Email is in use")) {
-        return res.status(404).send({
-          message: "Email is in use",
-        });
-      }
-      if (error.name === "ValidationError") {
-        return res.status(404).send({
-          message: "Some fields are needed",
-        });
-      }
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
+      // if (error.message.includes("Email is in use")) {
+      //   return res.status(404).send({
+      //     message: "Email is in use",
+      //   });
+      // }
+      // if (error.name === "ValidationError") {
+      //   return res.status(404).send({
+      //     message: "Some fields are needed",
+      //   });
+      // }
+      // console.error(error);
+      // next(error);
     }
   }
 
@@ -36,8 +44,8 @@ class UserController {
       };
       res.status(200).json(ret);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
@@ -45,9 +53,7 @@ class UserController {
     try {
       const user = await UserDAO.findById({ _id: req.params.userId });
       if (!user) {
-        return res.status(404).send({
-          message: "user not found with id " + req.params.userId,
-        });
+        throw new NotFoundError(404, `User not found with id ${req.params.userId}`);
       }
       res.status(200).json(user);
     } catch (err) {
@@ -60,14 +66,12 @@ class UserController {
     try {
       const userDeleted = await UserDAO.delete({ _id: req.params.userId }, req.user._id);
       if (!userDeleted) {
-        return res.status(404).send({
-          message: "user not found with id " + req.params.userId,
-        });
+        throw new NotFoundError(404, `User not found with id ${req.params.userId}`);
       }
       res.status(200).json(userDeleted);
     } catch (err) {
-      console.error(err);
-      next(err);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
@@ -78,15 +82,16 @@ class UserController {
       assert(_.isObject(user), "User is not a valid object.");
       const actualUser = await UserDAO.findById(user.id);
       if (user.superadmin && actualUser.manifestation_id) {
-        return res.status(404).send({
-          message: "User can't have a manifestation if is superadmin or vice versa",
-        });
+        throw new NotFoundError(
+          404,
+          "User can't have a manifestation if is superadmin or vice versa",
+        );
       }
       const updatedUser = await UserDAO.udpate(user.id, user);
       res.status(201).json(updatedUser);
     } catch (error) {
-      console.error(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
@@ -102,8 +107,8 @@ class UserController {
       await req.user.save();
       res.send();
     } catch (error) {
-      res.status(500).send(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
@@ -116,8 +121,8 @@ class UserController {
       await UserDAO.findByIdAndUpdate(req.user._id, req.user);
       res.send();
     } catch (error) {
-      res.status(500).send(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 
@@ -127,13 +132,13 @@ class UserController {
       const { email, password } = req.body;
       const user = await UserDAO.findByCredentials(email, password);
       if (!user) {
-        return res.status(401).send({ error: "Login failed! Check authentication credentials" });
+        throw new AuthenticationError(401, "Login failed! Check authentication credentials");
       }
       const token = await user.generateAuthToken();
       res.send({ user, token });
     } catch (error) {
-      res.status(400).send(error);
-      next(error);
+      const throwable = normalizeAndLogError("DenyList", req, error);
+      next(throwable);
     }
   }
 }
