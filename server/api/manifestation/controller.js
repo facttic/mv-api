@@ -1,5 +1,7 @@
 const _ = require("lodash");
 const assert = require("assert");
+// const formidable = require("formidable");
+// const pify = require("pify");
 
 const { ManifestationDAO, UserDAO } = require("mv-models");
 
@@ -115,6 +117,28 @@ class ManifestationController {
 
   async update(req, res, next) {
     try {
+      // TODO finish implementation once defined if
+      // react-admin will send Base64 encode or multi-part form data
+
+      // const form = formidable({ multiples: true });
+      // const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
+      // // const asyncParse = util.promisify(form.parse).bind(form);
+      // const [fields, files] = await asyncParse(req);
+      // console.log("results", fields, files);
+
+      // // form.parse(req, (err, fields, files) => {
+      // //   if (err) {
+      // //     console.error(err);
+      // //   }
+      // //   console.log("fields", fields);
+      // //   console.log("files", files);
+      // // });
+
+      // const manifestation = fields;
+
+      // foreach(files, (file) => const url = files.saveS3();
+      //   manifestaion.loqueva.url = url
+      // );
       const manifestation = req.body;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
       const usersId = manifestation.users_id;

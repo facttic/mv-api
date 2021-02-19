@@ -36,7 +36,8 @@
     "lodash": "^4.17.19",
     "mv-models": "^1.0.1",
     "node-cache": "^5.1.0",
-    "node-seaweedfs": "^1.4.0"
+    "node-seaweedfs": "^1.4.0",
+    "pify": "^5.0.0"
   },
   "devDependencies": {
     "eslint": "^7.17.0",

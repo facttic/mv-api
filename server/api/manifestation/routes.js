@@ -10,7 +10,7 @@ class ManifestationRoutes {
     router
       .route("/manifestations")
       .get([shapeQuery(ManifestationDAO.schema), manifestationController.getAll])
-      .post([manifestationController.create]);
+      .post([auth, manifestationController.create]);
 
     router
       .route("/manifestations/:manifestationId")

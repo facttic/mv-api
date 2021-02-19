@@ -1,18 +1,11 @@
 const WeedClient = require("node-seaweedfs");
 
-let seaweedfs;
-
-class SeaweedConfig {
-  static init() {
+class SeaweedFs {
+  constructor() {
     const server = process.env.SEAWEEDFS_MAIN_SERVER || "localhost";
     const port = process.env.SEAWEEDFS_MAIN_PORT || 9333;
-    seaweedfs = new WeedClient({ server, port });
-    return seaweedfs;
-  }
-
-  static get() {
-    return seaweedfs;
+    this.client = new WeedClient({ server, port });
   }
 }
 
-module.exports = { SeaweedConfig };
+module.exports = { SeaweedFs };
