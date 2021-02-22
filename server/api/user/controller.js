@@ -16,7 +16,7 @@ class UserController {
       const newUser = await UserDAO.createNew(user);
       res.status(201).json(newUser);
     } catch (error) {
-      const throwable = normalizeAndLogError("DenyList", req, error);
+      const throwable = normalizeAndLogError("User", req, error);
       next(throwable);
       // if (error.message.includes("Email is in use")) {
       //   return res.status(404).send({
@@ -44,7 +44,7 @@ class UserController {
       };
       res.status(200).json(ret);
     } catch (error) {
-      const throwable = normalizeAndLogError("DenyList", req, error);
+      const throwable = normalizeAndLogError("User", req, error);
       next(throwable);
     }
   }
@@ -70,7 +70,7 @@ class UserController {
       }
       res.status(200).json(userDeleted);
     } catch (err) {
-      const throwable = normalizeAndLogError("DenyList", req, error);
+      const throwable = normalizeAndLogError("User", req, err);
       next(throwable);
     }
   }
@@ -90,7 +90,7 @@ class UserController {
       const updatedUser = await UserDAO.udpate(user.id, user);
       res.status(201).json(updatedUser);
     } catch (error) {
-      const throwable = normalizeAndLogError("DenyList", req, error);
+      const throwable = normalizeAndLogError("User", req, error);
       next(throwable);
     }
   }
@@ -107,7 +107,7 @@ class UserController {
       await req.user.save();
       res.send();
     } catch (error) {
-      const throwable = normalizeAndLogError("DenyList", req, error);
+      const throwable = normalizeAndLogError("User", req, error);
       next(throwable);
     }
   }
@@ -121,7 +121,7 @@ class UserController {
       await UserDAO.findByIdAndUpdate(req.user._id, req.user);
       res.send();
     } catch (error) {
-      const throwable = normalizeAndLogError("DenyList", req, error);
+      const throwable = normalizeAndLogError("User", req, error);
       next(throwable);
     }
   }
@@ -137,7 +137,7 @@ class UserController {
       const token = await user.generateAuthToken();
       res.send({ user, token });
     } catch (error) {
-      const throwable = normalizeAndLogError("DenyList", req, error);
+      const throwable = normalizeAndLogError("User", req, error);
       next(throwable);
     }
   }
