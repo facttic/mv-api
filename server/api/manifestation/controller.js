@@ -129,6 +129,7 @@ class ManifestationController {
 
   async resolveAsForm(req, res) {
     const form = formidable({ multiples: true });
+    console.log(req.headers);
     const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
     // const asyncParse = util.promisify(form.parse).bind(form);
     const [fields, files] = await asyncParse(req);
@@ -138,21 +139,15 @@ class ManifestationController {
     const values = Object.values(fields);
 
     for (let i = 0; i < keys.length; i++) {
-      // ignores data images, sponsors and hashtags.
-      if (
-        !keys[i].includes("images") &&
-        !keys[i].includes("sponsors") &&
-        !keys[i].includes("hashtags")
-      ) {
+      // ignores data of sponsors and hashtags.
+      if (!keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
         const value = values[i];
         const vquery = {};
         vquery[keys[i]] = value;
         await ManifestationDAO.udpate(req.params.manifestationId, vquery);
       } else {
         // Parse fields like sponsors.0.name to array element.
-        if (keys[i].includes("sponsors") || keys[i].includes("hashtags")) {
-          new ManifestationController().parseFieldToArrayElement(arrayValues, keys[i], values[i]);
-        }
+        new ManifestationController().parseFieldToArrayElement(arrayValues, keys[i], values[i]);
       }
     }
     await ManifestationDAO.udpate(req.params.manifestationId, arrayValues);
@@ -171,7 +166,7 @@ class ManifestationController {
       /* Solo estoy usando el nombre del campo del field que viene como image.header.rawFile
       para pasarlo a image.header.src y aprobechar el la notación dot para guardar el url. */
       const key = filesKeys[i].replace("rawFile", "src");
-      // vquery[key] = urlfile;
+      // query[key] = urlfile;
       query[key] = "https://www.instasent.com/blog/wp-content/uploads/2019/09/5a144f339cc68-1.png";
       await ManifestationDAO.udpate(req.params.manifestationId, query);
     }
@@ -182,6 +177,7 @@ class ManifestationController {
   async resolveAsJson(req, res) {
     let manifestation = req.body;
     console.log("resolve as json");
+    console.log(req.headers);
     assert(_.isObject(manifestation), "Manifestation is not a valid object.");
     const usersId = manifestation.users_id;
     delete manifestation.users_id;
