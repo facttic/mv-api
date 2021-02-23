@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const assert = require("assert");
-// const formidable = require("formidable");
-// const pify = require("pify");
+const formidable = require("formidable");
+const pify = require("pify");
 
 const { ManifestationDAO, UserDAO } = require("mv-models");
 
@@ -10,6 +10,7 @@ const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
 class ManifestationController {
   async create(req, res, next) {
     try {
+      console.log("create");
       const manifestation = req.body;
       const userId = manifestation.user;
       const users = [];
@@ -113,43 +114,97 @@ class ManifestationController {
     }
   }
 
+  async parseFieldToArrayElement(object, key, value) {
+    const keys = key.split(".");
+    if (object[keys[0]][parseInt(keys[1])]) {
+      object[keys[0]][parseInt(keys[1])][keys[2]] = value;
+    } else {
+      const newObject = {};
+      newObject[keys[2]] = value;
+      object[keys[0]].push(newObject);
+    }
+    console.log("PARSE", { key, value });
+    console.log("object", object);
+  }
+
+  async resolveAsForm(req, res) {
+    const form = formidable({ multiples: true });
+    console.log(req.headers);
+    const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
+    // const asyncParse = util.promisify(form.parse).bind(form);
+    const [fields, files] = await asyncParse(req);
+    delete fields.id;
+    const arrayValues = { sponsors: [], hashtags: [] };
+    const keys = Object.keys(fields);
+    const values = Object.values(fields);
+
+    for (let i = 0; i < keys.length; i++) {
+      // ignores data of sponsors and hashtags.
+      if (!keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
+        const value = values[i];
+        const vquery = {};
+        vquery[keys[i]] = value;
+        await ManifestationDAO.udpate(req.params.manifestationId, vquery);
+      } else {
+        // Parse fields like sponsors.0.name to array element.
+        new ManifestationController().parseFieldToArrayElement(arrayValues, keys[i], values[i]);
+      }
+    }
+    await ManifestationDAO.udpate(req.params.manifestationId, arrayValues);
+
+    // image file save
+    console.log(files);
+    // foreach(files, (file) => const url = files.saveS3();
+    //   manifestaion.loqueva.url = url
+    // );
+    const filesKeys = Object.keys(files);
+    const filesValues = Object.values(files);
+    for (let i = 0; i < filesKeys.length; i++) {
+      const query = {};
+      // urlfile = filesValues[i].saveS3();
+
+      /* Solo estoy usando el nombre del campo del field que viene como image.header.rawFile
+      para pasarlo a image.header.src y aprobechar el la notación dot para guardar el url. */
+      const key = filesKeys[i].replace("rawFile", "src");
+      // query[key] = urlfile;
+      query[key] = "https://www.instasent.com/blog/wp-content/uploads/2019/09/5a144f339cc68-1.png";
+      await ManifestationDAO.udpate(req.params.manifestationId, query);
+    }
+    const updatedManifestation = await ManifestationDAO.getById(req.params.manifestationId);
+    res.status(201).json(updatedManifestation);
+  }
+
+  async resolveAsJson(req, res) {
+    let manifestation = req.body;
+    console.log("resolve as json");
+    console.log(req.headers);
+    assert(_.isObject(manifestation), "Manifestation is not a valid object.");
+    const usersId = manifestation.users_id;
+    delete manifestation.users_id;
+    // cuts data for update when admin edits.
+    if (req.user.superadmin) {
+      manifestation = {
+        id: manifestation.id,
+        name: manifestation.name,
+        uri: manifestation.uri,
+      };
+    }
+    const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
+    new ManifestationController().assingUsers(
+      res,
+      req.user,
+      manifestation,
+      usersId,
+      updatedManifestation,
+    );
+    res.status(201).json(updatedManifestation);
+  }
+
   async update(req, res, next) {
     try {
-      // TODO finish implementation once defined if
-      // react-admin will send Base64 encode or multi-part form data
-
-      // const form = formidable({ multiples: true });
-      // const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
-      // // const asyncParse = util.promisify(form.parse).bind(form);
-      // const [fields, files] = await asyncParse(req);
-      // console.log("results", fields, files);
-
-      // // form.parse(req, (err, fields, files) => {
-      // //   if (err) {
-      // //     console.error(err);
-      // //   }
-      // //   console.log("fields", fields);
-      // //   console.log("files", files);
-      // // });
-
-      // const manifestation = fields;
-
-      // foreach(files, (file) => const url = files.saveS3();
-      //   manifestaion.loqueva.url = url
-      // );
-      const manifestation = req.body;
-      assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-      const usersId = manifestation.users_id;
-      delete manifestation.users_id;
-      const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
-      new ManifestationController().assingUsers(
-        res,
-        req.user,
-        manifestation,
-        usersId,
-        updatedManifestation,
-      );
-      res.status(201).json(updatedManifestation);
+      _.isEmpty(req.body)
+        ? await new ManifestationController().resolveAsForm(req, res)
+        : await new ManifestationController().resolveAsJson(req, res);
     } catch (error) {
       const throwable = normalizeAndLogError("Manifestation", req, error);
       next(throwable);

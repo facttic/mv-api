@@ -1,6 +1,7 @@
 const { ManifestationController } = require("./controller");
 const auth = require("../middleware/auth");
 const { shapeQuery } = require("../middleware/shape-query");
+const { adminChecker } = require("../middleware/admin-checker");
 const { ManifestationDAO } = require("mv-models");
 
 class ManifestationRoutes {
@@ -10,13 +11,13 @@ class ManifestationRoutes {
     router
       .route("/manifestations")
       .get([shapeQuery(ManifestationDAO.schema), manifestationController.getAll])
-      .post([auth, manifestationController.create]);
+      .post([auth, adminChecker, manifestationController.create]);
 
     router
       .route("/manifestations/:manifestationId")
       .get(manifestationController.getOne)
       .put([auth, manifestationController.update])
-      .delete([auth, manifestationController.delete]);
+      .delete([auth, adminChecker, manifestationController.delete]);
   }
 }
 
