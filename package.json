@@ -6,7 +6,9 @@
   "scripts": {
     "start": "nodemon index.js",
     "lint": "eslint '*/**/*.js' --quiet --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --exit",
+    "test-watch": "nodemon --exec \"mocha\"",
+    "coverage": "nyc nyc --reporter=lcov --reporter=text-summary npm run test"
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,7 @@
     "virtual",
     "nodejs"
   ],
-  "author": "FACTTIC",
+  "author": "Facttic",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/facttic/mv-api/issues"
@@ -45,6 +47,9 @@
     "pify": "^5.0.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.3.0",
     "eslint": "^7.17.0",
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^7.1.0",
@@ -54,7 +59,9 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^5.0.0",
+    "mocha": "^8.2.1",
     "nodemon": "^2.0.2",
+    "nyc": "^15.1.0",
     "prettier": "^2.2.1",
     "prettier-eslint": "^12.0.0"
   }

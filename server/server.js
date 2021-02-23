@@ -24,7 +24,8 @@ const app = express();
 
     await MvModels.init(dbUri);
     await http.createServer(app).listen(apiPort, apiHost);
-    LoggerConfig.getChild("server.js").info(`Server started on ${apiHost}:${apiPort}`);
+    process.env.NODE_ENV !== "test" &&
+      LoggerConfig.getChild("server.js").info(`Server started on ${apiHost}:${apiPort}`);
   } catch (err) {
     LoggerConfig.getChild("server.js").error(err);
   }
