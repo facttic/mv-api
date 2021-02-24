@@ -5,7 +5,7 @@ const pify = require("pify");
 
 const { ManifestationDAO, UserDAO } = require("mv-models");
 
-const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
+const { normalizeAndLogError, NotFoundError, PermissionError } = require("../../helpers/errors");
 
 class ManifestationController {
   async create(req, res, next) {
@@ -91,26 +91,24 @@ class ManifestationController {
     }
   }
 
-  async assingUsers(res, reqUser, manifestation, usersId, updatedManifestation) {
-    if (reqUser.superadmin) {
-      // remove manifestations from all users that have it
-      const usersWithThisManifestation = await UserDAO.find({
-        manifestation_id: manifestation.id,
-      });
-      for (const i in usersWithThisManifestation) {
-        const user = usersWithThisManifestation[i];
-        user.manifestation_id = null;
-        await UserDAO.udpate(user._id, user);
+  async assingUsers(manifestation, usersId) {
+    // remove manifestations from all users that have it
+    const usersWithThisManifestation = await UserDAO.find({
+      manifestation_id: manifestation.id,
+    });
+    for (const i in usersWithThisManifestation) {
+      const user = usersWithThisManifestation[i];
+      user.manifestation_id = null;
+      await UserDAO.udpate(user._id, user);
+    }
+    // re assigns users selected
+    for (const i in usersId) {
+      const user = await UserDAO.getById(usersId[i]);
+      if (!user) {
+        throw new NotFoundError(404, `User not found with id ${usersId[i]}`);
       }
-      // re assigns users selected
-      for (const i in usersId) {
-        const user = await UserDAO.getById(usersId[i]);
-        if (!user) {
-          throw new NotFoundError(404, `User not found with id ${usersId[i]}`);
-        }
-        user.manifestation_id = updatedManifestation._id;
-        await UserDAO.udpate(user._id, user);
-      }
+      user.manifestation_id = manifestation.id;
+      await UserDAO.udpate(user._id, user);
     }
   }
 
@@ -176,27 +174,33 @@ class ManifestationController {
 
   async resolveAsJson(req, res) {
     let manifestation = req.body;
-    console.log("resolve as json");
-    console.log(req.headers);
     assert(_.isObject(manifestation), "Manifestation is not a valid object.");
     const usersId = manifestation.users_id;
     delete manifestation.users_id;
-    // cuts data for update when admin edits.
     if (req.user.superadmin) {
+      // cuts data for update when admin edits.
       manifestation = {
         id: manifestation.id,
         name: manifestation.name,
         uri: manifestation.uri,
       };
+      await new ManifestationController().assingUsers(manifestation, usersId);
+    }
+    if (!req.user.superadmin) {
+      console.log(req.user);
+      const user = await UserDAO.getById(req.user._id);
+      if (
+        user.manifestation_id === null ||
+        manifestation.id.toString() !== user.manifestation_id.toString()
+      ) {
+        throw new PermissionError(
+          403,
+          `No tiene permisos de edición para la manifestación ${manifestation.name}`,
+        );
+      }
     }
     const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
-    new ManifestationController().assingUsers(
-      res,
-      req.user,
-      manifestation,
-      usersId,
-      updatedManifestation,
-    );
+
     res.status(201).json(updatedManifestation);
   }
 
