@@ -149,24 +149,19 @@ class ManifestationController {
     }
     await ManifestationDAO.udpate(req.params.manifestationId, arrayValues);
 
-    // image file save
-
-    // foreach(files, (file) => const url = files.saveS3();
-    //   manifestaion.loqueva.url = url
-    // );
     const filesKeys = Object.keys(files);
     const filesValues = Object.values(files);
+
     for (let i = 0; i < filesKeys.length; i++) {
       const query = {};
-      // urlfile = filesValues[i].saveS3();
 
       /* Solo estoy usando el nombre del campo del field que viene como image.header.rawFile
       para pasarlo a image.header.src y aprobechar el la notación dot para guardar el url. */
       const key = filesKeys[i].replace("rawFile", "src");
-      // query[key] = urlfile;
       query[key] = "https://www.instasent.com/blog/wp-content/uploads/2019/09/5a144f339cc68-1.png";
       await ManifestationDAO.udpate(req.params.manifestationId, query);
     }
+
     const updatedManifestation = await ManifestationDAO.getById(req.params.manifestationId);
     res.status(201).json(updatedManifestation);
   }
