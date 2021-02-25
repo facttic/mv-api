@@ -129,9 +129,8 @@ class ManifestationController {
 
   async resolveAsForm(req, res) {
     const form = formidable({ multiples: true });
-    console.log(req.headers);
+
     const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
-    // const asyncParse = util.promisify(form.parse).bind(form);
     const [fields, files] = await asyncParse(req);
     delete fields.id;
     const arrayValues = { sponsors: [], hashtags: [] };
@@ -153,7 +152,7 @@ class ManifestationController {
     await ManifestationDAO.udpate(req.params.manifestationId, arrayValues);
 
     // image file save
-    console.log(files);
+
     // foreach(files, (file) => const url = files.saveS3();
     //   manifestaion.loqueva.url = url
     // );
@@ -176,20 +175,18 @@ class ManifestationController {
 
   async resolveAsJson(req, res) {
     let manifestation = req.body;
-    console.log("resolve as json");
-    console.log(req.headers);
+    const { id, name, uri } = manifestation;
     assert(_.isObject(manifestation), "Manifestation is not a valid object.");
+
     const usersId = manifestation.users_id;
     delete manifestation.users_id;
+
     // cuts data for update when admin edits.
     if (req.user.superadmin) {
-      manifestation = {
-        id: manifestation.id,
-        name: manifestation.name,
-        uri: manifestation.uri,
-      };
+      manifestation = { id, name, uri };
     }
     const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
+
     new ManifestationController().assingUsers(
       res,
       req.user,
