@@ -1,4 +1,5 @@
 const { SeaweedFs } = require("./seaweed");
+
 let s3;
 
 function init(provider) {
@@ -11,4 +12,8 @@ function init(provider) {
   }
 }
 
-module.exports = { init, s3 };
+function getInstance() {
+  return s3;
+}
+
+module.exports = { init, getInstance };
