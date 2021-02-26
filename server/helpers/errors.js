@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-const { LoggerConfig } = require("../services/logger");
+const { LoggerConfig } = require("../common/logger");
 
 class CustomError extends Error {
   constructor(statusCode, message) {

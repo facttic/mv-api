@@ -2,10 +2,12 @@ const _ = require("lodash");
 const assert = require("assert");
 const formidable = require("formidable");
 const pify = require("pify");
+const Stream = require("stream");
 
 const { ManifestationDAO, UserDAO } = require("mv-models");
-
 const { normalizeAndLogError, NotFoundError, PermissionError } = require("../../helpers/errors");
+const s3Service = require("../../common/s3");
+const manifestationService = require("./service");
 
 class ManifestationController {
   async create(req, res, next) {
@@ -91,27 +93,6 @@ class ManifestationController {
     }
   }
 
-  async assingUsers(manifestation, usersId) {
-    // remove manifestations from all users that have it
-    const usersWithThisManifestation = await UserDAO.find({
-      manifestation_id: manifestation.id,
-    });
-    for (const i in usersWithThisManifestation) {
-      const user = usersWithThisManifestation[i];
-      user.manifestation_id = null;
-      await UserDAO.udpate(user._id, user);
-    }
-    // re assigns users selected
-    for (const i in usersId) {
-      const user = await UserDAO.getById(usersId[i]);
-      if (!user) {
-        throw new NotFoundError(404, `User not found with id ${usersId[i]}`);
-      }
-      user.manifestation_id = manifestation.id;
-      await UserDAO.udpate(user._id, user);
-    }
-  }
-
   async parseFieldToArrayElement(object, key, value) {
     const keys = key.split(".");
     if (object[keys[0]][parseInt(keys[1])]) {
@@ -126,11 +107,40 @@ class ManifestationController {
   }
 
   async resolveAsForm(req, res) {
+    const s3 = s3Service.getInstance();
     const form = formidable({ multiples: true });
+
+    let readableStream;
+    form.onPart = async function (part) {
+      if (part.filename === "" || !part.mime) {
+        return form.handlePart(part);
+      }
+      console.log("filename", part.filename);
+      readableStream = new Stream.Readable({
+        read() {},
+      });
+      console.log("readableStream created", readableStream);
+
+      part.once("error", console.error);
+      part.once("end", () => {
+        console.log("Done!");
+        // readableStream.push(null);
+      });
+
+      part.on("data", (buffer) => {
+        console.log("getting data", buffer);
+        buffer && readableStream.push(buffer);
+      });
+
+      console.log("a punto de promise");
+      const coso = await s3.client.write(readableStream);
+      console.log("coso", coso);
+    };
 
     const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
     const [fields, files] = await asyncParse(req);
     delete fields.id;
+
     const arrayValues = { sponsors: [], hashtags: [] };
     const keys = Object.keys(fields);
     const values = Object.values(fields);
@@ -147,20 +157,24 @@ class ManifestationController {
         new ManifestationController().parseFieldToArrayElement(arrayValues, keys[i], values[i]);
       }
     }
+
     await ManifestationDAO.udpate(req.params.manifestationId, arrayValues);
 
-    const filesKeys = Object.keys(files);
-    const filesValues = Object.values(files);
+    // for (const [key, value] of Object.entries(files)) {
+    //   const fileSaved = await s3.client.write(readableStream);
+    // console.log("key", key);
+    // console.log("value", value);
+    //   console.log("fileSaved", fileSaved);
+    // }
 
-    for (let i = 0; i < filesKeys.length; i++) {
-      const query = {};
-
-      /* Solo estoy usando el nombre del campo del field que viene como image.header.rawFile
-      para pasarlo a image.header.src y aprobechar el la notación dot para guardar el url. */
-      const key = filesKeys[i].replace("rawFile", "src");
-      query[key] = "https://www.instasent.com/blog/wp-content/uploads/2019/09/5a144f339cc68-1.png";
-      await ManifestationDAO.udpate(req.params.manifestationId, query);
-    }
+    // for (let i = 0; i < filesKeys.length; i++) {
+    //   const query = {};
+    //   /* Solo estoy usando el nombre del campo del field que viene como image.header.rawFile
+    //   para pasarlo a image.header.src y aprobechar el la notación dot para guardar el url. */
+    //   const key = filesKeys[i].replace("rawFile", "src");
+    //   query[key] = "https://www.instasent.com/blog/wp-content/uploads/2019/09/5a144f339cc68-1.png";
+    //   await ManifestationDAO.udpate(req.params.manifestationId, query);
+    // }
 
     const updatedManifestation = await ManifestationDAO.getById(req.params.manifestationId);
     res.status(201).json(updatedManifestation);
@@ -176,7 +190,7 @@ class ManifestationController {
     if (req.user.superadmin) {
       // cuts data for update when admin edits.
       manifestation = { id, name, uri };
-      await new ManifestationController().assingUsers(manifestation, usersId);
+      await manifestationService.assingUsers(manifestation, usersId);
     }
     if (!req.user.superadmin) {
       console.log(req.user);

@@ -2,7 +2,7 @@ const _ = require("lodash");
 const assert = require("assert");
 
 const { PostDAO } = require("mv-models");
-const { CacheConfig } = require("../../services/cache");
+const { CacheConfig } = require("../../common/cache");
 
 const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
 

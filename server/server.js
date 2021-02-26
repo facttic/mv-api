@@ -4,9 +4,9 @@ const config = require("config");
 const MvModels = require("mv-models");
 
 const { RoutesConfig } = require("./routes");
-const { CacheConfig } = require("./services/cache");
-const { LoggerConfig } = require("./services/logger");
-const S3Config = require("./services/s3");
+const { CacheConfig } = require("./common/cache");
+const { LoggerConfig } = require("./common/logger");
+const S3Config = require("./common/s3");
 const dbHelper = require("./helpers/db");
 
 const apiPort = config.get("api.port") || 3333;
