@@ -95,7 +95,7 @@ class ManifestationController {
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
 
       // 0. Validar superadmin o permisos de acceso
-      await manifestationService.validateOwnership(manifestation, user);
+      manifestationService.validateOwnership(manifestation, user);
 
       // 1. Reasignar usuarios
       manifestation.users_id &&
