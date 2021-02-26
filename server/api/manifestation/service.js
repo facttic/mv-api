@@ -1,14 +1,10 @@
 const _ = require("lodash");
-const assert = require("assert");
 const { _destroy } = require("bunyan-format");
-const { ManifestationDAO, UserDAO } = require("mv-models");
-const {
-  NotFoundError,
-  PermissionError,
-} = require("../../helpers/errors");
+const { UserDAO } = require("mv-models");
 
 const s3Service = require("../../common/s3");
 const seaweedHelper = require("../../helpers/seaweed");
+const { NotFoundError, PermissionError } = require("../../helpers/errors");
 
 function parseFieldToArrayElement(object, key, value) {
   const keys = key.split(".");
@@ -76,9 +72,11 @@ async function processFiles(manifestation, files) {
 
   // TODO: check for multifiles upload
   // and iterate over the results
-  for (file in files) {
+  for (const file in files) {
     const uploadResults = await s3.client.write(files[file].path);
     const src = seaweedHelper.parseResultsToSrc(uploadResults);
+    // file is a string shaped like path
+    // E.g.: images.og.twitter
     _.set(manifestation, file, { src });
   }
 }

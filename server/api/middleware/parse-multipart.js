@@ -1,8 +1,9 @@
-const { isEmpty } = require("lodash");
 const formidable = require("formidable");
 const pify = require("pify");
 
-const parseMultipart = async (req, res, next) => {
+const { normalizeAndLogError } = require("../../helpers/errors");
+
+const parseMultipart = async (req, _res, next) => {
   try {
     if (!req._body) {
       const form = formidable({ multiples: true });

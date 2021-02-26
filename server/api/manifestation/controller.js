@@ -2,7 +2,7 @@ const _ = require("lodash");
 const assert = require("assert");
 
 const { UserDAO, ManifestationDAO } = require("mv-models");
-const { normalizeAndLogError, NotFoundError, PermissionError } = require("../../helpers/errors");
+const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
 const manifestationService = require("./service");
 
 class ManifestationController {
