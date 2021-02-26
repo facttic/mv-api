@@ -75,6 +75,8 @@ async function processFiles(manifestation, files) {
   for (const file in files) {
     const uploadResults = await s3.client.write(files[file].path);
     const src = seaweedHelper.parseResultsToSrc(uploadResults);
+    // file is a string shaped like path
+    // E.g.: images.og.twitter
     _.set(manifestation, file, { src });
   }
 }
