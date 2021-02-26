@@ -1,7 +1,7 @@
 const { DenyListController } = require("./controller");
 const { shapeQuery } = require("../middleware/shape-query");
 const { manifestationChild } = require("../middleware/manifestation-child");
-const auth = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 
 class DenyListRoutes {
   static init(router) {

@@ -1,8 +1,7 @@
-const { ManifestationController } = require("./controller");
-const auth = require("../middleware/auth");
-const { shapeQuery } = require("../middleware/shape-query");
-const { adminChecker } = require("../middleware/admin-checker");
 const { ManifestationDAO } = require("mv-models");
+
+const { ManifestationController } = require("./controller");
+const { auth, shapeQuery, adminChecker, parseMultipart } = require("../middleware");
 
 class ManifestationRoutes {
   static init(router) {
@@ -16,7 +15,7 @@ class ManifestationRoutes {
     router
       .route("/manifestations/:manifestationId")
       .get(manifestationController.getOne)
-      .put([auth, manifestationController.update])
+      .put([auth, parseMultipart, manifestationController.update])
       .delete([auth, adminChecker, manifestationController.delete]);
   }
 }
