@@ -8,7 +8,6 @@ const manifestationService = require("./service");
 class ManifestationController {
   async create(req, res, next) {
     try {
-      console.log("create");
       const manifestation = req.body;
       const userId = manifestation.user;
       const users = [];
@@ -96,7 +95,7 @@ class ManifestationController {
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
 
       // 0. Validar superadmin o permisos de acceso
-      manifestationService.validateOwnership(manifestation, user);
+      await manifestationService.validateOwnership(manifestation, user);
 
       // 1. Reasignar usuarios
       manifestation.users_id &&

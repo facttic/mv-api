@@ -2,6 +2,10 @@ const _ = require("lodash");
 const assert = require("assert");
 const { _destroy } = require("bunyan-format");
 const { ManifestationDAO, UserDAO } = require("mv-models");
+const {
+  NotFoundError,
+  PermissionError,
+} = require("../../helpers/errors");
 
 const s3Service = require("../../common/s3");
 const seaweedHelper = require("../../helpers/seaweed");
@@ -40,7 +44,7 @@ function processArrayFields(manifestation) {
 
 async function assingUsers(manifestation) {
   const usersId = manifestation.users_id;
-
+  delete manifestation.users_id;
   // remove manifestations from all users that have it
   const usersWithThisManifestation = await UserDAO.find({
     manifestation_id: manifestation.id,
