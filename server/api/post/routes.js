@@ -2,7 +2,7 @@ const { PostDAO } = require("mv-models");
 const { PostController } = require("./controller");
 const { shapeQuery } = require("../middleware/shape-query");
 const { manifestationChild } = require("../middleware/manifestation-child");
-const auth = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 
 class PostRoutes {
   static init(router) {

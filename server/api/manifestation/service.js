@@ -1,7 +1,10 @@
+const _ = require("lodash");
+const assert = require("assert");
+const { _destroy } = require("bunyan-format");
 const { ManifestationDAO, UserDAO } = require("mv-models");
+
 const s3Service = require("../../common/s3");
-const formidable = require("formidable");
-const pify = require("pify");
+const seaweedHelper = require("../../helpers/seaweed");
 
 function parseFieldToArrayElement(object, key, value) {
   const keys = key.split(".");
@@ -16,7 +19,28 @@ function parseFieldToArrayElement(object, key, value) {
   console.log("object", object);
 }
 
-async function assingUsers(manifestation, usersId) {
+function processArrayFields(manifestation) {
+  const arrayValues = { sponsors: [], hashtags: [] };
+  const keys = Object.keys(manifestation);
+  const values = Object.values(manifestation);
+
+  for (let i = 0; i < keys.length; i++) {
+    // ignores data of sponsors and hashtags.
+    if (!keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
+      const value = values[i];
+      const vquery = {};
+      vquery[keys[i]] = value;
+      // await ManifestationDAO.udpate(req.params.manifestationId, vquery);
+    } else {
+      // Parse fields like sponsors.0.name to array element.
+      parseFieldToArrayElement(arrayValues, keys[i], values[i]);
+    }
+  }
+}
+
+async function assingUsers(manifestation) {
+  const usersId = manifestation.users_id;
+
   // remove manifestations from all users that have it
   const usersWithThisManifestation = await UserDAO.find({
     manifestation_id: manifestation.id,
@@ -37,112 +61,29 @@ async function assingUsers(manifestation, usersId) {
   }
 }
 
-async function resolveAsForm(req, res) {
-  const s3 = s3Service.getInstance();
-  const form = formidable({ multiples: true });
-
-  let readableStream;
-  form.onPart = async function (part) {
-    if (part.filename === "" || !part.mime) {
-      return form.handlePart(part);
-    }
-    console.log("filename", part.filename);
-    readableStream = new Stream.Readable({
-      read() {},
-    });
-    console.log("readableStream created", readableStream);
-
-    part.once("error", console.error);
-    part.once("end", () => {
-      console.log("Done!");
-      // readableStream.push(null);
-    });
-
-    part.on("data", (buffer) => {
-      console.log("getting data", buffer);
-      buffer && readableStream.push(buffer);
-    });
-
-    console.log("a punto de promise");
-    const coso = await s3.client.write(readableStream);
-    console.log("coso", coso);
-  };
-
-  const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
-  const [fields, files] = await asyncParse(req);
-  delete fields.id;
-
-  const arrayValues = { sponsors: [], hashtags: [] };
-  const keys = Object.keys(fields);
-  const values = Object.values(fields);
-
-  for (let i = 0; i < keys.length; i++) {
-    // ignores data of sponsors and hashtags.
-    if (!keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
-      const value = values[i];
-      const vquery = {};
-      vquery[keys[i]] = value;
-      await ManifestationDAO.udpate(req.params.manifestationId, vquery);
-    } else {
-      // Parse fields like sponsors.0.name to array element.
-      parseFieldToArrayElement(arrayValues, keys[i], values[i]);
+async function validateOwnership({ id, name }, { superadmin, manifestation_id }) {
+  if (!superadmin) {
+    if (manifestation_id === null || id.toString() !== manifestation_id.toString()) {
+      throw new PermissionError(403, `No tiene permisos de edición para la manifestación ${name}`);
     }
   }
-
-  await ManifestationDAO.udpate(req.params.manifestationId, arrayValues);
-
-  // for (const [key, value] of Object.entries(files)) {
-  //   const fileSaved = await s3.client.write(readableStream);
-  // console.log("key", key);
-  // console.log("value", value);
-  //   console.log("fileSaved", fileSaved);
-  // }
-
-  // for (let i = 0; i < filesKeys.length; i++) {
-  //   const query = {};
-  //   /* Solo estoy usando el nombre del campo del field que viene como image.header.rawFile
-  //   para pasarlo a image.header.src y aprobechar el la notación dot para guardar el url. */
-  //   const key = filesKeys[i].replace("rawFile", "src");
-  //   query[key] = "https://www.instasent.com/blog/wp-content/uploads/2019/09/5a144f339cc68-1.png";
-  //   await ManifestationDAO.udpate(req.params.manifestationId, query);
-  // }
-
-  const updatedManifestation = await ManifestationDAO.getById(req.params.manifestationId);
-  res.status(201).json(updatedManifestation);
 }
 
-async function resolveAsJson(req, res) {
-  let manifestation = req.body;
-  const { id, name, uri } = manifestation;
-  assert(_.isObject(manifestation), "Manifestation is not a valid object.");
+async function processFiles(manifestation, files) {
+  const s3 = s3Service.getInstance();
 
-  const usersId = manifestation.users_id;
-  delete manifestation.users_id;
-  if (req.user.superadmin) {
-    // cuts data for update when admin edits.
-    manifestation = { id, name, uri };
-    await manifestationService.assingUsers(manifestation, usersId);
+  // TODO: check for multifiles upload
+  // and iterate over the results
+  for (file in files) {
+    const uploadResults = await s3.client.write(files[file].path);
+    const src = seaweedHelper.parseResultsToSrc(uploadResults);
+    _.set(manifestation, file, { src });
   }
-  if (!req.user.superadmin) {
-    console.log(req.user);
-    const user = await UserDAO.getById(req.user._id);
-    if (
-      user.manifestation_id === null ||
-      manifestation.id.toString() !== user.manifestation_id.toString()
-    ) {
-      throw new PermissionError(
-        403,
-        `No tiene permisos de edición para la manifestación ${manifestation.name}`,
-      );
-    }
-  }
-  const updatedManifestation = await ManifestationDAO.udpate(manifestation.id, manifestation);
-
-  res.status(201).json(updatedManifestation);
 }
 
 module.exports = {
   assingUsers,
-  resolveAsForm,
-  resolveAsJson,
+  validateOwnership,
+  processArrayFields,
+  processFiles,
 };

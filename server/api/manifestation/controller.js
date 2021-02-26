@@ -1,8 +1,7 @@
 const _ = require("lodash");
 const assert = require("assert");
-const Stream = require("stream");
 
-const { UserDAO } = require("mv-models");
+const { UserDAO, ManifestationDAO } = require("mv-models");
 const { normalizeAndLogError, NotFoundError, PermissionError } = require("../../helpers/errors");
 const manifestationService = require("./service");
 
@@ -92,9 +91,29 @@ class ManifestationController {
 
   async update(req, res, next) {
     try {
-      _.isEmpty(req.body)
-        ? await manifestationService.resolveAsForm(req, res)
-        : await manifestationService.resolveAsJson(req, res);
+      const { body: manifestation, user, params } = req;
+
+      assert(_.isObject(manifestation), "Manifestation is not a valid object.");
+
+      // 0. Validar superadmin o permisos de acceso
+      manifestationService.validateOwnership(manifestation, user);
+
+      // 1. Reasignar usuarios
+      manifestation.users_id &&
+        user.superadmin &&
+        (await manifestationService.assingUsers(manifestation));
+
+      // 2. Procesar campos tipo Array: sponsors y hashtags
+      manifestationService.processArrayFields(manifestation);
+
+      // 3. Subir y asociar imágenes
+      req.files && (await manifestationService.processFiles(manifestation, req.files));
+
+      const updatedManifestation = await ManifestationDAO.udpate(
+        params.manifestationId,
+        manifestation,
+      );
+      res.status(201).json(updatedManifestation);
     } catch (error) {
       const throwable = normalizeAndLogError("Manifestation", req, error);
       next(throwable);

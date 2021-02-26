@@ -1,6 +1,6 @@
 const { HashtagController } = require("./controller");
 const { shapeQuery } = require("../middleware/shape-query");
-const auth = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 const { ManifestationDAO } = require("mv-models");
 class HashtagRoutes {
   static init(router) {
