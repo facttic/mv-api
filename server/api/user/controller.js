@@ -11,7 +11,8 @@ const {
 class UserController {
   async create(req, res, next) {
     try {
-      const user = req.body;
+      const user = req.body;      
+      delete user.cpassword;
       assert(_.isObject(user), "user is not a valid object.");
       const newUser = await UserDAO.createNew(user);
       res.status(201).json(newUser);
@@ -132,7 +133,7 @@ class UserController {
       const { email, password } = req.body;
       const user = await UserDAO.findByCredentials(email, password);
       if (!user) {
-        throw new AuthenticationError(401, "Login failed! Check authentication credentials");
+        throw new AuthenticationError(401, "Credenciales incorrectas");
       }
       const token = await user.generateAuthToken();
       res.send({ user, token });
