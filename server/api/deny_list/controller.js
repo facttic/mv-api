@@ -13,7 +13,7 @@ class DenyListController {
       assert(_.isObject(denyList), "DenyList is not a valid object.");
 
       const newDenyList = await DenyListDAO.createNew(denyList);
-      const removeResults = await PostDAO.removeByUserId(newDenyList.user_id_str, req.user._id);
+      const removeResults = await PostDAO.removeByUserIdStr(newDenyList.user_id_str, req.user._id);
 
       const cache = CacheConfig.get();
       cache.flushAll();
@@ -32,7 +32,7 @@ class DenyListController {
     try {
       const { manifestationId } = req.params;
 
-      const denyLists = await DenyListDAO.getAllByManifestationId(manifestationId);
+      const denyLists = await DenyListDAO.getAllByManifestationId(manifestationId, req.shapedQuery);
 
       res.status(200).json(denyLists);
     } catch (error) {

@@ -1,4 +1,5 @@
 const assert = require("assert");
+const { normalizeAndLogError } = require("../../helpers/errors");
 // const { Types } = require("mongoose");
 
 /**
@@ -21,8 +22,8 @@ const manifestationChild = async (req, res, next) => {
 
     next();
   } catch (err) {
-    console.error(err);
-    next(err);
+    const throwable = normalizeAndLogError("manifestationChild", req, err);
+    next(throwable);
   }
 };
 

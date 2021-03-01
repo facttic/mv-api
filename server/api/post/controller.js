@@ -66,8 +66,8 @@ class PostController {
 
       res.status(200).json(postDeleted);
     } catch (err) {
-      console.error(err);
-      next(err);
+      const throwable = normalizeAndLogError("manifestationChild", req, err);
+      next(throwable);
     }
   }
 }

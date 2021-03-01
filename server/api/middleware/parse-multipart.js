@@ -9,7 +9,6 @@ const parseMultipart = async (req, _res, next) => {
       const form = formidable({ multiples: true });
       const asyncParse = await pify(form.parse, { multiArgs: true }).bind(form);
       const [fields, files] = await asyncParse(req);
-      delete fields.id;
       req.body = fields;
       req.files = files;
     }
