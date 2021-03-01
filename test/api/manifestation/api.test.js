@@ -39,6 +39,52 @@ describe("manifestation", async function () {
           return "Bearer " + res.body.token.toString();
         });
     });
+
+    it("Should return 201 when admin trys to assing users to new manifestation", async function () {
+      const newManifestation = await factories.attrs("manifestation");
+      newManifestation.users_id = [this.user._id];
+      const token = this.adminToken;
+      await chai
+        .request(app)
+        .post("/api/manifestations")
+        .set("Authorization", token)
+        .send(newManifestation)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(201);
+        });
+    });
+
+    it("Should return 404 when admin trys to assing non existent users to new manifestation", async function () {
+      const newManifestation = await factories.attrs("manifestation");
+      newManifestation.users_id = ["603d479df7f5bc3e2c345dc7"];
+      const token = this.adminToken;
+      await chai
+        .request(app)
+        .post("/api/manifestations")
+        .set("Authorization", token)
+        .send(newManifestation)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(404);
+        });
+    });
+
+    it("Should return 404 when admin trys to assing non existent users to new manifestation", async function () {
+      const newManifestation = await factories.attrs("manifestation");
+      newManifestation.users_id = [this.admin._id];
+      const token = this.adminToken;
+      await chai
+        .request(app)
+        .post("/api/manifestations")
+        .set("Authorization", token)
+        .send(newManifestation)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(404);
+        });
+    });
+
     it("Should return 201 when admin try to create manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
       const token = this.adminToken;
@@ -81,6 +127,17 @@ describe("manifestation", async function () {
           expect(res).to.have.status(200);
         });
     });
+
+    it("Should return 404 when trys to get non existent manifestation", async function () {
+      const id = "603d479df7f5bc3e2c345dc0";
+      await chai
+        .request(app)
+        .get("/api/manifestations/" + id)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(404);
+        });
+    });
   });
 
   context("update", async function () {
@@ -110,6 +167,42 @@ describe("manifestation", async function () {
         .send({ email: this.admin.email, password: "adm1234abcd" })
         .then(async function (res) {
           return "Bearer " + res.body.token.toString();
+        });
+    });
+
+    it("Should return 404 when admin trys to assing non existent users to manifestation", async function () {
+      const manifestationEdit = await factories.attrs("manifestation");
+      const id = this.manifestation._id;
+      manifestationEdit.id = this.manifestation.id;
+      manifestationEdit.users_id = ["603d479df7f5bc3e2c345dc7"];
+      const token = this.adminToken;
+      await chai
+        .request(app)
+        .put("/api/manifestations/" + id)
+        .set("Authorization", token)
+        .send(manifestationEdit)
+        .then((res) => {
+          console.log(res.text);
+          expect(res).to.be.json;
+          expect(res).to.have.status(404);
+        });
+    });
+
+    it("Should return 200 when admin trys to assing users to manifestation", async function () {
+      const manifestationEdit = await factories.attrs("manifestation");
+      const id = this.manifestation._id;
+      manifestationEdit.id = this.manifestation.id;
+      manifestationEdit.users_id = [this.user._id];
+      const token = this.adminToken;
+      await chai
+        .request(app)
+        .put("/api/manifestations/" + id)
+        .set("Authorization", token)
+        .send(manifestationEdit)
+        .then((res) => {
+          console.log(res.text);
+          expect(res).to.be.json;
+          expect(res).to.have.status(201);
         });
     });
 
@@ -176,19 +269,19 @@ describe("manifestation", async function () {
     });
 
     it("Should return 201 when superadmin trys to update manifestation with a form", async function () {
-      const id = this.manifestation._id
+      const id = this.manifestation._id;
       const token = this.adminToken;
       //Este test solo trata de generar un form con 1 campo valido, debido a que el constructor del form
       //de chai es incompatible con el formato enviado del admin y esperado por el endpoint
       //Chai arma estructuras como 'sponsors[0][name]': 'Diebold Incorporated'
       //Admin arma estrutrucas como 'sponsors.0.name': 'Diebold Incorporated',
-      //Por lo tanto dejando incompatible el parser del update excepto por estructuras simples como name: 'Amy Fuller' 
+      //Por lo tanto dejando incompatible el parser del update excepto por estructuras simples como name: 'Amy Fuller'
       await chai
         .request(app)
         .put("/api/manifestations/" + id)
-        .type('form')
+        .type("form")
         .set("Authorization", token)
-        .send({title:"algo"})
+        .send({ title: "algo" })
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(201);
