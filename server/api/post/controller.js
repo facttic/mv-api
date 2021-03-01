@@ -57,10 +57,7 @@ class PostController {
         postId,
         req.user._id,
       );
-
-      if (!postDeleted) {
-        throw new NotFoundError(404, `Post not found with id ${postId}`);
-      }
+      
       const cache = CacheConfig.get();
       cache.flushAll();
 

@@ -14,6 +14,25 @@ describe("manifestation", async function () {
           expect(res).to.have.status(200);
         });
     });
+    it("Should return 200 when trys to get manifestations with query", async function () {
+      await chai
+        .request(app)
+        .get("/api/manifestations")
+        .query({perPage:1, page:1, sortBy:"_id"})
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(200);
+        });
+    });
+    it("Should return 422 when trys to get manifestations with wrong query", async function () {
+      await chai
+        .request(app)
+        .get("/api/manifestations")
+        .query({perPage:1, page:1, sortBy:"_id", query:""})
+        .then((res) => {
+          expect(res).to.have.status(422);
+        });
+    });
   });
 
   context("create", async function () {
@@ -182,7 +201,6 @@ describe("manifestation", async function () {
         .set("Authorization", token)
         .send(manifestationEdit)
         .then((res) => {
-          console.log(res.text);
           expect(res).to.be.json;
           expect(res).to.have.status(404);
         });
@@ -200,7 +218,6 @@ describe("manifestation", async function () {
         .set("Authorization", token)
         .send(manifestationEdit)
         .then((res) => {
-          console.log(res.text);
           expect(res).to.be.json;
           expect(res).to.have.status(201);
         });

@@ -59,17 +59,14 @@ class UserController {
       }
       res.status(200).json(user);
     } catch (err) {
-      console.error(err);
-      next(err);
+      const throwable = normalizeAndLogError("User", req, err);
+      next(throwable);
     }
   }
 
   async delete(req, res, next) {
     try {
       const userDeleted = await UserDAO.delete({ _id: req.params.userId }, req.user._id);
-      if (!userDeleted) {
-        throw new NotFoundError(404, `User not found with id ${req.params.userId}`);
-      }
       res.status(200).json(userDeleted);
     } catch (err) {
       const throwable = normalizeAndLogError("User", req, err);
