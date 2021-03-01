@@ -7,7 +7,7 @@ const { normalizeAndLogError } = require("../../helpers/errors");
  * And moves the value to params asi if the route would be have been
  * /manifestation/:manifestationId/resource
  */
-const manifestationChild = async (req, res, next) => {
+const manifestationChild = async (req, _res, next) => {
   try {
     const { manifestationId } = req.query;
 

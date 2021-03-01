@@ -59,8 +59,8 @@ async function assingUsers(manifestation) {
   }
 }
 
-function validateOwnership({ id, name }, { superadmin, manifestation_id }) {
-  if (!superadmin && (!manifestation_id || id.toString() !== manifestation_id.toString())) {
+function validateOwnership({ id, name }, { superadmin, manifestation_id: manifestationId }) {
+  if (!superadmin && (!manifestationId || id.toString() !== manifestationId.toString())) {
     throw new PermissionError(403, `No tiene permisos de edición para la manifestación ${name}`);
   }
 }
