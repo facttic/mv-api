@@ -12,7 +12,7 @@ describe("user", () => {
       this.userToken = await chai
         .request(app)
         .post("/api/users/login")
-        .send({ email:this.user.email, password:"1234abcd" })
+        .send({ email: this.user.email, password: "1234abcd" })
         .then((res) => {
           return "Bearer " + res.body.token.toString();
         });
@@ -90,20 +90,20 @@ describe("user", () => {
     });
 
     it("Should return error when use an invalid token", async function () {
-      const token = this.userToken        
+      const token = this.userToken;
       await chai
-      .request(app)
-      .post("/api/users/me/logout")
-      .set("Authorization", token)
-      .then(async (res) => {
-        return await chai
-          .request(app)
-          .post("/api/users/me")
-          .set("Authorization", token)
-          .then((res) => {
-            expect(res).to.have.status(401);
-          });
-      });
+        .request(app)
+        .post("/api/users/me/logout")
+        .set("Authorization", token)
+        .then(async () => {
+          return await chai
+            .request(app)
+            .post("/api/users/me")
+            .set("Authorization", token)
+            .then((res) => {
+              expect(res).to.have.status(401);
+            });
+        });
     });
   });
   context("update", () => {

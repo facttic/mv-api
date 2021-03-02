@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-expressions */
 const { expect } = require("chai");
 const chai = require("chai");
 const { factories } = require("mv-models");
 const app = require("../../../server/server");
+const fs = require("fs");
 
 describe("manifestation", async function () {
   context("obtain_all", async function () {
@@ -18,7 +20,7 @@ describe("manifestation", async function () {
       await chai
         .request(app)
         .get("/api/manifestations")
-        .query({perPage:1, page:1, sortBy:"_id"})
+        .query({ perPage: 1, page: 1, sortBy: "_id" })
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(200);
@@ -28,7 +30,7 @@ describe("manifestation", async function () {
       await chai
         .request(app)
         .get("/api/manifestations")
-        .query({perPage:1, page:1, sortBy:"_id", query:""})
+        .query({ perPage: 1, page: 1, sortBy: "_id", query: "" })
         .then((res) => {
           expect(res).to.have.status(422);
         });
@@ -160,6 +162,7 @@ describe("manifestation", async function () {
   });
 
   context("update", async function () {
+    this.timeout(10000);
     beforeEach(async function () {
       this.manifestation = await factories.create("manifestation");
       this.manifestationWithoutUser = await factories.create("manifestation");
@@ -288,11 +291,30 @@ describe("manifestation", async function () {
     it("Should return 201 when superadmin trys to update manifestation with a form", async function () {
       const id = this.manifestation._id;
       const token = this.adminToken;
-      //Este test solo trata de generar un form con 1 campo valido, debido a que el constructor del form
-      //de chai es incompatible con el formato enviado del admin y esperado por el endpoint
-      //Chai arma estructuras como 'sponsors[0][name]': 'Diebold Incorporated'
-      //Admin arma estrutrucas como 'sponsors.0.name': 'Diebold Incorporated',
-      //Por lo tanto dejando incompatible el parser del update excepto por estructuras simples como name: 'Amy Fuller'
+      await chai
+        .request(app)
+        .put("/api/manifestations/" + id)
+        .type("form")
+        .attach(
+          "images.header.rawFile",
+          fs.readFileSync("./test/api/assets/dummy.png"),
+          "avatar.png",
+        )
+        .set("Authorization", token)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(201);
+        });
+    });
+
+    it("Should return 201 when superadmin trys to update manifestation with a form", async function () {
+      const id = this.manifestation._id;
+      const token = this.adminToken;
+      // Este test solo trata de generar un form con 1 campo valido, debido a que el constructor del form
+      // de chai es incompatible con el formato enviado del admin y esperado por el endpoint
+      // Chai arma estructuras como 'sponsors[0][name]': 'Diebold Incorporated'
+      // Admin arma estrutrucas como 'sponsors.0.name': 'Diebold Incorporated',
+      // Por lo tanto dejando incompatible el parser del update excepto por estructuras simples como name: 'Amy Fuller'
       await chai
         .request(app)
         .put("/api/manifestations/" + id)

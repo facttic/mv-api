@@ -14,7 +14,6 @@ function cleanupStructure(manifestation) {
   const keys = Object.keys(manifestation);
   for (let i = 0; i < keys.length; i++) {
     if (keys[i].includes("id")) {
-      console.log("cleaned", keys[i]);
       delete manifestation[keys[i]];
     }
   }
