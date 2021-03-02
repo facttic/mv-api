@@ -3,5 +3,5 @@ node_modules
 .env.prod
 coverage
 .nyc_output
-public/*
-!public/.gitkeep
+server/public/*
+!server/public/.gitkeep
