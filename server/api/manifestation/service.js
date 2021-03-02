@@ -73,8 +73,17 @@ async function processFiles(manifestation, files) {
   // TODO: check for multifiles upload
   // and iterate over the results
   for (const file in files) {
-    const uploadResults = await s3.client.write(files[file].path);
-    const src = seaweedHelper.parseResultsToSrc(uploadResults);
+    let uploadResults;
+    let src;
+    try {
+      uploadResults = await s3.client.write(files[file].path);
+      src = seaweedHelper.parseResultsToSrc(uploadResults);
+    } catch (error) {
+      if (!error.message || !error.message.includes("ECONNREFUSED")) {
+        throw error;
+      }
+      src = "images_server_down";
+    }
     // file is a string shaped like path
     // E.g.: images.og.twitter
     _.set(manifestation, file, { src });
