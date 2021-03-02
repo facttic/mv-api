@@ -63,7 +63,7 @@ describe("manifestation", async function () {
 
     it("Should return 201 when admin trys to assing users to new manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
-      newManifestation.users_id = [this.user._id];
+      newManifestation.userIds = [this.user._id];
       const token = this.adminToken;
       await chai
         .request(app)
@@ -78,7 +78,7 @@ describe("manifestation", async function () {
 
     it("Should return 404 when admin trys to assing non existent users to new manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
-      newManifestation.users_id = ["603d479df7f5bc3e2c345dc7"];
+      newManifestation.userIds = ["603d479df7f5bc3e2c345dc7"];
       const token = this.adminToken;
       await chai
         .request(app)
@@ -93,7 +93,7 @@ describe("manifestation", async function () {
 
     it("Should return 404 when admin trys to assing non existent users to new manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
-      newManifestation.users_id = [this.admin._id];
+      newManifestation.userIds = [this.admin._id];
       const token = this.adminToken;
       await chai
         .request(app)
@@ -196,7 +196,7 @@ describe("manifestation", async function () {
       const manifestationEdit = await factories.attrs("manifestation");
       const id = this.manifestation._id;
       manifestationEdit.id = this.manifestation.id;
-      manifestationEdit.users_id = ["603d479df7f5bc3e2c345dc7"];
+      manifestationEdit.userIds = ["603d479df7f5bc3e2c345dc7"];
       const token = this.adminToken;
       await chai
         .request(app)
@@ -213,7 +213,7 @@ describe("manifestation", async function () {
       const manifestationEdit = await factories.attrs("manifestation");
       const id = this.manifestation._id;
       manifestationEdit.id = this.manifestation.id;
-      manifestationEdit.users_id = [this.user._id];
+      manifestationEdit.userIds = [this.user._id];
       const token = this.adminToken;
       await chai
         .request(app)

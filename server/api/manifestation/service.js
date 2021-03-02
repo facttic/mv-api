@@ -50,8 +50,8 @@ function processArrayFields(manifestation) {
 }
 
 async function assingUsers(manifestation) {
-  const usersId = manifestation.users_id;
-  delete manifestation.users_id;
+  const usersId = manifestation.userIds;
+  delete manifestation.userIds;
   // remove manifestations from all users that have it
   const usersWithThisManifestation = await UserDAO.find({
     manifestation_id: manifestation.id,
