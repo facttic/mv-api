@@ -78,7 +78,6 @@ async function assingUsers(manifestation) {
   delete manifestation.userIds;
   const users = await UserDAO.getManyByIds(usersIds);
   validateUsersId(usersIds, users);
-  // remove manifestations from all users that have it
   const usersWithThisManifestation = await UserDAO.find({
     manifestation_id: manifestation.id,
   });
@@ -86,12 +85,9 @@ async function assingUsers(manifestation) {
   usersWithThisManifestation.forEach(async (user) => {
     uids.push(user._id);
   });
-  // re assigns users selected
-
+  // remove manifestations from all users that have it
   await UserDAO.udpateToMany(uids, { manifestation_id: null });
-  users.forEach((user) => {
-    user.manifestation_id = manifestation.id;
-  });
+  // re assigns users selected
   await UserDAO.udpateToMany(usersIds, { manifestation_id: manifestation.id });
 }
 
