@@ -2,6 +2,7 @@ const http = require("http");
 const express = require("express");
 const config = require("config");
 const MvModels = require("mv-models");
+const path = require("path");
 
 const { RoutesConfig } = require("./routes");
 const { CacheConfig } = require("./common/cache");
@@ -14,6 +15,9 @@ const apiHost = config.get("api.host") || "localhost";
 const dbUri = dbHelper.getDbUri(config);
 
 const app = express();
+const dir = path.join(__dirname, "public");
+
+app.use(express.static(dir));
 
 (async () => {
   try {
