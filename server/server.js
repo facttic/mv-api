@@ -15,7 +15,7 @@ const apiHost = config.get("api.host") || "localhost";
 const dbUri = dbHelper.getDbUri(config);
 
 const app = express();
-const dir = path.join(__dirname, "..", "public");
+const dir = path.join(__dirname, "public");
 
 app.use("/pubresources", express.static(dir));
 

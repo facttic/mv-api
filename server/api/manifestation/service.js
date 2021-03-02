@@ -88,7 +88,7 @@ async function processFiles(manifestation, files) {
         throw error;
       }
       const fileName = `${shorthash(files[file].name)}${path.extname(files[file].name)}`;
-      await pify(mv)(files[file].path, path.join(__dirname, "../../..", "public", fileName));
+      await pify(mv)(files[file].path, path.join(__dirname, "../..", "public", fileName));
       src = `${config.get("api.public")}/pubresources/${fileName}`;
     }
 
