@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 const { expect } = require("chai");
 const chai = require("chai");
 const { factories } = require("mv-models");
@@ -45,35 +46,33 @@ describe("deny_list", () => {
     });
 
     it("Should return 401 when try to create a deny_list without login", async function () {
-      const deny_list = await factories.attrs("deny_list");
+      const denyList = await factories.attrs("deny_list");
 
       await chai
         .request(app)
         .post("/api/deny_lists")
-        .send(deny_list)
+        .send(denyList)
         .then((res) => {
           expect(res).to.have.status(401);
         });
     });
 
     it("Should return 200 when try to create a deny_list", async function () {
-      const deny_list = await factories.attrs("deny_list");
-      const posts = await factories.createMany("post", 10, {
-        "user.id_str": deny_list.user_id_str,
+      const denyList = await factories.attrs("deny_list");
+      await factories.createMany("post", 10, {
+        "user.id_str": denyList.user_id_str,
       });
       const token = this.userToken;
       await chai
         .request(app)
         .post("/api/deny_lists")
         .set("Authorization", token)
-        .send(deny_list)
+        .send(denyList)
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(201);
         });
     });
-
-
   });
 
   context("obtain_one", () => {
@@ -153,5 +152,4 @@ describe("deny_list", () => {
         });
     });
   });
-
 });

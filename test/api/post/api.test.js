@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 const { expect } = require("chai");
 const chai = require("chai");
 const { factories } = require("mv-models");
