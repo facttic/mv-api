@@ -49,27 +49,50 @@ function processArrayFields(manifestation) {
   }
 }
 
+function validateUsersId(userIds, users) {
+  if (userIds && userIds.length !== users.length) {
+    let idNotFound = "";
+    userIds.forEach((userId) => {
+      let found = false;
+      users.forEach((user) => {
+        found = userId.toString() === user._id.toString();
+      });
+      if (!found) {
+        idNotFound = userId;
+      }
+    });
+    throw new NotFoundError(404, `User not found with id ${idNotFound}`);
+  }
+  users.forEach((user) => {
+    if (user.superadmin) {
+      throw new NotFoundError(
+        404,
+        `User ${user.name} is not eligible for this manifestation, please select other`,
+      );
+    }
+  });
+}
+
 async function assingUsers(manifestation) {
-  const usersId = manifestation.userIds;
+  const usersIds = manifestation.userIds;
   delete manifestation.userIds;
+  const users = await UserDAO.getManyByIds(usersIds);
+  validateUsersId(usersIds, users);
   // remove manifestations from all users that have it
   const usersWithThisManifestation = await UserDAO.find({
     manifestation_id: manifestation.id,
   });
-  for (const i in usersWithThisManifestation) {
-    const user = usersWithThisManifestation[i];
-    user.manifestation_id = null;
-    await UserDAO.udpate(user._id, user);
-  }
+  const uids = [];
+  usersWithThisManifestation.forEach(async (user) => {
+    uids.push(user._id);
+  });
   // re assigns users selected
-  for (const i in usersId) {
-    const user = await UserDAO.getById(usersId[i]);
-    if (!user) {
-      throw new NotFoundError(404, `User not found with id ${usersId[i]}`);
-    }
+
+  await UserDAO.udpateToMany(uids, { manifestation_id: null });
+  users.forEach((user) => {
     user.manifestation_id = manifestation.id;
-    await UserDAO.udpate(user._id, user);
-  }
+  });
+  await UserDAO.udpateToMany(usersIds, { manifestation_id: manifestation.id });
 }
 
 function validateOwnership({ id, name }, { superadmin, manifestation_id: manifestationId }) {
@@ -112,4 +135,5 @@ module.exports = {
   processArrayFields,
   processFiles,
   cleanupStructure,
+  validateUsersId,
 };

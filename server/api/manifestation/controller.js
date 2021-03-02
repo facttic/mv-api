@@ -13,33 +13,9 @@ class ManifestationController {
       const users = await UserDAO.getManyByIds(userIds);
       delete manifestation.userIds;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-      if (userIds && userIds.length !== users.length) {
-        let idNotFound = "";
-        userIds.forEach((userId) => {
-          let found = false;
-          users.forEach((user) => {
-            found = userId.toString() === user._id.toString();
-          });
-          if (!found) {
-            idNotFound = userId;
-          }
-        });
-        throw new NotFoundError(404, `User not found with id ${idNotFound}`);
-      }
-      users.forEach((user) => {
-        if (user.superadmin) {
-          throw new NotFoundError(
-            404,
-            `User ${user.name} is not eligible for this manifestation, please select other`,
-          );
-        }
-      });
+      manifestationService.validateUsersId(userIds, users);
       const newManifestation = await ManifestationDAO.createNew(manifestation);
-      for (const i in users) {
-        const user = users[i];
-        user.manifestation_id = newManifestation._id;
-      }
-      await UserDAO.udpateToMany(userIds, users);
+      await UserDAO.udpateToMany(userIds, { manifestation_id: newManifestation._id });
       res.status(201).json(newManifestation);
     } catch (error) {
       const throwable = normalizeAndLogError("Manifestation", req, error);
