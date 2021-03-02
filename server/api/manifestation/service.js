@@ -1,7 +1,6 @@
 const _ = require("lodash");
 const { _destroy } = require("bunyan-format");
 const { UserDAO } = require("mv-models");
-const fs = require("fs").promises;
 const path = require("path");
 const config = require("config");
 const shorthash = require("shorthash2");
