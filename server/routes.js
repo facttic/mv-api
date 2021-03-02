@@ -4,6 +4,7 @@ const express = require("express");
 const compression = require("compression");
 const zlib = require("zlib");
 const cors = require("cors");
+const path = require("path");
 
 const { HashtagRoutes } = require("./api/hashtag/routes");
 const { UserRoutes } = require("./api/user/routes");
@@ -15,6 +16,8 @@ const { handleError } = require("./helpers/errors");
 
 class RoutesConfig {
   static init(app, router) {
+    const dir = path.join(__dirname, "public");
+
     app.use(
       compression({
         level: zlib.Z_BEST_COMPRESSION,
@@ -34,6 +37,7 @@ class RoutesConfig {
     ManifestationRoutes.init(router);
 
     app.use("/api", router);
+    app.use("/pubresources", express.static(dir));
 
     app.use(handleError);
   }
