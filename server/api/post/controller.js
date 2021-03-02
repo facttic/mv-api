@@ -57,17 +57,14 @@ class PostController {
         postId,
         req.user._id,
       );
-
-      if (!postDeleted) {
-        throw new NotFoundError(404, `Post not found with id ${postId}`);
-      }
+      
       const cache = CacheConfig.get();
       cache.flushAll();
 
       res.status(200).json(postDeleted);
     } catch (err) {
-      console.error(err);
-      next(err);
+      const throwable = normalizeAndLogError("manifestationChild", req, err);
+      next(throwable);
     }
   }
 }

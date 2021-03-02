@@ -1,4 +1,7 @@
 const assert = require("assert");
+const {
+  normalizeAndLogError,
+} = require("../../helpers/errors");
 
 const fieldIsContainedInModelKeys = (keys, field) => {
   const normalizedField = field.replace(/^-/, "");
@@ -71,9 +74,9 @@ const shapeQuery = (model) => async (req, res, next) => {
       query: regexQuery,
     };
     next();
-  } catch (err) {
-    console.error(err);
-    next(err);
+  } catch (error) {
+    const throwable = normalizeAndLogError("User", req, error);
+    next(throwable);
   }
 };
 

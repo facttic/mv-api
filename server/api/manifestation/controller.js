@@ -9,14 +9,14 @@ class ManifestationController {
   async create(req, res, next) {
     try {
       const manifestation = req.body;
-      const userId = manifestation.user;
+      const usersId = manifestation.users_id;
       const users = [];
-      delete manifestation.user;
+      delete manifestation.users_id;
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
-      for (const i in userId) {
-        const user = await UserDAO.getById(userId[i]);
+      for (const i in usersId) {
+        const user = await UserDAO.getById(usersId[i]);
         if (!user) {
-          throw new NotFoundError(404, `User not found with id ${userId}`);
+          throw new NotFoundError(404, `User not found with id ${usersId[i]}`);
         }
         if (user.superadmin) {
           throw new NotFoundError(
@@ -59,12 +59,6 @@ class ManifestationController {
         { _id: req.params.manifestationId },
         req.user._id,
       );
-      if (!manifestationDeleted) {
-        throw new NotFoundError(
-          404,
-          `Manifestation not found with id ${req.params.manifestationId}`,
-        );
-      }
       res.status(200).json(manifestationDeleted);
     } catch (err) {
       const throwable = normalizeAndLogError("Manifestation", req, err);

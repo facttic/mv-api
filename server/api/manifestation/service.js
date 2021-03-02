@@ -15,8 +15,6 @@ function parseFieldToArrayElement(object, key, value) {
     newObject[keys[2]] = value;
     object[keys[0]].push(newObject);
   }
-  console.log("PARSE", { key, value });
-  console.log("object", object);
 }
 
 function processArrayFields(manifestation) {
