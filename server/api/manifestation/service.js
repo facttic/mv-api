@@ -10,6 +10,16 @@ const s3Service = require("../../common/s3");
 const seaweedHelper = require("../../helpers/seaweed");
 const { NotFoundError, PermissionError } = require("../../helpers/errors");
 
+function cleanupStructure(manifestation) {
+  const keys = Object.keys(manifestation);
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i].includes("id")) {
+      console.log("cleaned", keys[i]);
+      delete manifestation[keys[i]];
+    }
+  }
+}
+
 function parseFieldToArrayElement(object, key, value) {
   const keys = key.split(".");
   if (object[keys[0]][parseInt(keys[1])]) {
@@ -76,6 +86,7 @@ async function processFiles(manifestation, files) {
   // and iterate over the results
   for (const file in files) {
     let uploadResults;
+    const renamedFile = file.toString().replace("rawFile", "src");
     let src;
     try {
       uploadResults = await s3.client.write(files[file].path);
@@ -92,7 +103,7 @@ async function processFiles(manifestation, files) {
       src = `${config.get("api.public")}/pubresources/${fileName}`;
     }
 
-    _.set(manifestation, file, { src });
+    _.set(manifestation, renamedFile, src);
   }
 }
 
@@ -101,4 +112,5 @@ module.exports = {
   validateOwnership,
   processArrayFields,
   processFiles,
+  cleanupStructure,
 };
