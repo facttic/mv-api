@@ -2,7 +2,8 @@
   "api": {
     "jwtKey": "an_encription_key",
     "host": "localhost",
-    "port": 3333
+    "port": 3333,
+    "public": "http://localhost:3333"
   },
   "db": {
     "host": "localhost",
