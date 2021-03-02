@@ -1,5 +1,4 @@
 const _ = require("lodash");
-const { _destroy } = require("bunyan-format");
 const { UserDAO } = require("mv-models");
 const path = require("path");
 const config = require("config");
