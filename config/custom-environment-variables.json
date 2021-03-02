@@ -2,7 +2,8 @@
   "api": {
     "jwtKey": "API_JWT_KEY",
     "host": "API_HOST",
-    "port": "API_PORT"
+    "port": "API_PORT",
+    "public": "API_PUBLIC"
   },
   "db": {
     "host": "DB_HOST",

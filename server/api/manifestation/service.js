@@ -1,6 +1,10 @@
 const _ = require("lodash");
 const { _destroy } = require("bunyan-format");
 const { UserDAO } = require("mv-models");
+const fs = require("fs").promises;
+const path = require("path");
+const config = require("config");
+const shorthash = require("shorthash2");
 
 const s3Service = require("../../common/s3");
 const seaweedHelper = require("../../helpers/seaweed");
@@ -77,13 +81,17 @@ async function processFiles(manifestation, files) {
       uploadResults = await s3.client.write(files[file].path);
       src = seaweedHelper.parseResultsToSrc(uploadResults);
     } catch (error) {
+      // if the file server is down
+      // move to local public static served folder
+      // and use that as source
       if (!error.message || !error.message.includes("ECONNREFUSED")) {
         throw error;
       }
-      src = "images_server_down";
+      const fileName = `${shorthash(files[file].name)}${path.extname(files[file].name)}`;
+      await fs.rename(files[file].path, path.join(__dirname, "../../..", "public", fileName));
+      src = `${config.get("api.public")}/pubresources/${fileName}`;
     }
-    // file is a string shaped like path
-    // E.g.: images.og.twitter
+
     _.set(manifestation, file, { src });
   }
 }
