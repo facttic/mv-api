@@ -9,6 +9,13 @@ describe("user", () => {
       this.user = await factories.create("user", { password: "1234abcd" });
       this.userLogin = async (email = this.user.email, password = "1234abcd") =>
         await chai.request(app).post("/api/users/login").send({ email, password });
+      this.userToken = await chai
+        .request(app)
+        .post("/api/users/login")
+        .send({ email:this.user.email, password:"1234abcd" })
+        .then((res) => {
+          return "Bearer " + res.body.token.toString();
+        });
     });
 
     it("Should login and return 200 and a token if a existing username and password are provided", async function () {
@@ -73,13 +80,30 @@ describe("user", () => {
       });
     });
 
-    it("Should return error when trys logout without token", async function () {
+    it("Should return 401 error when trys logout without token", async function () {
       await chai
         .request(app)
         .post("/api/users/me/logout")
         .then((res) => {
           expect(res).to.have.status(401);
         });
+    });
+
+    it("Should return error when use an invalid token", async function () {
+      const token = this.userToken        
+      await chai
+      .request(app)
+      .post("/api/users/me/logout")
+      .set("Authorization", token)
+      .then(async (res) => {
+        return await chai
+          .request(app)
+          .post("/api/users/me")
+          .set("Authorization", token)
+          .then((res) => {
+            expect(res).to.have.status(401);
+          });
+      });
     });
   });
   context("update", () => {
