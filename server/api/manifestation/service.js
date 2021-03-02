@@ -1,10 +1,11 @@
 const _ = require("lodash");
 const { _destroy } = require("bunyan-format");
 const { UserDAO } = require("mv-models");
-const fs = require("fs").promises;
 const path = require("path");
 const config = require("config");
 const shorthash = require("shorthash2");
+const pify = require("pify");
+const mv = require("mv");
 
 const s3Service = require("../../common/s3");
 const seaweedHelper = require("../../helpers/seaweed");
@@ -88,7 +89,7 @@ async function processFiles(manifestation, files) {
         throw error;
       }
       const fileName = `${shorthash(files[file].name)}${path.extname(files[file].name)}`;
-      await fs.rename(files[file].path, path.join(__dirname, "../../..", "public", fileName));
+      await pify(mv)(files[file].path, path.join(__dirname, "../../..", "public", fileName));
       src = `${config.get("api.public")}/pubresources/${fileName}`;
     }
 
