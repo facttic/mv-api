@@ -78,7 +78,7 @@ describe("manifestation", async function () {
 
     it("Should return 404 when admin trys to assing non existent users to new manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
-      newManifestation.userIds = ["603d479df7f5bc3e2c345dc7"];
+      newManifestation.userIds = ["603d479df7f5bc3e2c345dc7", this.user._id];
       const token = this.adminToken;
       await chai
         .request(app)
@@ -91,7 +91,7 @@ describe("manifestation", async function () {
         });
     });
 
-    it("Should return 404 when admin trys to assing non existent users to new manifestation", async function () {
+    it("Should return 404 when admin trys to assing admin user to new manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
       newManifestation.userIds = [this.admin._id];
       const token = this.adminToken;
