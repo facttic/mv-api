@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 const { expect } = require("chai");
 const chai = require("chai");
 const { factories } = require("mv-models");
@@ -76,10 +77,10 @@ describe("hashtag", () => {
     it("Should return 200 when user delete hashtag", async function () {
       const id = this.manifestation._id;
       const hashtagId = this.manifestation.hashtags[0]._id;
-      const token = this.userToken;      
+      const token = this.userToken;
       await chai
         .request(app)
-        .delete("/api/manifestations/" + id + "/hashtags/" +hashtagId)
+        .delete("/api/manifestations/" + id + "/hashtags/" + hashtagId)
         .set("Authorization", token)
         .then((res) => {
           expect(res).to.have.status(200);
@@ -89,10 +90,10 @@ describe("hashtag", () => {
     it("Should return 404 when user delete non existent hashtag", async function () {
       const id = this.manifestation._id;
       const hashtagId = "not id";
-      const token = this.userToken;      
+      const token = this.userToken;
       await chai
         .request(app)
-        .delete("/api/manifestations/" + id + "/hashtags/" +hashtagId)
+        .delete("/api/manifestations/" + id + "/hashtags/" + hashtagId)
         .set("Authorization", token)
         .then((res) => {
           expect(res).to.have.status(404);
@@ -102,10 +103,9 @@ describe("hashtag", () => {
     it("Should return 401 when not logged  user try delete hashtag", async function () {
       const id = this.manifestation._id;
       const hashtagId = this.manifestation.hashtags[0]._id;
-      const token = this.userToken;      
       await chai
         .request(app)
-        .delete("/api/manifestations/" + id + "/hashtags/" +hashtagId)
+        .delete("/api/manifestations/" + id + "/hashtags/" + hashtagId)
         .then((res) => {
           expect(res).to.have.status(401);
         });
@@ -133,7 +133,7 @@ describe("hashtag", () => {
       editedHashtag.name = "changed";
       await chai
         .request(app)
-        .put("/api/manifestations/" + id + "/hashtags/" +hashtagId)
+        .put("/api/manifestations/" + id + "/hashtags/" + hashtagId)
         .set("Authorization", token)
         .send(editedHashtag)
         .then((res) => {
@@ -149,7 +149,7 @@ describe("hashtag", () => {
       editedHashtag.name = "changed";
       await chai
         .request(app)
-        .put("/api/manifestations/" + id + "/hashtags/" +hashtagId)
+        .put("/api/manifestations/" + id + "/hashtags/" + hashtagId)
         .send(editedHashtag)
         .then((res) => {
           expect(res).to.have.status(401);
@@ -164,7 +164,7 @@ describe("hashtag", () => {
       editedHashtag.name = "changed";
       await chai
         .request(app)
-        .put("/api/manifestations/" + id + "/hashtags/" +hashtagId)
+        .put("/api/manifestations/" + id + "/hashtags/" + hashtagId)
         .set("Authorization", token)
         .send(editedHashtag)
         .then((res) => {

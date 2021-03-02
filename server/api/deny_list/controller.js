@@ -20,7 +20,7 @@ class DenyListController {
 
       res.status(201).json({
         inserted: newDenyList,
-        removedPostsCount: removeResults.nModified,
+        removedPostsCount: removeResults || 0,
       });
     } catch (error) {
       const throwable = normalizeAndLogError("DenyList", req, error);
@@ -57,7 +57,10 @@ class DenyListController {
   }
 
   async update(req, res, next) {
-    try {
+/*    por el momento no se usa, queda comentado por si en algun momento se desea
+      hacer update de un denylist.
+
+      try {
       if (!req.body.name) {
         throw new BadRequestError(400, "DenyList content can not be empty");
       }
@@ -78,7 +81,7 @@ class DenyListController {
     } catch (error) {
       const throwable = normalizeAndLogError("DenyList", req, error);
       next(throwable);
-    }
+    } */
   }
 
   async delete(req, res, next) {

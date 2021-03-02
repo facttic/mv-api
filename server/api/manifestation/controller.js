@@ -102,6 +102,9 @@ class ManifestationController {
       // 3. Subir y asociar imágenes
       req.files && (await manifestationService.processFiles(manifestation, req.files));
 
+      // 4. Limpia todos los datos que no concuerdan con el schema
+      manifestationService.cleanupStructure(manifestation);
+
       const updatedManifestation = await ManifestationDAO.udpate(
         params.manifestationId,
         manifestation,
