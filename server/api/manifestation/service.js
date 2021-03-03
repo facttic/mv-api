@@ -20,17 +20,13 @@ function cleanupStructure(manifestation) {
 }
 
 function processArrayFields(manifestation) {
-  const arrayValues = { sponsors: [], hashtags: [] };
   const keys = Object.keys(manifestation);
   const values = Object.values(manifestation);
-
+  const parsedManifestaion = {};
   for (let i = 0; i < keys.length; i++) {
-    // detects data of sponsors and hashtags.
-    if (keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
-      // Parse fields like sponsors.0.name to array element.
-      _.set(arrayValues, keys[i], values[i]);
-    }
+    _.setWith(parsedManifestaion, keys[i], values[i], {});
   }
+  return parsedManifestaion;
 }
 
 function validateUsersId(userIds, users) {

@@ -68,7 +68,7 @@ class ManifestationController {
 
   async update(req, res, next) {
     try {
-      const { body: manifestation, user, params } = req;
+      let { body: manifestation, user, params } = req;
 
       assert(_.isObject(manifestation), "Manifestation is not a valid object.");
 
@@ -81,7 +81,7 @@ class ManifestationController {
         (await manifestationService.assingUsers(manifestation));
 
       // 2. Procesar campos tipo Array: sponsors y hashtags
-      manifestationService.processArrayFields(manifestation);
+      manifestation = manifestationService.processArrayFields(manifestation);
 
       // 3. Subir y asociar imágenes
       req.files && (await manifestationService.processFiles(manifestation, req.files));
