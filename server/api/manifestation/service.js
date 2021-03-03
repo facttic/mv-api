@@ -19,32 +19,16 @@ function cleanupStructure(manifestation) {
   }
 }
 
-function parseFieldToArrayElement(object, key, value) {
-  const keys = key.split(".");
-  if (object[keys[0]][parseInt(keys[1])]) {
-    object[keys[0]][parseInt(keys[1])][keys[2]] = value;
-  } else {
-    const newObject = {};
-    newObject[keys[2]] = value;
-    object[keys[0]].push(newObject);
-  }
-}
-
 function processArrayFields(manifestation) {
   const arrayValues = { sponsors: [], hashtags: [] };
   const keys = Object.keys(manifestation);
   const values = Object.values(manifestation);
 
   for (let i = 0; i < keys.length; i++) {
-    // ignores data of sponsors and hashtags.
-    if (!keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
-      const value = values[i];
-      const vquery = {};
-      vquery[keys[i]] = value;
-      // await ManifestationDAO.udpate(req.params.manifestationId, vquery);
-    } else {
+    // detects data of sponsors and hashtags.
+    if (keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
       // Parse fields like sponsors.0.name to array element.
-      parseFieldToArrayElement(arrayValues, keys[i], values[i]);
+      _.set(arrayValues, keys[i], values[i]);
     }
   }
 }

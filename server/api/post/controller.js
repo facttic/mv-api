@@ -4,7 +4,7 @@ const assert = require("assert");
 const { PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../common/cache");
 
-const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
+const { normalizeAndLogError } = require("../../helpers/errors");
 
 class PostController {
   /**
