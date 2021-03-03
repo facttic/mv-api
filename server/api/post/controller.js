@@ -52,12 +52,12 @@ class PostController {
     try {
       const { manifestationId, postId } = req.params;
 
-      const postDeleted = await PostDAO.removeByManifestationId(
+      const postDeleted = await PostDAO.removeByIdByManifestationId(
         manifestationId,
         postId,
         req.user._id,
       );
-      
+
       const cache = CacheConfig.get();
       cache.flushAll();
 

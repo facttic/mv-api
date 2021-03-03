@@ -12,7 +12,7 @@ const {
 class UserController {
   async create(req, res, next) {
     try {
-      const user = req.body;      
+      const user = req.body;
       delete user.cpassword;
       assert(_.isObject(user), "user is not a valid object.");
       const newUser = await UserDAO.createNew(user);
@@ -79,7 +79,9 @@ class UserController {
       const user = req.body;
       delete user.manifestation_id;
       assert(_.isObject(user), "User is not a valid object.");
-      if(!user.id){throw new BadRequestError(400, "Se necesita el id del usuario")}
+      if (!user.id) {
+        throw new BadRequestError(400, "Se necesita el id del usuario");
+      }
       const actualUser = await UserDAO.findById(user.id);
       if (user.superadmin && actualUser.manifestation_id) {
         throw new NotFoundError(
@@ -95,7 +97,7 @@ class UserController {
     }
   }
 
-  async userProfile(req, res, next) {
+  async userProfile(req, res) {
     // View logged in user profile
     res.status(201).json(req.user);
   }
