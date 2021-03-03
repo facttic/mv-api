@@ -24,7 +24,7 @@ function processArrayFields(manifestation) {
   const values = Object.values(manifestation);
   const parsedManifestaion = {};
   for (let i = 0; i < keys.length; i++) {
-    _.setWith(parsedManifestaion, keys[i], values[i], {});
+    _.set(parsedManifestaion, keys[i], values[i]);
   }
   return parsedManifestaion;
 }
