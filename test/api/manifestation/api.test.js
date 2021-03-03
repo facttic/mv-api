@@ -308,19 +308,15 @@ describe("manifestation", async function () {
     });
 
     it("Should return 201 when superadmin trys to update manifestation with a form", async function () {
+      const manifestation = await factories.attrs("manifestation");
       const id = this.manifestation._id;
       const token = this.adminToken;
-      // Este test solo trata de generar un form con 1 campo valido, debido a que el constructor del form
-      // de chai es incompatible con el formato enviado del admin y esperado por el endpoint
-      // Chai arma estructuras como 'sponsors[0][name]': 'Diebold Incorporated'
-      // Admin arma estrutrucas como 'sponsors.0.name': 'Diebold Incorporated',
-      // Por lo tanto dejando incompatible el parser del update excepto por estructuras simples como name: 'Amy Fuller'
       await chai
         .request(app)
         .put("/api/manifestations/" + id)
         .type("form")
         .set("Authorization", token)
-        .send({ title: "algo" })
+        .send(manifestation)
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(201);
