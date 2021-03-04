@@ -56,8 +56,8 @@ class DenyListController {
     }
   }
 
-  //  async update(req, res, next) {
-  /*    por el momento no se usa, queda comentado por si en algun momento se desea
+  async update(req, res, next) {
+    /*    por el momento no se usa, queda comentado por si en algun momento se desea
       hacer update de un denylist.
 
       try {
@@ -82,7 +82,7 @@ class DenyListController {
       const throwable = normalizeAndLogError("DenyList", req, error);
       next(throwable);
     } */
-  //  }
+  }
 
   async delete(req, res, next) {
     try {

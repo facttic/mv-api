@@ -6,6 +6,9 @@ const app = require("../../../server/server");
 const fs = require("fs");
 
 describe("manifestation", async function () {
+  beforeEach(async function () {
+    this.manifestation = await factories.create("manifestation");
+  });
   context("obtain_all", async function () {
     it("Should return 200 when trys to get manifestations", async function () {
       await chai
@@ -33,6 +36,28 @@ describe("manifestation", async function () {
         .query({ perPage: 1, page: 1, sortBy: "_id", query: "" })
         .then((res) => {
           expect(res).to.have.status(422);
+        });
+    });
+    it("Should return 200 when trys to get manifestations with _id query", async function () {
+      const manifestationname = this.manifestation.name;
+      const manifestationId = this.manifestation.id;
+      await chai
+        .request(app)
+        .get("/api/manifestations")
+        .query({ perPage: 1, page: 1, sortBy: "_id", _id: manifestationId })
+        .then((res) => {
+          expect(res).to.have.status(200);
+        });
+    });
+
+    it("Should return 200 when trys to get manifestations with name query", async function () {
+      const manifestationname = this.manifestation.name;
+      await chai
+        .request(app)
+        .get("/api/manifestations")
+        .query({ perPage: 1, page: 1, sortBy: "_id", name: manifestationname })
+        .then((res) => {
+          expect(res).to.have.status(200);
         });
     });
   });

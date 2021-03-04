@@ -1,5 +1,6 @@
 const assert = require("assert");
 const { normalizeAndLogError } = require("../../helpers/errors");
+const mongoose = require("mongoose");
 
 const fieldIsContainedInModelKeys = (keys, field) => {
   const normalizedField = field.replace(/^-/, "");
@@ -42,12 +43,18 @@ const validateFieldsQuery = (model, fieldsQuery) => {
   });
 };
 
-const castQueryToRegex = (query) => {
+const castQueryToRegex = (model, query) => {
   const regexQuery = {};
   Object.entries(query).forEach((entry) => {
-    regexQuery[entry[0]] = entry[1];
-    // Error: Can't use $regex (revisar)
-    // regexQuery[entry[0]] = { $regex: new RegExp(entry[1], "ig") };
+    if (entry[0].includes("_id")) {
+      regexQuery[entry[0]] = entry[1];
+    } else {
+      assert(
+        fieldIsContainedInModelKeys(Object.keys(model.obj), entry[0]),
+        `Sort by field defined (${entry[0]}) does not match a valid model property`,
+      );
+      regexQuery[entry[0]] = { $regex: new RegExp(entry[1], "ig") };
+    }
   });
   return regexQuery;
 };
@@ -65,7 +72,7 @@ const shapeQuery = (model) => async (req, res, next) => {
     const skip = +limit * (+currentPage - 1) || 0;
     const sort = sortBy || "-_id";
     const selectQuery = select || "+_id";
-    const regexQuery = castQueryToRegex(query);
+    const regexQuery = castQueryToRegex(model, query);
     req.shapedQuery = {
       skip,
       limit,
