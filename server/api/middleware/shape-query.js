@@ -64,7 +64,7 @@ const shapeQuery = (model) => async (req, res, next) => {
     const currentPage = +page || 1;
     const skip = +limit * (+currentPage - 1) || 0;
     const sort = sortBy || "-_id";
-    const selectQuery = select || "-_id";
+    const selectQuery = select || "+_id";
     const regexQuery = castQueryToRegex(query);
     req.shapedQuery = {
       skip,
