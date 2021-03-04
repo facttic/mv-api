@@ -15,7 +15,7 @@ class PostController {
   async createNew(req, res, next) {
     try {
       const post = req.body;
-      assert(_.isObject(post), "Post is not a valid object.");
+      assert(_.isObject(post), "Post no es un objeto valido..");
 
       const newPost = await PostDAO.createNew(post);
       res.status(201).json(newPost);

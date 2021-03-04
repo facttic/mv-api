@@ -22,11 +22,11 @@ function cleanupStructure(manifestation) {
 function processArrayFields(manifestation) {
   const keys = Object.keys(manifestation);
   const values = Object.values(manifestation);
-  const parsedManifestaion = {};
+  const parsedManifestation = {};
   for (let i = 0; i < keys.length; i++) {
-    _.set(parsedManifestaion, keys[i], values[i]);
+    _.set(parsedManifestation, keys[i], values[i]);
   }
-  return parsedManifestaion;
+  return parsedManifestation;
 }
 
 function validateUsersId(userIds, users) {
@@ -41,13 +41,13 @@ function validateUsersId(userIds, users) {
         idNotFound = userId;
       }
     });
-    throw new NotFoundError(404, `User not found with id ${idNotFound}`);
+    throw new NotFoundError(404, `No existe el usuario con id ${idNotFound}`);
   }
   users.forEach((user) => {
     if (user.superadmin) {
       throw new NotFoundError(
         404,
-        `User ${user.name} is not eligible for this manifestation, please select other`,
+        `El usuario ${user.name} no es elegible para esta manifestación`,
       );
     }
   });
