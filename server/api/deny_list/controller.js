@@ -4,13 +4,13 @@ const assert = require("assert");
 const { DenyListDAO, PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../common/cache");
 
-const { normalizeAndLogError, NotFoundError, BadRequestError } = require("../../helpers/errors");
+const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
 
 class DenyListController {
   async createNew(req, res, next) {
     try {
       const denyList = req.body;
-      assert(_.isObject(denyList), "DenyList is not a valid object.");
+      assert(_.isObject(denyList), "DenyList no es un objeto valido.");
 
       const newDenyList = await DenyListDAO.createNew(denyList);
       const removeResults = await PostDAO.removeByUserIdStr(newDenyList.user_id_str, req.user._id);
@@ -46,7 +46,7 @@ class DenyListController {
       const denyList = await DenyListDAO.findById(req.params.denyListId);
 
       if (!denyList) {
-        throw new NotFoundError(404, "DenyList not found with id " + req.params.denyListId);
+        throw new NotFoundError(404, "No se encuentra DenyList con id " + req.params.denyListId);
       }
 
       res.status(200).json(denyList);
@@ -56,8 +56,8 @@ class DenyListController {
     }
   }
 
-  async update(req, res, next) {
-/*    por el momento no se usa, queda comentado por si en algun momento se desea
+  //  async update(req, res, next) {
+  /*    por el momento no se usa, queda comentado por si en algun momento se desea
       hacer update de un denylist.
 
       try {
@@ -82,13 +82,13 @@ class DenyListController {
       const throwable = normalizeAndLogError("DenyList", req, error);
       next(throwable);
     } */
-  }
+  //  }
 
   async delete(req, res, next) {
     try {
       const denyList = await DenyListDAO.findByIdAndRemove(req.params.denyListId);
       if (!denyList) {
-        throw new NotFoundError(404, "DenyList not found with id " + req.params.denyListId);
+        throw new NotFoundError(404, "No se encuentra DenyList con id " + req.params.denyListId);
       }
       res.status(200).json(denyList);
     } catch (error) {

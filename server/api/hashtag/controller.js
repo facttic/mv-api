@@ -10,7 +10,7 @@ class HashtagController {
     try {
       const manifestation = await ManifestationDAO.getById(req.params.manifestationId);
       const hashtag = req.body;
-      assert(_.isObject(hashtag), "Hashtag is not a valid object.");
+      assert(_.isObject(hashtag), "La manifestación no es un objeto valido.");
 
       const newHashtag = await manifestation.newHashtag(hashtag);
       res.status(201).json(newHashtag);
@@ -49,7 +49,7 @@ class HashtagController {
   async update(req, res, next) {
     try {
       if (!req.body.name) {
-        throw new BadRequestError(400, "Hashtag content can not be empty");
+        throw new BadRequestError(400, "El contenido del hashtag no puede ser vacío");
       }
       const { manifestationId, hashtagId } = req.params;
       const manifestation = await ManifestationDAO.getById(manifestationId);
@@ -59,7 +59,7 @@ class HashtagController {
       });
 
       if (!hashtag) {
-        throw new NotFoundError(404, "Hashtag not found with id " + hashtagId);
+        throw new NotFoundError(404, "No se encontró el Hashtag con id  " + hashtagId);
       }
 
       res.status(200).json(hashtag);
@@ -77,7 +77,7 @@ class HashtagController {
       const hashtag = await manifestation.deleteHashtag(hashtagId);
 
       if (!hashtag) {
-        throw new NotFoundError(404, "Hashtag not found with id " + hashtagId);
+        throw new NotFoundError(404, "No se encontró el Hashtag con id " + hashtagId);
       }
 
       res.status(200).json(hashtag);

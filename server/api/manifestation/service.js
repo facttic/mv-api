@@ -19,34 +19,14 @@ function cleanupStructure(manifestation) {
   }
 }
 
-function parseFieldToArrayElement(object, key, value) {
-  const keys = key.split(".");
-  if (object[keys[0]][parseInt(keys[1])]) {
-    object[keys[0]][parseInt(keys[1])][keys[2]] = value;
-  } else {
-    const newObject = {};
-    newObject[keys[2]] = value;
-    object[keys[0]].push(newObject);
-  }
-}
-
 function processArrayFields(manifestation) {
-  const arrayValues = { sponsors: [], hashtags: [] };
   const keys = Object.keys(manifestation);
   const values = Object.values(manifestation);
-
+  const parsedManifestation = {};
   for (let i = 0; i < keys.length; i++) {
-    // ignores data of sponsors and hashtags.
-    if (!keys[i].includes("sponsors") && !keys[i].includes("hashtags")) {
-      const value = values[i];
-      const vquery = {};
-      vquery[keys[i]] = value;
-      // await ManifestationDAO.udpate(req.params.manifestationId, vquery);
-    } else {
-      // Parse fields like sponsors.0.name to array element.
-      parseFieldToArrayElement(arrayValues, keys[i], values[i]);
-    }
+    _.set(parsedManifestation, keys[i], values[i]);
   }
+  return parsedManifestation;
 }
 
 function validateUsersId(userIds, users) {
@@ -61,13 +41,13 @@ function validateUsersId(userIds, users) {
         idNotFound = userId;
       }
     });
-    throw new NotFoundError(404, `User not found with id ${idNotFound}`);
+    throw new NotFoundError(404, `No existe el usuario con id ${idNotFound}`);
   }
   users.forEach((user) => {
     if (user.superadmin) {
       throw new NotFoundError(
         404,
-        `User ${user.name} is not eligible for this manifestation, please select other`,
+        `El usuario ${user.name} no es elegible para esta manifestación`,
       );
     }
   });

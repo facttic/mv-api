@@ -12,7 +12,7 @@ class ManifestationController {
       const userIds = manifestation.userIds;
       const users = await UserDAO.getManyByIds(userIds);
       delete manifestation.userIds;
-      assert(_.isObject(manifestation), "Manifestation is not a valid object.");
+      assert(_.isObject(manifestation), "La manifestación no es un objeto valido.");
       manifestationService.validateUsersId(userIds, users);
       const newManifestation = await ManifestationDAO.createNew(manifestation);
       await UserDAO.udpateToMany(userIds, { manifestation_id: newManifestation._id });
@@ -56,7 +56,7 @@ class ManifestationController {
       if (!manifestation) {
         throw new NotFoundError(
           404,
-          `Manifestation not found with id ${req.params.manifestationId}`,
+          `No se encontró la manifestación con el id ${req.params.manifestationId}`,
         );
       }
       res.status(200).json(manifestation);
@@ -68,9 +68,9 @@ class ManifestationController {
 
   async update(req, res, next) {
     try {
-      const { body: manifestation, user, params } = req;
+      let { body: manifestation, user, params } = req;
 
-      assert(_.isObject(manifestation), "Manifestation is not a valid object.");
+      assert(_.isObject(manifestation), "La manifestación no es un objeto valido.");
 
       // 0. Validar superadmin o permisos de acceso
       manifestationService.validateOwnership(manifestation, user);
@@ -81,7 +81,7 @@ class ManifestationController {
         (await manifestationService.assingUsers(manifestation));
 
       // 2. Procesar campos tipo Array: sponsors y hashtags
-      manifestationService.processArrayFields(manifestation);
+      manifestation = manifestationService.processArrayFields(manifestation);
 
       // 3. Subir y asociar imágenes
       req.files && (await manifestationService.processFiles(manifestation, req.files));

@@ -12,9 +12,9 @@ const {
 class UserController {
   async create(req, res, next) {
     try {
-      const user = req.body;      
+      const user = req.body;
       delete user.cpassword;
-      assert(_.isObject(user), "user is not a valid object.");
+      assert(_.isObject(user), "Usuario no es un objeto valido..");
       const newUser = await UserDAO.createNew(user);
       res.status(201).json(newUser);
     } catch (error) {
@@ -55,7 +55,7 @@ class UserController {
     try {
       const user = await UserDAO.findById({ _id: req.params.userId });
       if (!user) {
-        throw new NotFoundError(404, `User not found with id ${req.params.userId}`);
+        throw new NotFoundError(404, `No se encontró el usuario con el id ${req.params.userId}`);
       }
       res.status(200).json(user);
     } catch (err) {
@@ -78,13 +78,15 @@ class UserController {
     try {
       const user = req.body;
       delete user.manifestation_id;
-      assert(_.isObject(user), "User is not a valid object.");
-      if(!user.id){throw new BadRequestError(400, "Se necesita el id del usuario")}
+      assert(_.isObject(user), "Usuario no es un objeto valido..");
+      if (!user.id) {
+        throw new BadRequestError(400, "Se necesita el id del usuario");
+      }
       const actualUser = await UserDAO.findById(user.id);
       if (user.superadmin && actualUser.manifestation_id) {
         throw new NotFoundError(
           404,
-          "User can't have a manifestation if is superadmin or vice versa",
+          "Un usuario no puede ser super administrador si posee una marcha o viceversa",
         );
       }
       const updatedUser = await UserDAO.udpate(user.id, user);
@@ -95,7 +97,7 @@ class UserController {
     }
   }
 
-  async userProfile(req, res, next) {
+  async userProfile(req, res) {
     // View logged in user profile
     res.status(201).json(req.user);
   }

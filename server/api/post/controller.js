@@ -4,7 +4,7 @@ const assert = require("assert");
 const { PostDAO } = require("mv-models");
 const { CacheConfig } = require("../../common/cache");
 
-const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
+const { normalizeAndLogError } = require("../../helpers/errors");
 
 class PostController {
   /**
@@ -15,7 +15,7 @@ class PostController {
   async createNew(req, res, next) {
     try {
       const post = req.body;
-      assert(_.isObject(post), "Post is not a valid object.");
+      assert(_.isObject(post), "Post no es un objeto valido..");
 
       const newPost = await PostDAO.createNew(post);
       res.status(201).json(newPost);
@@ -52,12 +52,12 @@ class PostController {
     try {
       const { manifestationId, postId } = req.params;
 
-      const postDeleted = await PostDAO.removeByManifestationId(
+      const postDeleted = await PostDAO.removeByIdByManifestationId(
         manifestationId,
         postId,
         req.user._id,
       );
-      
+
       const cache = CacheConfig.get();
       cache.flushAll();
 

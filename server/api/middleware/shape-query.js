@@ -1,7 +1,5 @@
 const assert = require("assert");
-const {
-  normalizeAndLogError,
-} = require("../../helpers/errors");
+const { normalizeAndLogError } = require("../../helpers/errors");
 
 const fieldIsContainedInModelKeys = (keys, field) => {
   const normalizedField = field.replace(/^-/, "");
@@ -57,7 +55,7 @@ const castQueryToRegex = (query) => {
 const shapeQuery = (model) => async (req, res, next) => {
   try {
     const { query: reqQuery } = req;
-    const { perPage, page, sortBy, ...query } = reqQuery;
+    const { perPage, page, sortBy, select, ...query } = reqQuery;
 
     validatePaginationQuery(model, reqQuery);
     validateFieldsQuery(model, query);
@@ -66,11 +64,13 @@ const shapeQuery = (model) => async (req, res, next) => {
     const currentPage = +page || 1;
     const skip = +limit * (+currentPage - 1) || 0;
     const sort = sortBy || "-_id";
+    const selectQuery = select || "+_id";
     const regexQuery = castQueryToRegex(query);
     req.shapedQuery = {
       skip,
       limit,
       sort,
+      selectQuery,
       query: regexQuery,
     };
     next();
