@@ -1,6 +1,5 @@
 const assert = require("assert");
 const { normalizeAndLogError } = require("../../helpers/errors");
-const mongoose = require("mongoose");
 
 const fieldIsContainedInModelKeys = (keys, field) => {
   const normalizedField = field.replace(/^-/, "");
