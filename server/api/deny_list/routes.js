@@ -16,7 +16,6 @@ class DenyListRoutes {
     router
       .route("/deny_lists/:denyListId")
       .get(denyListController.getOne)
-      .put([auth, denyListController.update])
       .delete([auth, denyListController.delete]);
   }
 }
