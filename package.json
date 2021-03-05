@@ -46,7 +46,8 @@
     "node-cache": "^5.1.0",
     "node-seaweedfs": "^1.4.0",
     "pify": "^5.0.0",
-    "shorthash2": "^1.0.3"
+    "shorthash2": "^1.0.3",
+    "sinon": "^9.2.4"
   },
   "devDependencies": {
     "chai": "^4.2.0",
