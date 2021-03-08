@@ -39,7 +39,6 @@ describe("manifestation", async function () {
         });
     });
     it("Should return 200 when trys to get manifestations with _id query", async function () {
-      const manifestationname = this.manifestation.name;
       const manifestationId = this.manifestation.id;
       await chai
         .request(app)
