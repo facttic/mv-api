@@ -162,6 +162,19 @@ describe("manifestation", async function () {
     beforeEach(async function () {
       this.manifestation = await factories.create("manifestation");
     });
+
+    it("Should return 200 when trys to getbyuri manifestation", async function () {
+      const curi = this.manifestation.uri;
+      await chai
+        .request(app)
+        .get(`/api/manifestations/getOne/byQuery`)
+        .query({ uri: curi })
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(200);
+        });
+    });
+
     it("Should return 200 when trys to get one manifestation", async function () {
       const id = this.manifestation._id;
       await chai

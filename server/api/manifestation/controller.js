@@ -50,6 +50,23 @@ class ManifestationController {
     }
   }
 
+  async getByUri(req, res, next) {
+    try {
+      const { shapedQuery } = req;
+      const manifestation = await ManifestationDAO.getByUri(shapedQuery);
+      if (!manifestation) {
+        throw new NotFoundError(
+          404,
+          `No se encontró la manifestación con los filtros proprocionados`,
+        );
+      }
+      res.status(200).json(manifestation);
+    } catch (error) {
+      const throwable = normalizeAndLogError("Manifestation", req, error);
+      next(throwable);
+    }
+  }
+
   async getOne(req, res, next) {
     try {
       const manifestation = await ManifestationDAO.getById(req.params.manifestationId);

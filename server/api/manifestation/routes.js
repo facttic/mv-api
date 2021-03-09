@@ -11,12 +11,15 @@ class ManifestationRoutes {
       .route("/manifestations")
       .get([shapeQuery(ManifestationDAO.schema), manifestationController.getAll])
       .post([auth, adminChecker, manifestationController.create]);
-
     router
       .route("/manifestations/:manifestationId")
       .get(manifestationController.getOne)
       .put([auth, parseMultipart, manifestationController.update])
       .delete([auth, adminChecker, manifestationController.delete]);
+
+    router
+      .route("/manifestations/getOne/byQuery")
+      .get([shapeQuery(ManifestationDAO.schema), manifestationController.getByUri]);
   }
 }
 

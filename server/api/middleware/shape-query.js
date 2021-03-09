@@ -45,7 +45,7 @@ const validateFieldsQuery = (model, fieldsQuery) => {
 const castQueryToRegex = (model, query) => {
   const regexQuery = {};
   Object.entries(query).forEach((entry) => {
-    if (entry[0].includes("_id")) {
+    if (entry[0].includes("_id") || entry[0].includes("superadmin")) {
       regexQuery[entry[0]] = entry[1];
     } else {
       assert(
