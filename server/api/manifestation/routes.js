@@ -19,7 +19,7 @@ class ManifestationRoutes {
 
     router
       .route("/manifestations/getOne/byQuery")
-      .get([shapeQuery(ManifestationDAO.schema), manifestationController.getByUri]);
+      .get([shapeQuery(ManifestationDAO.schema), manifestationController.getByQuery]);
   }
 }
 

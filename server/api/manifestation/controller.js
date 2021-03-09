@@ -50,10 +50,10 @@ class ManifestationController {
     }
   }
 
-  async getByUri(req, res, next) {
+  async getByQuery(req, res, next) {
     try {
       const { shapedQuery } = req;
-      const manifestation = await ManifestationDAO.getByUri(shapedQuery);
+      const manifestation = await ManifestationDAO.getByQuery(shapedQuery);
       if (!manifestation) {
         throw new NotFoundError(
           404,
