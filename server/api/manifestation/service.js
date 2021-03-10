@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { UserDAO } = require("mv-models");
+const { UserDAO, ManifestationDAO } = require("mv-models");
 const path = require("path");
 const config = require("config");
 const shorthash = require("shorthash2");
@@ -8,7 +8,28 @@ const mv = require("mv");
 
 const s3Service = require("../../common/s3");
 const seaweedHelper = require("../../helpers/seaweed");
-const { NotFoundError, PermissionError } = require("../../helpers/errors");
+const { NotFoundError, PermissionError, ValidationError } = require("../../helpers/errors");
+
+async function valideateUpdateUri(manifestation) {
+  const manifestationByUri = await ManifestationDAO.getByQuery({
+    query: { uri: manifestation.uri },
+  });
+  if (
+    manifestationByUri.length > 0 &&
+    manifestationByUri[0]._id.toString() !== manifestation.id.toString()
+  ) {
+    throw new ValidationError(422, `Ya existe una marcha con la uri ${manifestation.uri}`);
+  }
+}
+
+async function valideateCreateUri(manifestation) {
+  const manifestationByUri = await ManifestationDAO.getByQuery({
+    query: { uri: manifestation.uri },
+  });
+  if (manifestationByUri.length > 0) {
+    throw new ValidationError(422, `Ya existe una marcha con la uri ${manifestation.uri}`);
+  }
+}
 
 function cleanupStructure(manifestation) {
   const keys = Object.keys(manifestation);
@@ -112,4 +133,6 @@ module.exports = {
   processFiles,
   cleanupStructure,
   validateUsersId,
+  valideateUpdateUri,
+  valideateCreateUri,
 };
