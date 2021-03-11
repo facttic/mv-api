@@ -63,6 +63,7 @@ describe("manifestation", async function () {
 
   context("create", async function () {
     beforeEach(async function () {
+      this.manifestation = await factories.create("manifestation");
       this.user = await factories.create("user", { superadmin: false, password: "1234abcd" });
       this.admin = await factories.create("user", {
         email: "su@admin.com",
@@ -85,8 +86,24 @@ describe("manifestation", async function () {
         });
     });
 
+    it("Should return 422 when admin trys to assing existing uri to new manifestation", async function () {
+      const newManifestation = await factories.attrs("manifestation");
+      newManifestation.uri = this.manifestation.uri;
+      const token = this.adminToken;
+      await chai
+        .request(app)
+        .post("/api/manifestations")
+        .set("Authorization", token)
+        .send(newManifestation)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(422);
+        });
+    });
+
     it("Should return 201 when admin trys to assing users to new manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
+      newManifestation.uri = "example.com";
       newManifestation.userIds = [this.user._id];
       const token = this.adminToken;
       await chai
@@ -132,6 +149,7 @@ describe("manifestation", async function () {
 
     it("Should return 201 when admin try to create manifestation", async function () {
       const newManifestation = await factories.attrs("manifestation");
+      newManifestation.uri = "example.com";
       const token = this.adminToken;
       await chai
         .request(app)
@@ -201,7 +219,7 @@ describe("manifestation", async function () {
   context("update", async function () {
     this.timeout(10000);
     beforeEach(async function () {
-      this.manifestation = await factories.create("manifestation");
+      this.manifestation = await factories.create("manifestation", { uri: "manifestation.com" });
       this.manifestationWithoutUser = await factories.create("manifestation");
       this.user = await factories.create("user", {
         superadmin: false,
@@ -231,6 +249,7 @@ describe("manifestation", async function () {
 
     it("Should return 404 when admin trys to assing non existent users to manifestation", async function () {
       const manifestationEdit = await factories.attrs("manifestation");
+      manifestationEdit.uri = "example.com";
       const id = this.manifestation._id;
       manifestationEdit.id = this.manifestation.id;
       manifestationEdit.userIds = ["603d479df7f5bc3e2c345dc7"];
@@ -248,6 +267,7 @@ describe("manifestation", async function () {
 
     it("Should return 200 when admin trys to assing users to manifestation", async function () {
       const manifestationEdit = await factories.attrs("manifestation");
+      manifestationEdit.uri = "example.com";
       const id = this.manifestation._id;
       manifestationEdit.id = this.manifestation.id;
       manifestationEdit.userIds = [this.user._id];
@@ -295,8 +315,26 @@ describe("manifestation", async function () {
         });
     });
 
+    it("Should return 422 when superadmin trys to update manifestation with an existing uri", async function () {
+      const manifestationEdit = this.manifestationWithoutUser;
+      manifestationEdit.uri = "manifestation.com";
+      const id = manifestationEdit._id;
+      manifestationEdit.title = "edit";
+      const token = this.adminToken;
+      await chai
+        .request(app)
+        .put("/api/manifestations/" + id)
+        .set("Authorization", token)
+        .send(manifestationEdit)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(422);
+        });
+    });
+
     it("Should return 201 when superadmin trys to update manifestation", async function () {
       const manifestationEdit = this.manifestation;
+      manifestationEdit.uri = "example.com";
       const id = manifestationEdit._id;
       manifestationEdit.title = "edit";
       const token = this.adminToken;
@@ -325,7 +363,7 @@ describe("manifestation", async function () {
         });
     });
 
-    it("Should return 201 when superadmin trys to update manifestation with a form", async function () {
+    it("Should return 201 when superadmin trys to update manifestation with a form with file", async function () {
       const id = this.manifestation._id;
       const token = this.adminToken;
       await chai
@@ -346,6 +384,7 @@ describe("manifestation", async function () {
 
     it("Should return 201 when superadmin trys to update manifestation with a form", async function () {
       const manifestation = await factories.attrs("manifestation");
+      manifestation.uri = "example.com";
       const id = this.manifestation._id;
       const token = this.adminToken;
       await chai

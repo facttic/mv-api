@@ -10,7 +10,7 @@ const s3Service = require("../../common/s3");
 const seaweedHelper = require("../../helpers/seaweed");
 const { NotFoundError, PermissionError, ValidationError } = require("../../helpers/errors");
 
-async function valideateUpdateUri(manifestation) {
+async function validateUpdateUri(manifestation) {
   const manifestationByUri = await ManifestationDAO.getByQuery({
     query: { uri: manifestation.uri },
   });
@@ -22,7 +22,7 @@ async function valideateUpdateUri(manifestation) {
   }
 }
 
-async function valideateCreateUri(manifestation) {
+async function validateCreateUri(manifestation) {
   const manifestationByUri = await ManifestationDAO.getByQuery({
     query: { uri: manifestation.uri },
   });
@@ -133,6 +133,6 @@ module.exports = {
   processFiles,
   cleanupStructure,
   validateUsersId,
-  valideateUpdateUri,
-  valideateCreateUri,
+  validateUpdateUri,
+  validateCreateUri,
 };

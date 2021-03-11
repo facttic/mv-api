@@ -14,7 +14,7 @@ class ManifestationController {
       delete manifestation.userIds;
       assert(_.isObject(manifestation), "La manifestación no es un objeto valido.");
       manifestationService.validateUsersId(userIds, users);
-      await manifestationService.valideateCreateUri(manifestation);
+      await manifestationService.validateCreateUri(manifestation);
       const newManifestation = await ManifestationDAO.createNew(manifestation);
       await UserDAO.udpateToMany(userIds, { manifestation_id: newManifestation._id });
       res.status(201).json(newManifestation);
@@ -92,7 +92,7 @@ class ManifestationController {
 
       // 0. Validar superadmin o permisos de acceso y la uri no esta repetida
       manifestationService.validateOwnership(manifestation, user);
-      await manifestationService.valideateUpdateUri(manifestation);
+      await manifestationService.validateUpdateUri(manifestation);
 
       // 1. Reasignar usuarios
       manifestation.userIds &&
