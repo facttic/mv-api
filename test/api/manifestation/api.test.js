@@ -17,6 +17,7 @@ describe("manifestation", async function () {
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(200);
+          expect(JSON.parse(res.text).data[0]).to.be.an("object").that.not.has.property("config");
         });
     });
     it("Should return 200 when trys to get manifestations with query", async function () {
@@ -179,6 +180,18 @@ describe("manifestation", async function () {
   context("get_one", async function () {
     beforeEach(async function () {
       this.manifestation = await factories.create("manifestation");
+      this.user = await factories.create("user", {
+        superadmin: false,
+        password: "1234abcd",
+        manifestation_id: this.manifestation._id,
+      });
+      this.userToken = await chai
+        .request(app)
+        .post("/api/users/login")
+        .send({ email: this.user.email, password: "1234abcd" })
+        .then(async function (res) {
+          return "Bearer " + res.body.token.toString();
+        });
     });
 
     it("Should return 200 when trys to getbyuri manifestation", async function () {
@@ -190,25 +203,41 @@ describe("manifestation", async function () {
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(200);
+          expect(JSON.parse(res.text)[0]).to.be.an("object").that.not.has.property("config");
         });
     });
 
     it("Should return 200 when trys to get one manifestation", async function () {
       const id = this.manifestation._id;
+      const token = this.userToken;
       await chai
         .request(app)
         .get("/api/manifestations/" + id)
+        .set("Authorization", token)
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(200);
         });
     });
 
-    it("Should return 404 when trys to get non existent manifestation", async function () {
-      const id = "603d479df7f5bc3e2c345dc0";
+    it("Should return 401 when trys to get one manifestation without login", async function () {
+      const id = this.manifestation._id;
       await chai
         .request(app)
         .get("/api/manifestations/" + id)
+        .then((res) => {
+          expect(res).to.be.json;
+          expect(res).to.have.status(401);
+        });
+    });
+
+    it("Should return 404 when trys to get non existent manifestation", async function () {
+      const id = "603d479df7f5bc3e2c345dc0";
+      const token = this.userToken;
+      await chai
+        .request(app)
+        .get("/api/manifestations/" + id)
+        .set("Authorization", token)
         .then((res) => {
           expect(res).to.be.json;
           expect(res).to.have.status(404);

@@ -13,7 +13,7 @@ class ManifestationRoutes {
       .post([auth, adminChecker, manifestationController.create]);
     router
       .route("/manifestations/:manifestationId")
-      .get(manifestationController.getOne)
+      .get([auth, manifestationController.getOne])
       .put([auth, parseMultipart, manifestationController.update])
       .delete([auth, adminChecker, manifestationController.delete]);
 

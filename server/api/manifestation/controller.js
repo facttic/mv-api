@@ -28,6 +28,7 @@ class ManifestationController {
     try {
       const { shapedQuery } = req;
       const manifestation = await ManifestationDAO.getAll(shapedQuery);
+      manifestation.list.forEach((element) => (element.config = {}));
       res.status(200).json({
         data: manifestation.list,
         total: manifestation.total,
@@ -55,6 +56,7 @@ class ManifestationController {
     try {
       const { shapedQuery } = req;
       const manifestation = await ManifestationDAO.getByQuery(shapedQuery);
+      manifestation.forEach((element) => (element.config = {}));
       if (!manifestation) {
         throw new NotFoundError(
           404,
