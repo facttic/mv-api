@@ -11,6 +11,10 @@
     "cwd"         : "./",
     "exec_mode"   : "cluster",
     "instances"   : "1",
+    "ignore_watch" : ["node_modules", "server/public"],
+    "watch_options": {
+      "followSymlinks": false
+    },
     "env": {
       "NODE_ENV": "production"
     }
