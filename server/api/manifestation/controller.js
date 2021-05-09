@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const assert = require("assert");
 
-const { UserDAO, ManifestationDAO } = require("mv-models");
+const { UserDAO, ManifestationDAO, PostDAO } = require("mv-models");
 const { normalizeAndLogError, NotFoundError } = require("../../helpers/errors");
 const manifestationService = require("./service");
 
@@ -52,18 +52,23 @@ class ManifestationController {
     }
   }
 
-  async getByQuery(req, res, next) {
+  async getSetup(req, res, next) {
     try {
-      const { shapedQuery } = req;
-      const manifestation = await ManifestationDAO.getByQuery(shapedQuery);
-      manifestation.forEach((element) => (element.config = {}));
+      const { query, shapedQuery } = req;
+      const manifestation = await ManifestationDAO.getByUriParts(query.uri);
       if (!manifestation) {
         throw new NotFoundError(
           404,
           `No se encontró la manifestación con los filtros proprocionados`,
         );
       }
-      res.status(200).json(manifestation);
+      const returnManifestation = manifestation.toObject();
+      delete returnManifestation.config;
+      // query must be overriden because it was used
+      // to fetch the manifestation by uri
+      shapedQuery.query = {};
+      const posts = await PostDAO.getAllByManifestationId(manifestation.id, shapedQuery);
+      res.status(200).json({ manifestation: returnManifestation, posts });
     } catch (error) {
       const throwable = normalizeAndLogError("Manifestation", req, error);
       next(throwable);
