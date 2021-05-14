@@ -16,5 +16,9 @@
   "cache": {
     "ttl": 60,
     "checkPeriod": 30
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379
   }
 }

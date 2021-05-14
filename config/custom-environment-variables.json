@@ -15,5 +15,9 @@
   "cache": {
     "ttl": "CACHE_TTL",
     "checkPeriod": "CACHE_CHECKPERIOD"
+  },
+  "redis": {
+    "host": "REDIS_HOST",
+    "port": "REDIS_PORT"
   }
 }
