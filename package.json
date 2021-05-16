@@ -42,7 +42,7 @@
     "lodash": "^4.17.19",
     "morgan": "^1.10.0",
     "mv": "^2.1.1",
-    "mv-models": "^4.0.8",
+    "mv-models": "^4.0.9",
     "node-cache": "^5.1.0",
     "node-seaweedfs": "^1.4.0",
     "pify": "^5.0.0",
