@@ -39,7 +39,7 @@
     "formidable": "^1.2.2",
     "helmet": "^3.21.3",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "mv": "^2.1.1",
     "mv-models": "^4.0.9",
